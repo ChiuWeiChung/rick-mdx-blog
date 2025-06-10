@@ -7,11 +7,12 @@ import {
 	FormMessage,
 } from '@/components/ui/form';
 import { FormField } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import * as SwitchPrimitive from '@radix-ui/react-switch';
 import { Control, FieldValues } from 'react-hook-form';
 
-interface InputFieldProps<TFieldValues extends FieldValues = FieldValues>
-	extends React.InputHTMLAttributes<HTMLInputElement> {
+interface SwitchFieldProps<TFieldValues extends FieldValues = FieldValues>
+	extends React.ComponentProps<typeof SwitchPrimitive.Root> {
 	control?: Control<TFieldValues>;
 	name: string;
 	label?: ReactNode;
@@ -19,8 +20,8 @@ interface InputFieldProps<TFieldValues extends FieldValues = FieldValues>
 	description?: ReactNode;
 }
 
-const InputField = (props: InputFieldProps) => {
-	const { control, name, label, placeholder, description, className, ...inputProps } = props;
+const SwitchField = (props: SwitchFieldProps) => {
+	const { control, name, label, description, className, ...switchProps } = props;
 	return (
 		<FormField
 			control={control}
@@ -29,7 +30,7 @@ const InputField = (props: InputFieldProps) => {
 				<FormItem className={className}>
 					{label ? <FormLabel>{label}</FormLabel> : null}
 					<FormControl>
-						<Input placeholder={placeholder} {...field} {...inputProps} />
+						<Switch checked={field.value} onCheckedChange={field.onChange} {...switchProps} />
 					</FormControl>
 					{description ? <FormDescription>{description}</FormDescription> : null}
 					<FormMessage />
@@ -39,4 +40,4 @@ const InputField = (props: InputFieldProps) => {
 	);
 };
 
-export default InputField;
+export default SwitchField;

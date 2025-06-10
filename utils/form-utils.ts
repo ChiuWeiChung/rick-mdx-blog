@@ -13,6 +13,9 @@ export function getDefaultValues<Schema extends z.AnyZodObject>(schema: Schema):
 			if (value instanceof z.ZodString) {
 				return [key, ''];
 			}
+			if (value instanceof z.ZodBoolean) {
+				return [key, false];
+			}
 			return [key, undefined];
 		})
 	) as z.infer<Schema>;

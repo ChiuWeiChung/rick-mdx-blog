@@ -8,6 +8,7 @@ import InputField from '@/components/form-fields/input-field';
 import { Button } from '@/components/ui/button';
 import SingleSelectField from '@/components/form-fields/single-select-field';
 import MultiSelectField from '@/components/form-fields/multi-select-field';
+import SwitchField from '@/components/form-fields/switch-field';
 // import { MultiSelect } from '@/components/multi-select';
 // import { useState } from 'react';
 
@@ -37,44 +38,47 @@ const PlaygroundForm = () => {
 	};
 
 	return (
-		<div>
-			<SmartForm {...form} onSubmit={onSubmit} className="flex flex-col gap-4">
-				<InputField
-					name="name"
-					label="Name"
-					placeholder="Enter your name"
-					description="This is your name"
-				/>
-				<InputField
-					name="email"
-					label="Email"
-					type="email"
-					placeholder="Enter your email"
-					description="This is your email"
-				/>
-				<InputField
-					name="password"
-					label="Password"
-					type="password"
-					placeholder="Enter your password"
-					description="This is your password"
-				/>
-				<SingleSelectField
-					name="language"
-					label="Language"
-					placeholder="Select your language"
-					options={options}
-				/>
-				<MultiSelectField
-					name="tags"
-					label="Tags"
-					placeholder="Select your tags"
-					options={tagsOptions}
-				/>
+		<SmartForm {...form} onSubmit={onSubmit} className="flex flex-col gap-4">
+			<InputField
+				name="name"
+				label="Name"
+				placeholder="Enter your name"
+				description="This is your name"
+			/>
+			<InputField
+				name="email"
+				label="Email"
+				type="email"
+				placeholder="Enter your email"
+				description="This is your email"
+			/>
+			<InputField
+				name="password"
+				label="Password"
+				type="password"
+				placeholder="Enter your password"
+				description="This is your password"
+			/>
+			<SingleSelectField
+				name="language"
+				label="Language"
+				placeholder="Select your language"
+				options={options}
+			/>
+			<MultiSelectField
+				name="tags"
+				label="Tags"
+				placeholder="Select your tags"
+				options={tagsOptions}
+			/>
+			<SwitchField
+				name="isPublic"
+				label="Is Public"
+				description="This is your public display name."
+			/>
 
-				<Button type="submit">Submit</Button>
-			</SmartForm>
-		</div>
+			<Button type="submit">Submit</Button>
+		</SmartForm>
 	);
 };
 
