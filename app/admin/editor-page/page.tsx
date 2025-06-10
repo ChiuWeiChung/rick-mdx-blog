@@ -9,13 +9,10 @@ const EditorPage = () => {
   `;
 
   return (
-    <div className='m-4 p-4 border border-gray-300 rounded-md'>
-      <ForwardRefEditor 
-        markdown={markdown} 
-        contentEditableClassName='' 
-      />
+    <div className="m-4 p-4 border border-gray-300 rounded-md">
+      <ForwardRefEditor markdown={markdown} contentEditableClassName="prose lg:prose-xl" />
     </div>
-  )
+  );
 }
 
 export default EditorPage

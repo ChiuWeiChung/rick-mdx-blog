@@ -23,8 +23,8 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
   };
 
   return (
-    <div className="code-block my-4 rounded-md overflow-hidden">
-      <div className="code-header bg-gray-800 text-white px-4 py-2 text-sm flex justify-between items-center">
+    <div className="my-4 rounded-md overflow-hidden">
+      <div className="bg-gray-800 text-white px-4 py-2 text-sm flex justify-between items-center">
         <span>{language || 'code'}</span>
         <button
           onClick={handleCopy}
@@ -41,8 +41,8 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
           borderRadius: '0 0 0.375rem 0.375rem',
           fontSize: '0.9rem',
         }}
-        showLineNumbers={true}
-        wrapLines={true}
+        showLineNumbers
+        wrapLines
       >
         {code}
       </SyntaxHighlighter>

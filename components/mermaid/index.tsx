@@ -1,8 +1,7 @@
 'use client';
 
 import { Mermaid as MDXMermaid } from 'mdx-mermaid/Mermaid';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useReducer } from 'react';
 
 interface MermaidProps {
   chart: string;
@@ -10,13 +9,12 @@ interface MermaidProps {
 
 // 簡單的 Mermaid 組件，直接使用 mdx-mermaid/Mermaid
 const Mermaid: React.FC<MermaidProps> = ({ chart }) => {
-  const [, setCount] = useState(0);
+  const [, forceRender] = useReducer((x) => x + 1, 0);
 
-  // NOTE: 為了解決了一個惱人的 bug：Mermaid 圖表在首次渲染後會跑版，因此透過強制渲染兩次作為 workaround。
+  // NOTE: 為了解決了一個惱人的 bug：Mermaid 圖表在首次渲染後會跑版，因此透過強制渲染避免跑版
   useEffect(() => {
-    // 第一次渲染後觸發兩次更新
-    setCount(1);
-    setTimeout(() => setCount(2), 0); // 下一輪 event loop 更新
+    // onMounted 後再次觸發渲染
+    forceRender();
   }, []);
 
   return (
