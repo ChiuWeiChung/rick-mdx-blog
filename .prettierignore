@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+.next
+.git
+
+# Production builds
+out
+dist
+build
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Package files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Generated files
+*.log
+.DS_Store
+
+# MDX files that might have specific formatting
+# Remove this line if you want to format MDX files
+# *.mdx 
