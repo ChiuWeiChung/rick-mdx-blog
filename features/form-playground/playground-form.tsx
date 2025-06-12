@@ -1,7 +1,12 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { playgroundFormDefaultValues, PlaygroundFormSchema, playgroundFormSchema } from './types';
+import {
+	playgroundFormDefaultValues,
+	playgroundFormKeys,
+	PlaygroundFormSchema,
+	playgroundFormSchema,
+} from './types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import SmartForm from '@/components/smart-form';
 import InputField from '@/components/form-fields/input-field';
@@ -9,8 +14,6 @@ import { Button } from '@/components/ui/button';
 import SingleSelectField from '@/components/form-fields/single-select-field';
 import MultiSelectField from '@/components/form-fields/multi-select-field';
 import SwitchField from '@/components/form-fields/switch-field';
-// import { MultiSelect } from '@/components/multi-select';
-// import { useState } from 'react';
 
 const options = [
 	{ label: 'Option 1', value: 'option1' },
@@ -37,42 +40,44 @@ const PlaygroundForm = () => {
 		console.log(data);
 	};
 
+	// console.log('newPlaygroundFormDefaultValues', newPlaygroundFormDefaultValues);
+
 	return (
 		<SmartForm {...form} onSubmit={onSubmit} className="flex flex-col gap-4">
 			<InputField
-				name="name"
+				name={playgroundFormKeys.name}
 				label="Name"
 				placeholder="Enter your name"
 				description="This is your name"
 			/>
 			<InputField
-				name="email"
+				name={playgroundFormKeys.email}
 				label="Email"
 				type="email"
 				placeholder="Enter your email"
 				description="This is your email"
 			/>
 			<InputField
-				name="password"
+				name={playgroundFormKeys.password}
 				label="Password"
 				type="password"
 				placeholder="Enter your password"
 				description="This is your password"
 			/>
 			<SingleSelectField
-				name="language"
+				name={playgroundFormKeys.language}
 				label="Language"
 				placeholder="Select your language"
 				options={options}
 			/>
 			<MultiSelectField
-				name="tags"
+				name={playgroundFormKeys.tags}
 				label="Tags"
 				placeholder="Select your tags"
 				options={tagsOptions}
 			/>
 			<SwitchField
-				name="isPublic"
+				name={playgroundFormKeys.isPublic}
 				label="Is Public"
 				description="This is your public display name."
 			/>

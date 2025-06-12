@@ -3,11 +3,13 @@
 import dynamic from 'next/dynamic';
 import { forwardRef } from 'react';
 import { type MDXEditorMethods, type MDXEditorProps } from '@mdxeditor/editor';
+import { Loader } from 'lucide-react';
 
 // This is the only place InitializedMDXEditor is imported directly.
 const Editor = dynamic(() => import('./initialized-mdx-editor'), {
 	// Make sure we turn SSR off
 	ssr: false,
+	loading: () => <Loader className="text-primary mx-auto h-12 w-12 animate-spin" />,
 });
 
 // This is what is imported by other components. Pre-initialized with plugins, and ready

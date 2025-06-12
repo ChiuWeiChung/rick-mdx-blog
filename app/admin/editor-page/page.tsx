@@ -1,17 +1,13 @@
-import { ForwardRefEditor } from '@/components/mdx-editor';
-import React from 'react';
+import MarkdownEditor from '@/features/MarkdownEditor';
+
+const markdown = `
+# Hello World
+This is a test markdown
+[Link](https://virtuoso.dev)
+`;
 
 const EditorPage = () => {
-	const markdown = `
-  # Hello World
-  This is a test markdown
-  `;
-
-	return (
-		<div className="m-4 rounded-md border border-gray-300 p-4">
-			<ForwardRefEditor markdown={markdown} contentEditableClassName="prose lg:prose-xl" />
-		</div>
-	);
+	return <MarkdownEditor content={markdown} />;
 };
 
 export default EditorPage;

@@ -9,11 +9,29 @@ import {
 	UndoRedo,
 	ListsToggle,
 	toolbarPlugin,
+	linkPlugin,
+	linkDialogPlugin,
 	BoldItalicUnderlineToggles,
 	MDXEditor,
+	diffSourcePlugin,
 	type MDXEditorMethods,
 	type MDXEditorProps,
+	DiffSourceToggleWrapper,
+	CreateLink,
+	codeBlockPlugin,
+	InsertCodeBlock,
+	codeMirrorPlugin,
+	ConditionalContents,
+	ChangeCodeMirrorLanguage,
+	imagePlugin,
+	InsertImage,
+	tablePlugin,
+	InsertTable,
+	BlockTypeSelect,
+	frontmatterPlugin,
+	InsertFrontmatter,
 } from '@mdxeditor/editor';
+
 import '@mdxeditor/editor/style.css';
 
 // Only import this to the next file
@@ -25,18 +43,75 @@ export default function InitializedMDXEditor({
 		<MDXEditor
 			plugins={[
 				// Example Plugin Usage
+				// directivesPlugin({ directiveDescriptors: [AdmonitionDirectiveDescriptor] }),
+				// insert block type plugin
+				frontmatterPlugin(),
 				headingsPlugin(),
 				listsPlugin(),
 				quotePlugin(),
 				thematicBreakPlugin(),
-				markdownShortcutPlugin(),
+				linkPlugin(),
+				linkDialogPlugin({
+					// TODO
+					linkAutocompleteSuggestions: ['https://virtuoso.dev', 'https://mdxeditor.dev'],
+				}),
+				codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
+				codeMirrorPlugin({
+					codeBlockLanguages: {
+						js: 'JavaScript',
+						css: 'CSS',
+						mermaid: 'Mermaid',
+						react: 'React',
+						typescript: 'TypeScript',
+						console: 'Console',
+					},
+				}),
+				imagePlugin({
+					// imageUploadHandler: file => {
+					// 	console.log('file', file);
+					// 	return Promise.resolve(
+					// 		'https://www.citypng.com/public/uploads/preview/funny-beluga-meme-cat-hd-transparent-background-735811696675541naaswhla0k.png'
+					// 	);
+					// },
+				}),
+				tablePlugin(),
+				markdownShortcutPlugin(), // 需要在最底下，以支援上述的 plugin shortcut
+				diffSourcePlugin({ diffMarkdown: props.markdown, viewMode: 'rich-text' }),
 				toolbarPlugin({
 					toolbarClassName: 'my-classname',
 					toolbarContents: () => (
 						<>
-							<UndoRedo />
-							<BoldItalicUnderlineToggles />
-							<ListsToggle />
+							<DiffSourceToggleWrapper>
+								<div className="flex items-center gap-2">
+									<UndoRedo />
+									<div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
+									<BlockTypeSelect />
+									<BoldItalicUnderlineToggles />
+									<div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
+									<ListsToggle />
+									<div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
+									<InsertTable />
+									<InsertImage />
+									<CreateLink />
+									<ConditionalContents
+										options={[
+											{
+												when: editor => editor?.editorType === 'codeblock',
+												contents: () => <ChangeCodeMirrorLanguage />,
+											},
+											{
+												fallback: () => (
+													<>
+														<InsertCodeBlock />
+													</>
+												),
+											},
+										]}
+									/>
+									<div className="mx-2 ml-auto inline-block h-4 w-[1px] self-center bg-neutral-300" />
+									<InsertFrontmatter />
+								</div>
+							</DiffSourceToggleWrapper>
 						</>
 					),
 				}),
