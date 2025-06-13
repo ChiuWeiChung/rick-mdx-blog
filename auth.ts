@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import 'next-auth/jwt';
 import Google from 'next-auth/providers/google';
+import { checkUserExist } from './app/actions/user';
 
 declare module 'next-auth' {
 	interface Session {
@@ -32,14 +33,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 	callbacks: {
 		async jwt({ token, account }) {
 			// Initialize token with required fields if they don't exist yet
-			if (!token.access_token) {
-				token.access_token = '';
-			}
-			if (!token.expires_at) {
-				token.expires_at = 0;
-			}
+			if (!token.access_token) token.access_token = '';
+
+			if (!token.expires_at) token.expires_at = 0;
+
 			if (account) {
 				// First-time login, save the `access_token`, its expiry and the `refresh_token`
+
 				return {
 					...token,
 					provider: account.provider,
@@ -97,6 +97,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 			session.error = token.error;
 			session.provider = token.provider;
 			return session;
+		},
+		async signIn({ user, account }) {
+			if (!account || !user.email) return false;
+			// 檢查合法的 user 是否存在於資料庫中
+			const userExist = await checkUserExist({
+				provider: account.provider,
+				email: user.email,
+			});
+			return Boolean(userExist);
 		},
 	},
 	secret: process.env.AUTH_SECRET,

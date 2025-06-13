@@ -123,4 +123,9 @@
 }
 
 @layer components {
+	/* 移除 prose 中 code 元素的 ::before 和 ::after 伪元素 */
+	.prose code::before,
+	.prose code::after {
+		content: none !important;
+	}
 }

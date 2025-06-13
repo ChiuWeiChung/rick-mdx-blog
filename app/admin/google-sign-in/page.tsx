@@ -1,4 +1,4 @@
-import { signIn } from '@/auth';
+import { signInAction } from '@/app/actions/user';
 
 export default function GoogleSignIn() {
 	return (
@@ -10,16 +10,10 @@ export default function GoogleSignIn() {
 					</h2>
 				</div>
 
-				<form
-					action={async () => {
-						'use server';
-						await signIn('google', { redirectTo: '/' });
-					}}
-					className="mt-8 space-y-6"
-				>
+				<form action={signInAction} className="mt-8 space-y-6">
 					<button
 						type="submit"
-						className="group relative flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
+						className="group relative flex w-full cursor-pointer justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600"
 					>
 						<span className="flex items-center">
 							<svg className="mr-2 h-5 w-5" viewBox="0 0 24 24">

@@ -1,8 +1,12 @@
 import { Code } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
+import { auth } from '@/auth';
+import DropdownMenuContainer from './dropdown-menu';
+import { signOutAction } from '@/app/actions/user';
 
-const Navbar = () => {
+const Navbar = async () => {
+	const session = await auth();
 	return (
 		<div className="sticky top-0 z-20 w-full bg-transparent">
 			<div className="pointer-events-none absolute z-[-1] h-full w-full bg-white opacity-80 shadow-md" />
@@ -13,6 +17,23 @@ const Navbar = () => {
 				>
 					<Code className="size-6" /> Rick&apos;s 開發筆記
 				</Link>
+
+				{session && (
+					<DropdownMenuContainer
+						triggerName={`Hi ${session.user?.name}`}
+						items={[
+							{ name: 'Playground', href: '/form-playground' },
+							{
+								name: 'logout',
+								element: (
+									<form action={signOutAction}>
+										<button type="submit">Sign Out</button>
+									</form>
+								),
+							},
+						]}
+					/>
+				)}
 			</nav>
 		</div>
 	);

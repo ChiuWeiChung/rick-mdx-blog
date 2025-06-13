@@ -18,7 +18,7 @@ const MarkdownEditor = ({ content }: { content: string }) => {
 			<div className="m-4 rounded-md border border-gray-300 p-4">
 				<ForwardRefEditor
 					markdown={content}
-					contentEditableClassName="prose lg:prose-xl"
+					contentEditableClassName="prose lg:prose-lg"
 					ref={ref}
 				/>
 			</div>

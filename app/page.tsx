@@ -1,11 +1,6 @@
-import { auth, signOut } from '@/auth';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import FeatureCard from '@/components/feature-card';
 
-export default async function Home() {
-	const session = await auth();
-
+export default function Home() {
 	return (
 		<div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-950">
 			<div className="container mx-auto flex flex-col items-center px-4 py-16">
@@ -17,29 +12,6 @@ export default async function Home() {
 					<p className="mb-8 text-xl text-gray-600 dark:text-gray-300">
 						Exploring technology through beautifully rendered MDX content
 					</p>
-
-					{session ? (
-						<div className="flex flex-col items-center gap-4">
-							<p className="inline-flex items-center rounded-full bg-green-100 px-4 py-2 text-sm text-green-800 dark:bg-green-900/30 dark:text-green-300">
-								<span className="mr-2 h-2 w-2 rounded-full bg-green-500"></span>
-								Signed in as {session.user?.email}
-							</p>
-							<form
-								action={async () => {
-									'use server';
-									await signOut();
-								}}
-							>
-								<Button variant="outline" type="submit">
-									Sign Out
-								</Button>
-							</form>
-						</div>
-					) : (
-						<Link href="/admin/google-sign-in">
-							<Button>Sign In with Google</Button>
-						</Link>
-					)}
 				</section>
 
 				{/* Feature Cards */}
