@@ -9,6 +9,7 @@ export const playgroundFormSchema = z.object({
 	language: z.string().min(1, '請選擇語言'),
 	tags: z.array(z.string()).min(1, '請選擇標籤'),
 	isPublic: z.boolean(),
+	image: z.instanceof(File).nullable(),
 });
 
 export type PlaygroundFormSchema = z.infer<typeof playgroundFormSchema>;

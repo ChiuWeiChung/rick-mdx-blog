@@ -11,6 +11,8 @@
 		"format:check": "prettier --check ."
 	},
 	"dependencies": {
+		"@aws-sdk/client-s3": "^3.828.0",
+		"@aws-sdk/s3-request-presigner": "^3.828.0",
 		"@hookform/resolvers": "^5.1.1",
 		"@mdx-js/loader": "^3.1.0",
 		"@mdx-js/react": "^3.1.0",

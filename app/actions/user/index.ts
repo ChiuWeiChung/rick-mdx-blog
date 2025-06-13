@@ -1,6 +1,6 @@
 'use server';
 import { signIn, signOut } from '@/auth';
-import pool from '@/db/pool';
+import pool from '@/lib/db';
 import { toCamelCase } from '@/utils/format-utils';
 import { User } from './types';
 

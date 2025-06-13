@@ -1,0 +1,28 @@
+// app/api/get-image-url/route.ts
+import { GetObjectCommand } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import s3 from '@/lib/s3';
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(req: NextRequest) {
+	const { searchParams } = new URL(req.url);
+	const key = searchParams.get('key'); // 圖片路徑，例如：images/photo.jpg
+
+	if (!key) {
+		return NextResponse.json({ error: 'Missing key' }, { status: 400 });
+	}
+
+	const command = new GetObjectCommand({
+		Bucket: process.env.S3_BUCKET_NAME!,
+		Key: key,
+	});
+
+	try {
+		const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 60 秒
+		// return NextResponse.json({ url: signedUrl });
+		return NextResponse.redirect(signedUrl);
+	} catch (error) {
+		console.error('Error generating signed URL:', error);
+		return NextResponse.json({ error: 'Failed to generate signed URL' }, { status: 500 });
+	}
+}

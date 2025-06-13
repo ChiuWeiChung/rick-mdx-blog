@@ -15,7 +15,7 @@ export default function Home() {
 				</section>
 
 				{/* Feature Cards */}
-				<section className="mb-16 grid w-full max-w-5xl grid-cols-1 gap-6 md:grid-cols-3">
+				<section className="mb-16 grid w-full max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 					<FeatureCard
 						title="MDX Content"
 						description="Beautifully rendered Markdown with JSX"
@@ -48,7 +48,15 @@ export default function Home() {
 						content="Use our powerful form to play with form."
 						buttonText="Form Playground"
 						href="/form-playground"
-						imageUrl="https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070&auto=format&fit=crop"
+						imageUrl="https://images.unsplash.com/photo-1579444741963-5ae219cfe27c?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // new unsplash image
+					/>
+					<FeatureCard
+						title="Image Upload"
+						description="Upload image"
+						content="Use our powerful image upload to upload image."
+						buttonText="Image Upload"
+						href="/image-upload"
+						// imageUrl="http://localhost:3000/api/image?key=js/card.png"
 					/>
 				</section>
 

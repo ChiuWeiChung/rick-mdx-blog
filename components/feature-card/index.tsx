@@ -25,14 +25,14 @@ export function FeatureCard({
 		<Card className="transform transition-all hover:scale-105">
 			<CardHeader className="pb-0">
 				{imageUrl && (
-					<div className="-mx-6 -mt-6 mb-4 overflow-hidden rounded-t-lg">
+					<div className="relative -mx-6 -mt-6 mb-4 aspect-video overflow-hidden rounded-t-lg">
 						<Image
 							src={imageUrl}
 							alt={title}
-							width={400}
-							height={225}
+							fill
 							priority
-							className="h-48 w-full object-cover transition-transform duration-300 hover:scale-105"
+							sizes="(min-width: 1024px) 320px, (min-width: 768px) 350px, 100vw"
+							className="object-cover transition-transform duration-300 hover:scale-105"
 						/>
 					</div>
 				)}

@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/button';
 import SingleSelectField from '@/components/form-fields/single-select-field';
 import MultiSelectField from '@/components/form-fields/multi-select-field';
 import SwitchField from '@/components/form-fields/switch-field';
+import FileUploadField from '@/components/form-fields/file-upload-field';
+// import { uploadImage } from '@/app/actions/image';
 
 const options = [
 	{ label: 'Option 1', value: 'option1' },
@@ -30,17 +32,17 @@ const tagsOptions = [
 ];
 
 const PlaygroundForm = () => {
-	// const [selectedTags, setSelectedTags] = useState<string[]>([]);
 	const form = useForm({
-		defaultValues: playgroundFormDefaultValues,
+		defaultValues: {
+			...playgroundFormDefaultValues,
+			image: null,
+		},
 		resolver: zodResolver(playgroundFormSchema),
 	});
 
-	const onSubmit = (data: PlaygroundFormSchema) => {
-		console.log(data);
+	const onSubmit = (values: PlaygroundFormSchema) => {
+		console.log('values', values);
 	};
-
-	// console.log('newPlaygroundFormDefaultValues', newPlaygroundFormDefaultValues);
 
 	return (
 		<SmartForm {...form} onSubmit={onSubmit} className="flex flex-col gap-4">
@@ -81,6 +83,8 @@ const PlaygroundForm = () => {
 				label="Is Public"
 				description="This is your public display name."
 			/>
+
+			<FileUploadField name="image" label="請上傳圖片" />
 
 			<Button type="submit">Submit</Button>
 		</SmartForm>
