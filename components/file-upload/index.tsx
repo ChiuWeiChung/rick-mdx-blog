@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { Edit, Upload } from 'lucide-react';
 import { Input } from '../ui/input';
-import { FormLabel } from '../ui/form';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { Label } from '../ui/label';
 
 export interface FileUploadProps extends Omit<React.ComponentProps<'input'>, 'value'> {
 	label?: string;
@@ -48,7 +48,24 @@ export function FileUpload({ value, ...props }: FileUploadProps) {
 			<div className="space-y-4">
 				<div className="relative flex flex-col items-center justify-center gap-4">
 					{props.label ? (
-						<FormLabel
+						// <FormLabel
+						// 	className={cn(
+						// 		'text-primary cursor-pointer text-2xl font-bold',
+						// 		image ? 'absolute top-0 right-0' : ''
+						// 	)}
+						// 	htmlFor={props.name}
+						// >
+						// 	{image ? (
+						// 		<div className="bg-secondary flex items-center justify-center rounded-full p-2">
+						// 			<Edit className="size-6 text-gray-400" />
+						// 		</div>
+						// 	) : (
+						// 		props.label
+						// 	)}
+						// </FormLabel>
+						<Label
+							data-slot="form-label"
+							// data-error={!!error}
 							className={cn(
 								'text-primary cursor-pointer text-2xl font-bold',
 								image ? 'absolute top-0 right-0' : ''
@@ -62,7 +79,7 @@ export function FileUpload({ value, ...props }: FileUploadProps) {
 							) : (
 								props.label
 							)}
-						</FormLabel>
+						</Label>
 					) : null}
 
 					{isLoading ? (

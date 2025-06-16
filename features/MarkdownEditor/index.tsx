@@ -1,17 +1,21 @@
 'use client';
+// import { uploadMarkdownFile } from '@/actions/markdown';
 import { ForwardRefEditor } from '@/components/mdx-editor';
 import { Button } from '@/components/ui/button';
 import { MDXEditorMethods } from '@mdxeditor/editor';
 import React, { useRef } from 'react';
 
-// const markdown = `
-// # Hello World
-// This is a test markdown
-// [Link](https://virtuoso.dev)
-// `;
 
 const MarkdownEditor = ({ content }: { content: string }) => {
 	const ref = useRef<MDXEditorMethods>(null);
+
+	const handleSave = async () => {
+		const markdown = ref.current?.getMarkdown();
+		console.log('markdown', markdown);
+		// if (markdown) {
+		// 	const res = await uploadMarkdownFile(markdown, 'test2');
+		// }
+	};
 
 	return (
 		<>
@@ -23,7 +27,7 @@ const MarkdownEditor = ({ content }: { content: string }) => {
 				/>
 			</div>
 			<div className="m-4 flex justify-end">
-				<Button onClick={() => console.log(ref.current?.getMarkdown())}>儲存</Button>
+				<Button onClick={handleSave}>儲存</Button>
 			</div>
 		</>
 	);

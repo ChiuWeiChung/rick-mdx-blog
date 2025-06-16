@@ -29,4 +29,5 @@ export async function uploadImage(request: { file: File; fileName: string; folde
 
 	// console.log('command', command);
 	await s3.send(command);
+	return objectKey;
 }

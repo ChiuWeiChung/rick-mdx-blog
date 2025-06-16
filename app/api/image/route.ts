@@ -18,7 +18,7 @@ export async function GET(req: NextRequest) {
 	});
 
 	try {
-		const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 60 秒
+		const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
 		// return NextResponse.json({ url: signedUrl });
 		return NextResponse.redirect(signedUrl);
 	} catch (error) {

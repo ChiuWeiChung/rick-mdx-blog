@@ -8,17 +8,20 @@ export function getDefaultValues<Schema extends z.ZodObject<z.ZodRawShape>>(
 
 	return Object.fromEntries(
 		Object.entries(shape).map(([key, value]) => {
-			if (value instanceof z.ZodDefault) {
-				return [key, value._zod.def.defaultValue];
+			switch (true) {
+				case value instanceof z.ZodDefault:
+					return [key, value._zod.def.defaultValue];
+				case value instanceof z.ZodString:
+				case value instanceof z.ZodEmail:
+				case value instanceof z.ZodURL:
+					return [key, ''];
+				case value instanceof z.ZodBoolean:
+					return [key, false];
+				case value instanceof z.ZodNullable:
+					return [key, null];
+				default:
+					return [key, undefined];
 			}
-			// 對於字串類型，提供空字串作為預設值
-			if (value instanceof z.ZodString) {
-				return [key, ''];
-			}
-			if (value instanceof z.ZodBoolean) {
-				return [key, false];
-			}
-			return [key, undefined];
 		})
 	) as z.infer<Schema>;
 }

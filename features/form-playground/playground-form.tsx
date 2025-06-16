@@ -15,6 +15,7 @@ import SingleSelectField from '@/components/form-fields/single-select-field';
 import MultiSelectField from '@/components/form-fields/multi-select-field';
 import SwitchField from '@/components/form-fields/switch-field';
 import FileUploadField from '@/components/form-fields/file-upload-field';
+import { useAlertDialog } from '@/hooks/use-alert-dialog';
 // import { uploadImage } from '@/app/actions/image';
 
 const options = [
@@ -32,6 +33,7 @@ const tagsOptions = [
 ];
 
 const PlaygroundForm = () => {
+	const { openAlertDialog } = useAlertDialog();
 	const form = useForm({
 		defaultValues: {
 			...playgroundFormDefaultValues,
@@ -42,6 +44,11 @@ const PlaygroundForm = () => {
 
 	const onSubmit = (values: PlaygroundFormSchema) => {
 		console.log('values', values);
+		openAlertDialog({
+			title: 'Form Submitted',
+			description: 'Your form has been submitted successfully.',
+			status: 'warning',
+		});
 	};
 
 	return (

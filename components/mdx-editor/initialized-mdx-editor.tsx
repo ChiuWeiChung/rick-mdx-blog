@@ -24,7 +24,7 @@ import {
 	ConditionalContents,
 	ChangeCodeMirrorLanguage,
 	imagePlugin,
-	InsertImage,
+	// InsertImage,
 	tablePlugin,
 	InsertTable,
 	BlockTypeSelect,
@@ -33,6 +33,7 @@ import {
 } from '@mdxeditor/editor';
 
 import '@mdxeditor/editor/style.css';
+import AddImage from './component/image-dialog';
 
 // Only import this to the next file
 export default function InitializedMDXEditor({
@@ -67,6 +68,7 @@ export default function InitializedMDXEditor({
 					},
 				}),
 				imagePlugin({
+					disableImageSettingsButton: true,
 					// imageUploadHandler: file => {
 					// 	console.log('file', file);
 					// 	return Promise.resolve(
@@ -91,7 +93,8 @@ export default function InitializedMDXEditor({
 									<ListsToggle />
 									<div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
 									<InsertTable />
-									<InsertImage />
+									{/* <InsertImage /> */}
+									<AddImage />
 									<CreateLink />
 									<ConditionalContents
 										options={[

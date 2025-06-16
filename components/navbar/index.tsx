@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import { auth } from '@/auth';
 import DropdownMenuContainer from './dropdown-menu';
-import { signOutAction } from '@/app/actions/user';
+import { signOutAction } from '@/actions/user';
 
 const Navbar = async () => {
 	const session = await auth();

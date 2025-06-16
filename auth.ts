@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import 'next-auth/jwt';
 import Google from 'next-auth/providers/google';
-import { checkUserExist } from './app/actions/user';
+import { checkUserExist } from './actions/user';
 
 declare module 'next-auth' {
 	interface Session {
