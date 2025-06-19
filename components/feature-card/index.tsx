@@ -22,7 +22,7 @@ export function FeatureCard({
 	variant = 'outline',
 }: FeatureCardProps) {
 	return (
-		<Card className="transform transition-all hover:scale-105">
+		<Card className="hover:border-primary transform border-4 transition-all duration-300 hover:translate-y-[-1rem]">
 			<CardHeader className="pb-0">
 				{imageUrl && (
 					<div className="relative -mx-6 -mt-6 mb-4 aspect-video overflow-hidden rounded-t-lg">
@@ -32,7 +32,7 @@ export function FeatureCard({
 							fill
 							priority
 							sizes="(min-width: 1024px) 320px, (min-width: 768px) 350px, 100vw"
-							className="object-cover transition-transform duration-300 hover:scale-105"
+							className="object-cover"
 						/>
 					</div>
 				)}

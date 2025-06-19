@@ -2,20 +2,21 @@ import FeatureCard from '@/components/feature-card';
 
 export default function Home() {
 	return (
-		<div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-950">
+		<div className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 shadow-inner dark:from-gray-900 dark:to-gray-950">
+			{/* // <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-950"> */}
 			<div className="container mx-auto flex flex-col items-center px-4 py-16">
 				{/* Hero Section */}
-				<section className="mb-16 max-w-3xl text-center">
+				<section className="max-w-3xl text-center">
 					<h1 className="mb-6 bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text pb-1 text-4xl font-bold text-transparent md:text-6xl">
-						Rick&apos;s MDX Blog
+						Stay Hungry, Stay Foolish
 					</h1>
 					<p className="mb-8 text-xl text-gray-600 dark:text-gray-300">
-						Exploring technology through beautifully rendered MDX content
+						探索技術，分享知識，一起成長
 					</p>
 				</section>
 
 				{/* Feature Cards */}
-				<section className="mb-16 grid w-full max-w-5xl grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+				<section className="mb-16 grid w-full max-w-5xl grid-cols-1 gap-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
 					<FeatureCard
 						title="MDX Content"
 						description="Beautifully rendered Markdown with JSX"
@@ -59,11 +60,6 @@ export default function Home() {
 						// imageUrl="http://localhost:3000/api/image?key=js/card.png"
 					/>
 				</section>
-
-				{/* Footer */}
-				<footer className="mt-auto py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-					<p>© {new Date().getFullYear()} Rick&apos;s MDX Blog. All rights reserved.</p>
-				</footer>
 			</div>
 		</div>
 	);

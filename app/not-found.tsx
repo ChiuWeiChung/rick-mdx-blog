@@ -10,7 +10,7 @@ export default function NotFound() {
 				<h2 className="mb-6 text-2xl font-semibold text-gray-700 dark:text-gray-300">找不到頁面</h2>
 				<p className="mb-8 text-gray-600 dark:text-gray-400">您尋找的頁面不存在或已被移動。</p>
 				<Link href="/">
-					<Button variant="default" className="px-6">
+					<Button variant="outline" className="px-6">
 						返回首頁
 					</Button>
 				</Link>
