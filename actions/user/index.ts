@@ -5,6 +5,7 @@ import { toCamelCase } from '@/utils/format-utils';
 import { User } from './types';
 
 export const signOutAction = async () => {
+	'use server';
 	await signOut();
 };
 

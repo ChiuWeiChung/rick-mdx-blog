@@ -26,8 +26,10 @@ const Navbar = async () => {
 							{
 								name: 'logout',
 								element: (
-									<form action={signOutAction}>
-										<button type="submit">Sign Out</button>
+									<form>
+										<button type="submit" formAction={signOutAction}>
+											Sign Out
+										</button>
 									</form>
 								),
 							},

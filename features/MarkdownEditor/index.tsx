@@ -1,5 +1,5 @@
 'use client';
-// import { uploadMarkdownFile } from '@/actions/markdown';
+// import { saveMarkdownFile } from '@/actions/markdown';
 import { ForwardRefEditor } from '@/components/mdx-editor';
 import { Button } from '@/components/ui/button';
 import { MDXEditorMethods } from '@mdxeditor/editor';
@@ -13,7 +13,7 @@ const MarkdownEditor = ({ content }: { content: string }) => {
 		const markdown = ref.current?.getMarkdown();
 		console.log('markdown', markdown);
 		// if (markdown) {
-		// 	const res = await uploadMarkdownFile(markdown, 'test2');
+		// 	const res = await saveMarkdownFile(markdown, 'test2');
 		// }
 	};
 

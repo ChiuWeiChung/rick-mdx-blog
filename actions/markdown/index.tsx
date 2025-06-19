@@ -2,7 +2,7 @@
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 import s3 from '@/lib/s3';
 
-const uploadMarkdownFile = async (content: string, filename: string) => {
+const saveMarkdownFile = async (content: string, filename: string) => {
 	// Process the markdown content
 	// const processedContent = content.replace(/<!-- internal-note: (.*) -->/g, '**$1**');
 
@@ -16,7 +16,7 @@ const uploadMarkdownFile = async (content: string, filename: string) => {
 	// // Upload to S3
 	const command = new PutObjectCommand({
 		Bucket: process.env.S3_BUCKET_NAME!,
-		Key: `markdown/test/${filename}.md`,
+		Key: `markdown/test/${filename}.md`, // TODO: change to the correct path
 		Body: buffer,
 		ContentType: 'text/markdown',
 	});
@@ -30,4 +30,4 @@ const uploadMarkdownFile = async (content: string, filename: string) => {
 	}
 };
 
-export { uploadMarkdownFile };
+export { saveMarkdownFile };
