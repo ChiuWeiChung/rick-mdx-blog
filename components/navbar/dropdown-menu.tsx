@@ -48,10 +48,6 @@ export default function DropdownMenuContainer({ triggerName, items }: DropdownMe
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="w-56" align="start">
 				{renderItems()}
-				{/* <DropdownMenuLabel>My Account</DropdownMenuLabel>
-				<DropdownMenuItem>Profile</DropdownMenuItem>
-				<DropdownMenuSeparator />
-				<DropdownMenuItem>Log out</DropdownMenuItem> */}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

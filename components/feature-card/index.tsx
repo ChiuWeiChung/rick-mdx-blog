@@ -22,7 +22,7 @@ export function FeatureCard({
 	variant = 'outline',
 }: FeatureCardProps) {
 	return (
-		<Card className="hover:border-primary transform border-4 transition-all duration-300 hover:translate-y-[-1rem]">
+		<Card className="transform outline-offset-10 transition-all duration-300 hover:translate-y-[-1rem] hover:outline-4">
 			<CardHeader className="pb-0">
 				{imageUrl && (
 					<div className="relative -mx-6 -mt-6 mb-4 aspect-video overflow-hidden rounded-t-lg">

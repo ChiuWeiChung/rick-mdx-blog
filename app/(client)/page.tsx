@@ -31,7 +31,7 @@ export default function Home() {
 						description="Secure authentication system"
 						content="Login with Google to access administrative features and protected content."
 						buttonText="Google Sign In"
-						href="/admin/google-sign-in"
+						href="/auth"
 						imageUrl="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2070&auto=format&fit=crop"
 					/>
 
