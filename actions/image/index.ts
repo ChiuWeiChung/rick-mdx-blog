@@ -5,6 +5,7 @@ import s3 from '@/lib/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
 // import { revalidatePath } from 'next/cache';
 
+// TODO 應該與 .../actions/markdown/index.tsx 合併 並且將 uploadImage 改名為 saveFile
 export async function uploadImage(request: { file: File; fileName: string; folder: string }) {
 	const { file, fileName, folder } = request;
 	if (!file || file.size === 0) {

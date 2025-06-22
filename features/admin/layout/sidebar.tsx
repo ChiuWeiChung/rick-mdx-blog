@@ -12,7 +12,7 @@ import {
 	SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
-import NavLink from '../nav-link';
+import NavLink from '../../../components/nav-link';
 
 // Menu items.
 const items = [
@@ -38,7 +38,7 @@ const items = [
 	},
 ];
 
-export default function AppSidebar() {
+export default function AdminSidebar() {
 	return (
 		<Sidebar>
 			<SidebarContent>

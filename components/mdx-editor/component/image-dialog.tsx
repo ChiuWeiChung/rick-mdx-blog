@@ -61,7 +61,11 @@ const AddImage = () => {
 					<DialogDescription className="text-sm text-gray-500">上傳圖片之 AWS S3</DialogDescription>
 					<SmartForm {...form} onSubmit={onSubmit}>
 						<div className="flex flex-col gap-2">
-							<FileUploadField name={imageDialogKeys.uploadedImage} label="請上傳圖片" />
+							<FileUploadField
+								name={imageDialogKeys.uploadedImage}
+								accept="image/*"
+								label="請上傳圖片"
+							/>
 
 							<SeparatorHorizontal className="bg-secondary my-4 h-[2px] w-full" />
 							<InputField name={imageDialogKeys.src} label="Link" />

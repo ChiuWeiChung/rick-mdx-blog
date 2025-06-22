@@ -27,7 +27,6 @@ const FileUploadField = (props: FileUploadFieldProps) => {
 				return (
 					<FormItem className={className}>
 						<FormControl>
-							{/* <Input placeholder={placeholder} {...field} {...inputProps} /> */}
 							<FileUpload {...field} {...inputProps} onChange={onChange} />
 						</FormControl>
 						{description ? <FormDescription>{description}</FormDescription> : null}
