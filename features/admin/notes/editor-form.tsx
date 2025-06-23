@@ -1,5 +1,11 @@
 'use client';
-import { defaultNoteValues, Note, NoteKeys, noteSchema } from '@/actions/notes/types';
+import {
+  defaultNoteValues,
+  createNoteSchemaKeys,
+  createNoteSchema,
+  CreateNote,
+} from '@/actions/notes/types';
+import { Option } from '@/types/global';
 import FileUploadField from '@/components/form-fields/file-upload-field';
 import InputField from '@/components/form-fields/input-field';
 import MultiSelectField from '@/components/form-fields/multi-select-field';
@@ -11,76 +17,95 @@ import { zodResolver } from '@hookform/resolvers/zod';
 // import { Form } from '@/components/ui/form';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import SwitchField from '@/components/form-fields/switch-field';
+import { Button } from '@/components/ui/button';
+import { FormMessage } from '@/components/ui/form';
+import { createNote } from '@/actions/notes';
 
 interface NoteEditorFormProps {
   id?: string;
+  categoryOptions: Option[];
+  tagOptions: Option[];
 }
 
-const NoteEditorForm = ({ id }: NoteEditorFormProps) => {
+const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps) => {
   const isCreate = !id;
-  const [manualUpload, setManualUpload] = useState(false);
+  const [manualUpload, setManualUpload] = useState(true);
   const form = useForm({
-    resolver: zodResolver(noteSchema.omit({ id: true, createdAt: true, updatedAt: true })),
+    resolver: zodResolver(createNoteSchema),
     defaultValues: defaultNoteValues,
   });
 
-  const onSubmit = (data: Omit<Note, 'id' | 'createdAt' | 'updatedAt'>) => {
-    // TODO 需要檢查是否有新增的標籤，如果有，需要新增到標籤列表中
-    // TODO 需要檢查是否有新增的分類，如果有，需要新增到分類列表中
-    console.log(data);
+  const onSubmit = (data: CreateNote) => {
+    createNote(data).then(note => {
+      console.log('note', note);
+    });
   };
 
   const handleSwitchChange = (checked: boolean) => {
-    console.log('checked', checked);
     setManualUpload(checked);
   };
-  console.log('manualUpload', manualUpload);
+  // console.log('defaultNoteValues', defaultNoteValues);
+  // console.log('form.errors', form.formState.errors);
   return (
     <div>
       <h1 className="my-4 text-2xl font-bold">{isCreate ? '新增筆記' : '編輯筆記'}</h1>
-      <SmartForm {...form} onSubmit={onSubmit} className="grid w-[80%] grid-cols-2 gap-6">
-        <InputField name={NoteKeys.title} label="文章標題" placeholder="請輸入文章標題" />
+      {/* <SmartForm {...form} onSubmit={onSubmit} className="grid w-[80%] grid-cols-2 gap-6"> */}
+      <SmartForm {...form} onSubmit={onSubmit} className="flex flex-col gap-4">
+        <InputField
+          name={createNoteSchemaKeys.title}
+          label="文章標題"
+          placeholder="請輸入文章標題"
+        />
         <SingleSelectField
-          name={NoteKeys.category}
+          name={createNoteSchemaKeys.category}
           label="分類"
           placeholder="請選擇分類"
-          // TODO: 從後端取得分類
-          options={[
-            { label: 'test', value: 'test' },
-            { label: 'test2', value: 'test2' },
-          ]}
+          options={categoryOptions}
+          creatable
         />
 
         <MultiSelectField
-          name={NoteKeys.tags}
+          name={createNoteSchemaKeys.tags}
           label="標籤"
           placeholder="請選擇標籤"
-          // TODO: 從後端取得標籤
-          options={[
-            { label: 'test', value: 'test' },
-            { label: 'test2', value: 'test2' },
-            { label: 'test3', value: 'test3' },
-          ]}
+          options={tagOptions}
+          creatable
         />
 
-        <div className="flex flex-col justify-start gap-2">
-          <Label>是否手動上傳檔案</Label>
-          <Switch
-            checked={manualUpload}
-            onCheckedChange={handleSwitchChange}
-            className="my-3 w-8 flex-1"
-          />
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col justify-start gap-2">
+            <Label>手動上傳</Label>
+            <Switch
+              checked={manualUpload}
+              onCheckedChange={handleSwitchChange}
+              className="h-[18px] w-8 flex-1"
+            />
+          </div>
+          <SwitchField name={createNoteSchemaKeys.visible} label="是否公開" />
         </div>
 
+        <FormMessage>
+          {
+            form.formState.errors['needFileOrContent' as keyof typeof form.formState.errors]
+              ?.message
+          }
+        </FormMessage>
         <div className="col-span-2">
           {manualUpload ? (
             <div>
-              <FileUploadField name={NoteKeys.coverPath} label="請上傳檔案" required />
+              <FileUploadField
+                name={createNoteSchemaKeys.file}
+                label="請上傳檔案"
+                accept="text/markdown"
+              />
             </div>
           ) : (
-            <div>輸入文章內容</div>
+            <div>TODO: 輸入文章內容....</div>
           )}
         </div>
+
+        <Button type="submit">建立筆記</Button>
       </SmartForm>
     </div>
   );

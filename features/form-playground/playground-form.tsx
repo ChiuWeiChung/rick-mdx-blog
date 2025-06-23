@@ -15,7 +15,7 @@ import SingleSelectField from '@/components/form-fields/single-select-field';
 import MultiSelectField from '@/components/form-fields/multi-select-field';
 import SwitchField from '@/components/form-fields/switch-field';
 import FileUploadField from '@/components/form-fields/file-upload-field';
-import { useAlertDialog } from '@/hooks/use-alert-dialog';
+import { useAlertModal } from '@/hooks/use-alert-modal';
 
 const options = [
   { label: 'Option 1', value: 'option1' },
@@ -24,15 +24,15 @@ const options = [
 ];
 
 const tagsOptions = [
-  { label: 'Option 1', value: 'option1' },
-  { label: 'Option 2', value: 'option2' },
-  { label: 'Option 3', value: 'option3' },
-  { label: 'Option 4', value: 'option4' },
-  { label: 'Option 5', value: 'option5' },
+  { label: 'Option 1', value: 1 },
+  { label: 'Option 2', value: 2 },
+  { label: 'Option 3', value: 3 },
+  { label: 'Option 4', value: 4 },
+  { label: 'Option 5', value: 5 },
 ];
 
 const PlaygroundForm = () => {
-  const { openAlertDialog } = useAlertDialog();
+  const { openAlertModal } = useAlertModal();
   const form = useForm({
     defaultValues: {
       ...playgroundFormDefaultValues,
@@ -43,13 +43,14 @@ const PlaygroundForm = () => {
 
   const onSubmit = (values: PlaygroundFormSchema) => {
     console.log('values', values);
-    openAlertDialog({
+    openAlertModal({
       title: 'Form Submitted',
       description: 'Your form has been submitted successfully.',
       status: 'warning',
     });
   };
 
+  console.log('form.errors', form.formState.errors);
   return (
     <SmartForm {...form} onSubmit={onSubmit} className="flex flex-col gap-4">
       <InputField

@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import 'next-auth/jwt';
 import Google from 'next-auth/providers/google';
-import { checkUserExist } from './actions/user';
+import { getUser } from './actions/users';
 
 declare module 'next-auth' {
 	interface Session {
@@ -101,10 +101,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		async signIn({ user, account }) {
 			if (!account || !user.email) return false;
 			// 檢查合法的 user 是否存在於資料庫中
-			const userExist = await checkUserExist({
-				provider: account.provider,
-				email: user.email,
-			});
+			const userExist = await getUser({
+        provider: account.provider,
+        email: user.email,
+      });
 			return Boolean(userExist);
 		},
 	},

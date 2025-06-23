@@ -2,7 +2,7 @@
 'use server';
 
 import s3 from '@/lib/s3';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 // import { revalidatePath } from 'next/cache';
 
 // TODO 應該與 .../actions/markdown/index.tsx 合併 並且將 uploadImage 改名為 saveFile
@@ -31,4 +31,16 @@ export async function uploadImage(request: { file: File; fileName: string; folde
 	// console.log('command', command);
 	await s3.send(command);
 	return objectKey;
+}
+
+export async function checkFileExists(filePath: string) {
+  try {
+    const command = new HeadObjectCommand({ Bucket: process.env.S3_BUCKET_NAME!, Key: filePath });
+    await s3.send(command);
+    return true; // 檔案存在
+  } catch (error) {
+    console.error(error);
+    // if (err instanceof NotFound) return false; // 檔案不存在
+    return false;
+  }
 }

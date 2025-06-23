@@ -3,7 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import { auth } from '@/auth';
 import DropdownMenuContainer from './dropdown-menu';
-import { signOutAction } from '@/actions/user';
+import { signOutAction } from '@/actions/authentication';
 import { Button } from '../ui/button';
 
 const Navbar = async () => {

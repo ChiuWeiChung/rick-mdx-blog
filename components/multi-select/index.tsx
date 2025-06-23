@@ -15,12 +15,15 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
+import { Option } from '@/types/global';
 
-export interface MultiSelectProps {
+// Generic Option interface
+
+export interface MultiSelectProps<T extends string | number = string | number> {
   placeholder?: string;
-  options: { label: string; value: string; description?: string }[];
-  value?: string[];
-  onChange: (value: string[]) => void;
+  options: Option<T>[];
+  value?: T[];
+  onChange: (value: T[]) => void;
   creatable?: boolean;
 }
 
@@ -29,18 +32,18 @@ const matches = (str: string, query: string, exact: boolean = false) =>
     ? str.toLowerCase() === query.toLowerCase()
     : str.toLowerCase().includes(query.toLowerCase());
 
-export function MultiSelect({
+export function MultiSelect<T extends string | number = string | number>({
   options,
   value,
   placeholder,
   onChange,
   creatable = false,
-}: MultiSelectProps) {
+}: MultiSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [currentOptions, setCurrentOptions] = useState(options);
   const [query, setQuery] = useState('');
 
-  const handleSelect = (optionValue: string) => {
+  const handleSelect = (optionValue: T) => {
     if (value?.includes(optionValue)) {
       // Remove from selection
       onChange(value.filter(v => v !== optionValue));
@@ -50,7 +53,7 @@ export function MultiSelect({
     }
   };
 
-  const handleRemove = (optionValue: string) => {
+  const handleRemove = (optionValue: T) => {
     if (value) {
       onChange(value.filter(v => v !== optionValue));
     }
@@ -119,7 +122,7 @@ export function MultiSelect({
                   key={query}
                   value={query}
                   onSelect={() => {
-                    const newOption = { value: query, label: query, description: 'NEW' };
+                    const newOption = { value: query as T, label: query, description: 'NEW' };
                     setCurrentOptions([...currentOptions, newOption]);
                     setQuery('');
                   }}

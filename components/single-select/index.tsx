@@ -14,12 +14,13 @@ import {
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useState } from 'react';
+import { Option } from '@/types/global';
 
-export interface SingleSelectProps {
+export interface SingleSelectProps<T extends string | number = string | number> {
   placeholder?: string;
-  options: { label: string; value: string; description?: string }[];
-  value: string;
-  onChange: (value: string) => void;
+  options: Option<T>[];
+  value: T;
+  onChange: (value: T) => void;
   creatable?: boolean;
 }
 
@@ -28,13 +29,13 @@ const matches = (str: string, query: string, exact: boolean = false) =>
     ? str.toLowerCase() === query.toLowerCase()
     : str.toLowerCase().includes(query.toLowerCase());
 
-export function SingleSelect({
+export function SingleSelect<T extends string | number = string | number>({
   options,
   value,
   placeholder,
   onChange,
   creatable = false,
-}: SingleSelectProps) {
+}: SingleSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [currentOptions, setCurrentOptions] = useState(options);
   const [query, setQuery] = useState('');
@@ -69,7 +70,11 @@ export function SingleSelect({
                   key={query}
                   value={query}
                   onSelect={() => {
-                    const newOption = { value: query, label: query, description: 'NEW' };
+                    const newOption: Option<T> = {
+                      value: query as T,
+                      label: query,
+                      description: 'NEW',
+                    };
                     setCurrentOptions([...currentOptions, newOption]);
                     setQuery('');
                   }}
@@ -94,8 +99,6 @@ export function SingleSelect({
                   value={opt.label}
                   key={opt.value}
                   onSelect={() => {
-                    console.log('opt.value', opt.value);
-                    console.log('onChange', onChange);
                     onChange(opt.value);
                     setOpen(false);
                   }}
