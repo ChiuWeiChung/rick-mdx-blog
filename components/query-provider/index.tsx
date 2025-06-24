@@ -14,6 +14,7 @@ import { type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 import { getQueryClient } from './utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
+import { toast } from 'sonner';
 
 export default function Providers({ children }: { children: ReactNode }) {
   const { openAlertModal } = useAlertModal();
@@ -45,6 +46,28 @@ export default function Providers({ children }: { children: ReactNode }) {
     void errorHandler(error, undefined, mutation, variables);
   };
 
+  const mutationSuccessHandler = (
+    _data: unknown,
+    _variables: unknown,
+    _context: unknown,
+    mutation: Mutation<unknown, unknown>
+  ) => {
+    // get meta from mutation
+    const { invalidateQueryKeys, successMessage } = mutation.options.meta ?? {};
+
+    if (invalidateQueryKeys) {
+      void queryClient.invalidateQueries({ queryKey: invalidateQueryKeys });
+    }
+
+    console.log('successMessage', successMessage);
+    console.log('successMessage', successMessage);
+    console.log('successMessage', successMessage);
+    console.log('successMessage', successMessage);
+    if (successMessage) {
+      toast.success(successMessage.title, { description: successMessage.description });
+    }
+  };
+
   const config: QueryClientConfig = {
     defaultOptions: {
       queries: {
@@ -61,7 +84,10 @@ export default function Providers({ children }: { children: ReactNode }) {
       },
     },
     queryCache: new QueryCache({ onError: queryErrorHandler }),
-    mutationCache: new MutationCache({ onError: mutationErrorHandler }),
+    mutationCache: new MutationCache({
+      onError: mutationErrorHandler,
+      onSuccess: mutationSuccessHandler,
+    }),
   };
   const queryClient = getQueryClient(config);
 

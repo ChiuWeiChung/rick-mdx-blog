@@ -3,11 +3,15 @@ import { z } from 'zod/v4';
 
 const noteSchema = z.object({
   id: z.number(),
-  title: z.string(),
+  title: z.string().min(1, '請輸入文章標題'),
   filePath: z.string(),
   coverPath: z.string(),
   author: z.string(),
   category: z.string().min(1, '請選擇分類'),
+  fileName: z
+    .string()
+    .min(1, '請提供檔案名稱')
+    .regex(/^[a-zA-Z0-9_-]+$/, '檔案名稱只能包含英文、數字、底線和連字號'),
   visible: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),

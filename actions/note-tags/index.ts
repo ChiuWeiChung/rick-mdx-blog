@@ -2,17 +2,18 @@
 import pool from '@/lib/db';
 import { toCamelCase } from '@/utils/format-utils';
 import { NoteTag } from './types';
+import { PoolClient } from 'pg';
 
-// TODO: 需要新增 post_tags 的關聯 sql 語法
-
-export const createNoteTags = async (noteId: number, tagIds: number[]) => {
+export const createNoteTags = async (noteId: number, tagIds: number[], client?: PoolClient) => {
   if (tagIds.length === 0) {
     return [];
   }
 
+  const queryExecutor = client || pool;
+
   // 使用 Promise.all 來並行執行多個 INSERT 操作
   const insertPromises = tagIds.map(tagId =>
-    pool.query('INSERT INTO post_tags (post_id, tag_id) VALUES ($1, $2) RETURNING *', [
+    queryExecutor.query('INSERT INTO post_tags (post_id, tag_id) VALUES ($1, $2) RETURNING *', [
       noteId,
       tagId,
     ])

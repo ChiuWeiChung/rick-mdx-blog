@@ -128,4 +128,8 @@
 	.prose code::after {
 		content: none !important;
 	}
+
+	.mdxeditor {
+		@apply min-h-[90vh] bg-gray-50;
+	}
 }

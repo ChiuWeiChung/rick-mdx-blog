@@ -6,15 +6,21 @@ import { auth } from '@/auth';
 import { getUser } from '../users';
 import { createCategory } from '../categories';
 import { createTags } from '../tags';
-import { saveMarkdownFile, saveUploadedMarkdownFile } from '../markdown';
-import { checkFileExists } from '../image';
+import { saveMarkdownFile } from '../s3/markdown';
+import { checkFileExists } from '../s3/image';
 import { createNoteTags } from '../note-tags';
 
 //
 export const createNote = async (note: CreateNote) => {
-  const { title, content, file, category, tags, visible } = note;
+  const { title, content, file, category, tags, visible, fileName } = note;
+
+  // 獲取數據庫客戶端連接
+  const client = await pool.connect();
 
   try {
+    // ====================== 開始 Transaction ======================
+    await client.query('BEGIN');
+
     const session = await auth();
 
     if (!session?.user || !session.user.email || !session.provider) {
@@ -26,20 +32,20 @@ export const createNote = async (note: CreateNote) => {
       user: { email },
     } = session;
 
-    const user = await getUser({ provider, email });
+    const user = await getUser({ provider, email }, client);
 
     if (!user) {
       throw new Error('User not found');
     }
 
     // 如果 category 存在，則取得 category_id，若無則新增 category 並取得 category_id
-    const createdCategory = await createCategory(category);
+    const createdCategory = await createCategory(category, client);
     if (!createdCategory) {
       throw new Error('Category not found');
     }
 
     // 如果 tags 存在，則取得 tag_id，若無則新增 tag 並取得 tag_id
-    const createdTags = await createTags(tags);
+    const createdTags = await createTags(tags, client);
     if (!createdTags) {
       throw new Error('Tags not found');
     }
@@ -47,34 +53,19 @@ export const createNote = async (note: CreateNote) => {
     let filePath = '';
 
     // 如果是上傳檔案，則上傳檔案
-    if (file) {
-      filePath = await saveUploadedMarkdownFile({
-        file,
-        title,
-        category,
-      });
-    } else {
-      // 如果是手動輸入，則轉成 markdown 檔案並上傳
-      filePath = await saveMarkdownFile({
-        content,
-        title,
-        category,
-      });
-    }
+    const saveRequest = file ? { file, category, fileName } : { content, category, fileName };
+    filePath = await saveMarkdownFile(saveRequest);
 
     if (!filePath) {
       throw new Error('Failed to save markdown file');
     }
 
-    // 取得封面
+    // 取得 category 對應的封面
     const isCoverExist = await checkFileExists(`${category}/card.png`);
     const coverPath = isCoverExist ? `${category}/card.png` : null;
 
-    console.log('isCoverExist', isCoverExist);
-    console.log('coverPath', coverPath);
-
     // 新增 post
-    const { rows } = await pool.query(
+    const { rows } = await client.query(
       'INSERT INTO posts (title, user_id, visible, created_at, updated_at, category_id, file_path, cover_path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
       [title, user.id, visible, new Date(), new Date(), createdCategory.id, filePath, coverPath]
     );
@@ -84,12 +75,21 @@ export const createNote = async (note: CreateNote) => {
     // 新增 tags 的關聯，以及 post_tags 的關聯
     await createNoteTags(
       noteId,
-      createdTags.map(tag => tag.id)
+      createdTags.map(tag => tag.id),
+      client
     );
+
+    // ====================== Commit Transaction ======================
+    await client.query('COMMIT');
 
     return toCamelCase<Note>(rows)[0];
   } catch (error) {
+    // ====================== Rollback Transaction ======================
+    await client.query('ROLLBACK');
     console.error(error);
     throw new Error('Failed to create note');
+  } finally {
+    // release client
+    client.release();
   }
 };

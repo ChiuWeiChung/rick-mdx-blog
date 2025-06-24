@@ -16,9 +16,6 @@ interface NotePageProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NotesPage = (props: NotePageProps) => {
-  // console.log(props);
-  //   const { id } = searchParams;
-
   return (
     <div className="relative mx-4 flex flex-col gap-4">
       <h1 className="text-3xl font-bold">筆記管理</h1>

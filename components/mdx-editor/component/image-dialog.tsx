@@ -11,7 +11,7 @@ import InputField from '@/components/form-fields/input-field';
 import SmartForm from '@/components/smart-form';
 import { imageDialogKeys, ImageDialogSchema, imageDialogSchema } from './types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { uploadImage } from '@/actions/image';
+import { uploadImage } from '@/actions/s3/image';
 
 const AddImage = () => {
 	const _insertImage = usePublisher(insertImage$);
