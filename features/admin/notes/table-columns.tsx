@@ -1,3 +1,4 @@
+'use client';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Switch } from '@/components/ui/switch';
 import { TableId } from '@/enums/table';
@@ -54,7 +55,7 @@ const columns = [
   }),
   accessor(NoteKeys.title, {
     header: '標題',
-    size: 250,
+    size: 200,
   }),
   display({
     id: NoteKeys.visible,
@@ -70,7 +71,7 @@ const columns = [
     },
   }),
 
-  accessor(NoteKeys.author, {
+  accessor(NoteKeys.username, {
     header: '作者',
   }),
   accessor(NoteKeys.category, {
@@ -90,15 +91,15 @@ const columns = [
         </div>
       );
     },
-    size: 200,
+    size: 250,
   }),
   accessor(NoteKeys.filePath, {
     header: '檔案路徑',
-    size: 200,
+    size: 250,
   }),
   accessor(NoteKeys.coverPath, {
     header: '封面路徑',
-    size: 200,
+    size: 250,
   }),
   accessor(NoteKeys.createdAt, {
     header: '建立時間',

@@ -15,7 +15,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { FieldErrors, useForm } from 'react-hook-form';
 import SwitchField from '@/components/form-fields/switch-field';
 import { Button } from '@/components/ui/button';
 import { FormMessage } from '@/components/ui/form';
@@ -29,6 +29,9 @@ import { PreventNavigation } from '@/components/prevent-navigation';
 import { useMutation } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
 import { toast } from 'sonner';
+import SpinnerLoader from '@/components/spinner-loader';
+import { cn } from '@/lib/utils';
+import { useAlertModal } from '@/hooks/use-alert-modal';
 
 interface NoteEditorFormProps {
   id?: string;
@@ -38,17 +41,20 @@ interface NoteEditorFormProps {
 
 const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps) => {
   const isCreate = !id;
-  const [manualUpload, setManualUpload] = useState(isCreate);
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const isMobile = useIsMobile();
+  const { openAlertModal } = useAlertModal();
 
   const form = useForm({
     resolver: zodResolver(createNoteSchema),
     defaultValues: defaultNoteValues,
   });
 
-  const markdown = form.watch(createNoteSchemaKeys.content);
+  const [markdown, manualUpload] = form.watch([
+    createNoteSchemaKeys.content,
+    createNoteSchemaKeys.manualUpload,
+  ]);
 
   const { mutate: createNoteMutation, isPending } = useMutation({
     mutationFn: mutationHandler(createNote),
@@ -62,13 +68,8 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
     createNoteMutation(data);
   };
 
-  const handleSwitchChange = (checked: boolean) => {
-    setManualUpload(checked);
-    form.setValue(createNoteSchemaKeys.file, null);
-  };
-
   const handleMarkdownChange = (markdown: string) => {
-    form.setValue(createNoteSchemaKeys.content, markdown);
+    form.setValue(createNoteSchemaKeys.content, markdown, { shouldDirty: true });
   };
 
   const renderBasicInfo = (title: string, value: string) => {
@@ -77,6 +78,25 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
         <span className="font-bold">{title}:</span> {value || '未設定'}
       </p>
     );
+  };
+
+  const handleSaveBtnClick = () => {
+    const onInvalid = (errors: FieldErrors<CreateNote>) => {
+      const messages = Object.keys(errors).map(key => errors[key as keyof typeof errors]?.message);
+      openAlertModal({
+        status: 'error',
+        title: '請檢查以下錯誤',
+        description: (
+          <span className="ml-4 flex flex-col gap-2">
+            {messages.map(message => (
+              <li key={message}>{message}</li>
+            ))}
+          </span>
+        ),
+      });
+    };
+
+    form.handleSubmit(onSubmit, onInvalid)();
   };
 
   return (
@@ -92,7 +112,11 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
         open={open}
         onOpenChange={setOpen}
       >
-        <SmartForm {...form} onSubmit={onSubmit} className="flex flex-col gap-4">
+        <SmartForm
+          {...form}
+          onSubmit={onSubmit}
+          className={cn('flex flex-col gap-4', isPending && 'pointer-events-none')}
+        >
           <InputField
             name={createNoteSchemaKeys.title}
             label="文章標題"
@@ -122,32 +146,20 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
           <div className="flex items-center justify-evenly gap-4">
             <SwitchField name={createNoteSchemaKeys.visible} label="是否公開" />
             <div className="h-full w-[2px] bg-gray-200" />
-            <div className="flex flex-col gap-2">
-              <Label>手動上傳</Label>
-              <Switch
-                checked={manualUpload}
-                onCheckedChange={handleSwitchChange}
-                className="h-[18px] w-8 flex-1"
-                disabled={!isCreate}
-              />
-            </div>
+            <SwitchField
+              name={createNoteSchemaKeys.manualUpload}
+              label="手動上傳"
+              disabled={!isCreate}
+            />
           </div>
 
-          <FormMessage>
-            {
-              form.formState.errors['needFileOrContent' as keyof typeof form.formState.errors]
-                ?.message
-            }
-          </FormMessage>
           <div className="col-span-2 h-33 w-full">
             {manualUpload && (
-              <div>
-                <FileUploadField
-                  name={createNoteSchemaKeys.file}
-                  label="請上傳檔案"
-                  accept="text/markdown"
-                />
-              </div>
+              <FileUploadField
+                name={createNoteSchemaKeys.file}
+                label="請上傳檔案"
+                accept="text/markdown"
+              />
             )}
           </div>
 
@@ -171,6 +183,14 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
 
       {!open && (
         <div className="bg-primary-foreground fixed right-4 bottom-4 z-[1000] flex flex-col items-center gap-2 rounded-lg p-2 opacity-80">
+          <div className="flex items-center justify-end gap-4">
+            <Button type="button" variant="outline" onClick={() => router.back()}>
+              取消
+            </Button>
+            <Button type="button" onClick={handleSaveBtnClick}>
+              儲存
+            </Button>
+          </div>
           <Button type="button" variant="outline" onClick={() => setOpen(true)}>
             文章基本資料 <Edit />
           </Button>
@@ -198,6 +218,13 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
         contentEditableClassName="prose lg:prose-lg"
         onChange={handleMarkdownChange}
       />
+
+      {/* Full page mask */}
+      {isPending && (
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50">
+          <SpinnerLoader />
+        </div>
+      )}
     </>
   );
 };

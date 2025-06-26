@@ -1,3 +1,4 @@
+import { queryNoteList } from '@/actions/notes';
 import { Button } from '@/components/ui/button';
 import NoteTable from '@/features/admin/notes/table';
 import { Plus } from 'lucide-react';
@@ -7,15 +8,18 @@ import React from 'react';
 interface NotePageProps {
   searchParams: {
     title?: string;
-    category?: string;
     visible?: boolean;
+    category?: string;
+    tags?: string[];
     createdAt?: number;
     updatedAt?: number;
   };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const NotesPage = (props: NotePageProps) => {
+const NotesPage = async (_props: NotePageProps) => {
+  const data = await queryNoteList();
+
   return (
     <div className="relative mx-4 flex flex-col gap-4">
       <h1 className="text-3xl font-bold">筆記管理</h1>
@@ -33,7 +37,7 @@ const NotesPage = (props: NotePageProps) => {
 
       {/* Notes Table Section */}
       {/* view size > 768 */}
-      <NoteTable />
+      <NoteTable data={data} />
     </div>
   );
 };

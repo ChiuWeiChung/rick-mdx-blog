@@ -10,9 +10,44 @@ import { saveMarkdownFile } from '../s3/markdown';
 import { checkFileExists } from '../s3/image';
 import { createNoteTags } from '../note-tags';
 
-//
+
+export const queryNoteList = async () => {
+  const { rows } = await pool.query(`
+    SELECT
+      posts.id,
+      title,
+      visible,
+      username,
+      categories.name AS category,
+      STRING_AGG(tags.name, ', ') AS tags,
+      file_path,
+      cover_path,
+      posts.created_at,
+      posts.updated_at
+    FROM
+      posts
+      LEFT JOIN post_tags ON post_tags.post_id = posts.id
+      LEFT JOIN tags ON tags.id = post_tags.tag_id
+      LEFT JOIN users ON users.id = posts.user_id
+      LEFT JOIN categories ON categories.id = posts.category_id
+    GROUP BY
+      posts.id,
+      users.username,
+      categories.name
+    ORDER BY
+      posts.created_at DESC
+  `);
+  const camelCaseRows = toCamelCase<Record<string, unknown>>(rows);
+  const formattedRows = camelCaseRows.map(row => {
+    const rowTags = row.tags as string;
+    const tags = rowTags?.split(',') ?? [];
+    return { ...row, tags };
+  });
+  return formattedRows as Note[];
+};
+
 export const createNote = async (note: CreateNote) => {
-  const { title, content, file, category, tags, visible, fileName } = note;
+  const { title, content, file, category, tags, visible, fileName, manualUpload } = note;
 
   // 獲取數據庫客戶端連接
   const client = await pool.connect();
@@ -53,7 +88,8 @@ export const createNote = async (note: CreateNote) => {
     let filePath = '';
 
     // 如果是上傳檔案，則上傳檔案
-    const saveRequest = file ? { file, category, fileName } : { content, category, fileName };
+    const saveRequest =
+      file && manualUpload ? { file, category, fileName } : { content, category, fileName };
     filePath = await saveMarkdownFile(saveRequest);
 
     if (!filePath) {

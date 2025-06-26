@@ -1,41 +1,46 @@
 'use client';
 
-import { Code2, Flame, Image, Notebook, Settings, Tag } from 'lucide-react';
+import { Code2, Edit, Flame, Image, Notebook, PenTool, Settings, Tag } from 'lucide-react';
 import {
-	Sidebar,
-	SidebarContent,
-	SidebarGroup,
-	SidebarGroupContent,
-	SidebarGroupLabel,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import NavLink from '../../../components/nav-link';
 
 // Menu items.
 const items = [
-	{
-		title: '筆記',
-		url: '/admin/notes',
-		icon: Notebook,
-	},
-	{
-		title: '類別',
-		url: '/admin/categories',
-		icon: Flame,
-	},
-	{
-		title: '標籤',
-		url: '/admin/tags',
-		icon: Tag,
-	},
-	{
-		title: '圖片',
-		url: '/admin/imgs',
-		icon: Image,
-	},
+  {
+    title: '筆記管理',
+    url: '/admin/notes',
+    icon: Notebook,
+  },
+  {
+    title: '類別管理',
+    url: '/admin/categories',
+    icon: Flame,
+  },
+  {
+    title: '標籤管理',
+    url: '/admin/tags',
+    icon: Tag,
+  },
+  {
+    title: '文章封面與圖示',
+    url: '/admin/image-overview',
+    icon: Image,
+  },
+  {
+    title: '內容修訂建議',
+    url: '/admin/editing-suggestions',
+    icon: PenTool,
+  },
 ];
 
 export default function AdminSidebar() {
