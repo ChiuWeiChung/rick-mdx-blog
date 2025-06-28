@@ -1,6 +1,6 @@
 'use client';
 import {
-  defaultNoteValues,
+  defaultCreateNoteValues,
   createNoteSchemaKeys,
   createNoteSchema,
   CreateNote,
@@ -35,8 +35,8 @@ import { useAlertModal } from '@/hooks/use-alert-modal';
 
 interface NoteEditorFormProps {
   id?: string;
-  categoryOptions: Option[];
-  tagOptions: Option[];
+  categoryOptions: Option<string>[];
+  tagOptions: Option<string>[];
 }
 
 const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps) => {
@@ -48,7 +48,7 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
 
   const form = useForm({
     resolver: zodResolver(createNoteSchema),
-    defaultValues: defaultNoteValues,
+    defaultValues: defaultCreateNoteValues,
   });
 
   const [markdown, manualUpload] = form.watch([

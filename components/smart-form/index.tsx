@@ -1,14 +1,15 @@
 import { createElement, HTMLAttributes, isValidElement, ReactElement, ReactNode } from 'react';
-import { FieldErrors, FieldValues, UseFormReturn } from 'react-hook-form';
+import { FieldErrors, FieldValues, SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { Form as FormProvider } from '@/components/ui/form';
 
 interface SmartFormProps<TFieldValues extends FieldValues = FieldValues>
-	extends UseFormReturn<TFieldValues> {
-	onSubmit?: (args: TFieldValues) => Promise<void> | void;
-	onSubmitError?: (errors: FieldErrors<TFieldValues>) => Promise<void> | Promise<boolean> | boolean;
-	children: ReactNode;
-	className?: HTMLAttributes<HTMLFormElement>['className'];
-	allowEnterSubmit?: boolean;
+  extends UseFormReturn<TFieldValues> {
+  //   onSubmit?: SubmitHandler<TFieldValues>;
+  onSubmit?: (args: TFieldValues) => Promise<void> | void;
+  onSubmitError?: (errors: FieldErrors<TFieldValues>) => Promise<void> | Promise<boolean> | boolean;
+  children: ReactNode;
+  className?: HTMLAttributes<HTMLFormElement>['className'];
+  allowEnterSubmit?: boolean;
 }
 
 interface FormFieldChildProps {

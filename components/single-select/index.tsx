@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, ChevronsUpDown, XIcon } from 'lucide-react';
+import { Check, ChevronsUpDown, X, XIcon } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -16,12 +16,15 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { useState } from 'react';
 import { Option } from '@/types/global';
 
-export interface SingleSelectProps<T extends string | number = string | number> {
+export interface SingleSelectProps<
+  T extends string | number | boolean = string | number | boolean,
+> {
   placeholder?: string;
   options: Option<T>[];
   value: T;
-  onChange: (value: T) => void;
+  onChange: (value?: T) => void;
   creatable?: boolean;
+  clearable?: boolean;
 }
 
 const matches = (str: string, query: string, exact: boolean = false) =>
@@ -35,6 +38,7 @@ export function SingleSelect<T extends string | number = string | number>({
   placeholder,
   onChange,
   creatable = false,
+  clearable = true,
 }: SingleSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [currentOptions, setCurrentOptions] = useState(options);
@@ -44,14 +48,25 @@ export function SingleSelect<T extends string | number = string | number>({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          className={cn('justify-between', !selectedLabel && 'text-muted-foreground')}
-        >
-          {selectedLabel ?? placeholder ?? ''}
-          <ChevronsUpDown className="opacity-50" />
-        </Button>
+        <div className="relative w-full">
+          <Button
+            variant="outline"
+            role="combobox"
+            className={cn('w-full justify-between', !selectedLabel && 'text-muted-foreground')}
+          >
+            {selectedLabel ?? placeholder ?? ''}
+            <ChevronsUpDown className="opacity-50" />
+          </Button>
+          {selectedLabel && clearable && (
+            <X
+              className="text-card-foreground hover:text-destructive absolute top-1/2 right-8 ml-auto h-4 w-4 -translate-y-1/2"
+              onClick={e => {
+                e.stopPropagation();
+                onChange(undefined);
+              }}
+            />
+          )}
+        </div>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
         <Command>

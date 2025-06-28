@@ -46,7 +46,9 @@ export default function AlertModal() {
             {renderStatusIcon()}
             {dialog.title && <AlertDialogTitle>{dialog.title}</AlertDialogTitle>}
           </div>
-          <AlertDialogDescription>{dialog.description}</AlertDialogDescription>
+          <AlertDialogDescription className="break-all">
+            {dialog.description}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           {dialog.cancelText && (

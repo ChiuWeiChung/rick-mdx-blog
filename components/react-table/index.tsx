@@ -151,12 +151,7 @@ function ReactTable<T>({
 
 	if (!isClient) return null;
 	return (
-    <div
-      className={cn(
-        'mx-auto flex w-full flex-col justify-between',
-        className
-      )}
-    >
+    <div className={cn('mx-auto flex w-full flex-col justify-between', className)}>
       <div
         className="relative flex w-full flex-col overflow-hidden rounded-sm"
         // style={{
@@ -165,7 +160,7 @@ function ReactTable<T>({
       >
         <Table aria-label="table" className="caption-top">
           {!headerHide && (
-            <TableHeader className="bg-primary sticky top-0 z-40 shadow-lg">
+            <TableHeader className="sticky top-0 z-40 bg-neutral-600 shadow-lg">
               <>
                 {table.getHeaderGroups().map(headerGroup => {
                   return (
@@ -204,10 +199,10 @@ function ReactTable<T>({
                               )}
                             </Button>
                           </TableHead>
-                        )
+                        );
                       })}
                     </TableRow>
-                  )
+                  );
                 })}
               </>
             </TableHeader>
@@ -233,9 +228,11 @@ function ReactTable<T>({
                             minWidth: size,
                             maxWidth: size,
                           };
-                          const contentComponent = !cell.id.includes(TableId.Number)
-                            ? flexRender(cell.column.columnDef.cell, cell.getContext())
-                            : <div className="font-bold">{index + 1}.</div>;
+                          const contentComponent = !cell.id.includes(TableId.Number) ? (
+                            flexRender(cell.column.columnDef.cell, cell.getContext())
+                          ) : (
+                            <div className="font-bold">{index + 1}.</div>
+                          );
 
                           return (
                             <TableCell
@@ -252,7 +249,7 @@ function ReactTable<T>({
                             >
                               {contentComponent}
                             </TableCell>
-                          )
+                          );
                         })}
                       </TableRow>
                       {row.getIsExpanded() && (
@@ -264,11 +261,10 @@ function ReactTable<T>({
                         </TableRow>
                       )}
                     </Fragment>
-                  )
+                  );
                 })}
             {!data?.length && !isLoading && <TableRow className="h-52" />}
           </TableBody>
-          
         </Table>
         {!data?.length && !isLoading && (
           <div className="absolute bottom-0 left-1/2 mb-8 flex -translate-x-1/2 items-center justify-center gap-2">

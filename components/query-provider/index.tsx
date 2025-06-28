@@ -59,10 +59,6 @@ export default function Providers({ children }: { children: ReactNode }) {
       void queryClient.invalidateQueries({ queryKey: invalidateQueryKeys });
     }
 
-    console.log('successMessage', successMessage);
-    console.log('successMessage', successMessage);
-    console.log('successMessage', successMessage);
-    console.log('successMessage', successMessage);
     if (successMessage) {
       toast.success(successMessage.title, { description: successMessage.description });
     }

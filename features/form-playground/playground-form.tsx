@@ -1,11 +1,11 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import {
-	playgroundFormDefaultValues,
-	playgroundFormKeys,
-	PlaygroundFormSchema,
-	playgroundFormSchema,
+  playgroundFormDefaultValues,
+  playgroundFormKeys,
+  PlaygroundFormSchema,
+  playgroundFormSchema,
 } from './types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import SmartForm from '@/components/smart-form';
@@ -16,6 +16,7 @@ import MultiSelectField from '@/components/form-fields/multi-select-field';
 import SwitchField from '@/components/form-fields/switch-field';
 import FileUploadField from '@/components/form-fields/file-upload-field';
 import { useAlertModal } from '@/hooks/use-alert-modal';
+import DatePickerField from '@/components/form-fields/date-picker-field';
 
 const options = [
   { label: 'Option 1', value: 'option1' },
@@ -41,16 +42,15 @@ const PlaygroundForm = () => {
     resolver: zodResolver(playgroundFormSchema),
   });
 
-  const onSubmit = (values: PlaygroundFormSchema) => {
+  const onSubmit = (values: Partial<PlaygroundFormSchema>) => {
     console.log('values', values);
     openAlertModal({
       title: 'Form Submitted',
-      description: 'Your form has been submitted successfully.',
-      status: 'warning',
+      description: JSON.stringify(values),
+      status: 'success',
     });
   };
 
-  console.log('form.errors', form.formState.errors);
   return (
     <SmartForm {...form} onSubmit={onSubmit} className="flex flex-col gap-4">
       <InputField
@@ -92,8 +92,18 @@ const PlaygroundForm = () => {
         label="Is Public"
         description="This is your public display name."
       />
+      <DatePickerField
+        name={playgroundFormKeys.date}
+        label="選擇日期"
+        placeholder="選擇日期"
+        description="This is your date"
+      />
 
-      <FileUploadField name="image" accept="text/markdown" label="請上傳 Markdown 檔案" />
+      <FileUploadField
+        name={playgroundFormKeys.markdown}
+        accept="text/markdown"
+        label="請上傳 Markdown 檔案"
+      />
       {/* <FileUploadField name="image" accept="image/*" label="請上傳圖片" /> */}
 
       <Button type="submit">Submit</Button>

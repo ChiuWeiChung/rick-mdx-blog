@@ -1,4 +1,4 @@
-export interface Option<T extends string | number = string | number> {
+export interface Option<T extends string | number | boolean = string | number | boolean> {
   value: T;
   label: string;
   description?: string;
