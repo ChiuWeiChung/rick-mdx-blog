@@ -40,6 +40,8 @@ export function getUpdatedSearchParams(
   Object.entries(values).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') {
       params.set(key, String(value));
+    } else if (Array.isArray(value) && value.length > 0) {
+      params.set(key, String(value));
     } else {
       params.delete(key);
     }

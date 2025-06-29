@@ -11,13 +11,11 @@ export const toCamelCase = <T>(rows: Record<string, unknown>[]): T[] => {
   });
 };
 
-export const toOption = <T extends string | number | boolean>(
-  rows: { name: T; id: number }[]
-): Option<T>[] => {
-  return rows.map(row => {
+export const toOption = (rows: { name: string; id: number }[]): Option<number>[] => {
+  return rows.map(({ name, id }) => {
     return {
-      label: String(row.name),
-      value: row.name,
+      label: String(name),
+      value: id,
     };
   });
 };

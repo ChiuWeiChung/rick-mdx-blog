@@ -1,14 +1,15 @@
 import { getCategories } from '@/actions/categories';
-import { queryNoteList } from '@/actions/notes';
 import { coerceQueryNote, defaultQueryNoteValues, QueryNote } from '@/actions/notes/types';
 import { getTags } from '@/actions/tags';
+import SpinnerLoader from '@/components/spinner-loader';
 import { Button } from '@/components/ui/button';
 import QuerySearchForm from '@/features/admin/notes/search-form';
 import NoteTable from '@/features/admin/notes/table';
+import { getUpdatedSearchParams } from '@/utils/form-utils';
 import { toOption } from '@/utils/format-utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 interface NotePageProps {
   searchParams?: Promise<Partial<QueryNote>>;
@@ -16,7 +17,6 @@ interface NotePageProps {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NotesPage = async (props: NotePageProps) => {
-  const data = await queryNoteList();
   const categories = await getCategories();
   const tags = await getTags();
 
@@ -24,13 +24,11 @@ const NotesPage = async (props: NotePageProps) => {
   const tagOptions = toOption(tags);
 
   const searchParams = await props.searchParams;
-  console.log('searchParams', searchParams);
-  const defaultValues = coerceQueryNote.parse(searchParams);
-  console.log('coerceQueryNote defaultValues', defaultValues);
-
+  const queryRequest = coerceQueryNote.parse(searchParams);
+  console.log('queryRequest', queryRequest);
   return (
     <div className="relative mx-4 flex flex-col gap-4">
-      <h1 className="text-3xl font-bold">筆記管理</h1>
+      <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">筆記管理</h1>
 
       {/* Add Notes Section */}
       <Button type="button" className="absolute top-0 right-0">
@@ -43,12 +41,13 @@ const NotesPage = async (props: NotePageProps) => {
       <QuerySearchForm
         tagOptions={tagOptions}
         categoryOptions={categoryOptions}
-        defaultValues={{ ...defaultQueryNoteValues, ...defaultValues }}
+        defaultValues={{ ...defaultQueryNoteValues, ...queryRequest }}
       />
 
       {/* Notes Table Section */}
-      <h1 className="text-2xl font-bold">筆記列表</h1>
-      <NoteTable data={data} />
+      {/* <Suspense fallback={<SpinnerLoader />} key={getUpdatedSearchParams(queryRequest).toString()}>
+      </Suspense> */}
+      <NoteTable queryRequest={queryRequest} />
     </div>
   );
 };

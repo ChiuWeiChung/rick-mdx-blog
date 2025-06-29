@@ -26,8 +26,8 @@ import { getUpdatedSearchParams } from '@/utils/form-utils';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface QuerySearchFormProps {
-  tagOptions: Option<string>[];
-  categoryOptions: Option<string>[];
+  tagOptions: Option<number>[];
+  categoryOptions: Option<number>[];
   defaultValues: QueryNote;
 }
 
@@ -40,7 +40,8 @@ const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySe
   });
 
   const onReset = () => {
-    form.reset(defaultQueryNoteValues);
+    console.log('defaultQueryNoteValues', defaultQueryNoteValues);
+    form.reset({ ...defaultQueryNoteValues });
   };
 
   const onSubmit = (values: Partial<QueryNote>) => {
@@ -48,10 +49,13 @@ const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySe
     router.push(`?${params.toString()}`);
   };
 
+  const watchedValues = form.watch();
+  console.log('watchedValues', watchedValues);
+
   return (
     <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
       <AccordionItem value="item-1">
-        <AccordionTrigger className="text-primary w-24 items-center justify-start gap-2 py-1 text-2xl font-bold">
+        <AccordionTrigger className="w-24 items-center justify-start gap-2 py-1 text-2xl font-bold text-neutral-400">
           進階搜尋
         </AccordionTrigger>
         <AccordionContent className="flex flex-col gap-4 p-0 text-balance">
@@ -92,6 +96,7 @@ const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySe
               placeholder="選擇標籤"
               options={tagOptions}
               className="col-span-4 lg:col-span-2 xl:col-span-1"
+              description="符合任一選擇條件"
             />
 
             <div className="col-span-4 flex w-full flex-col gap-2 2xl:col-span-2">

@@ -1,23 +1,21 @@
-'use client';
 import ReactTable from '@/components/react-table';
 import columns from './table-columns';
-import { Note } from '@/actions/notes/types';
+import { queryNoteList } from '@/actions/notes';
+import { Note, QueryNote } from '@/actions/notes/types';
+import Link from 'next/link';
 
+interface NoteTableProps {
+  queryRequest: QueryNote;
+}
 
-const NoteTable = ({ data }: { data: Note[] }) => {
+const NoteTable = async ({ queryRequest }: NoteTableProps) => {
+  
+  const { data, totalCount } = await queryNoteList({ ...queryRequest });
   return (
-    <ReactTable
-      columns={columns}
-      data={data}
-      totalElements={data.length}
-      meta={
-        {
-          //   onDataEdit:
-          // onDataDelete,
-          // onModalOpen,
-        }
-      }
-    />
+    <div>
+      <h1 className="text-2xl font-bold">筆記列表</h1>
+      <ReactTable data={data} columns={columns} totalElements={totalCount} manualPagination />
+    </div>
   );
 };
 

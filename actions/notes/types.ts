@@ -67,8 +67,8 @@ const queryNoteSchema = z
   .object({
     title: z.string().default(''),
     visible: z.boolean().optional(),
-    category: z.string().optional(),
-    tags: z.array(z.string()).optional(),
+    category: z.number().nullish(),
+    tags: z.array(z.number()).optional(),
     startCreatedTime: z.number().nullish(),
     endCreatedTime: z.number().nullish(),
     startUpdatedTime: z.number().nullish(),
@@ -111,12 +111,10 @@ const coerceQueryNote = queryNoteSchema.extend({
   page: z.coerce.number().default(1),
   limit: z.coerce.number().default(10),
   visible: z.coerce.boolean().optional(),
+  category: z.coerce.number().nullish(),
   tags: z.preprocess(val => {
-    if (typeof val === 'string') {
-      return val
-        .split(',')
-        .map(s => s.trim())
-        .filter(s => s.length > 0);
+    if (typeof val === 'string' && val) {
+      return val.split(',').map(s => parseInt(s, 10));
     }
 
     // 若已經是陣列就原封不動
@@ -124,8 +122,8 @@ const coerceQueryNote = queryNoteSchema.extend({
       return val;
     }
 
-    return []; // fallback 預設空陣列
-  }, z.array(z.string())),
+    return undefined; // fallback 預設空陣列
+  }, z.array(z.number()).optional()),
   startCreatedTime: z.coerce.number().nullish(),
   endCreatedTime: z.coerce.number().nullish(),
   startUpdatedTime: z.coerce.number().nullish(),

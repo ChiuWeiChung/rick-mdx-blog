@@ -15,7 +15,8 @@ export interface ReactTableProps<T> {
   data?: T[];
   meta?: TableMeta<T>;
   isLoading?: boolean;
-  limit?: number;
+  currentLimit?: number;
+  currentPage?: number;
   // totalPage?: number;
   headerHide?: boolean;
   renderSubComponent?: (props: { row: Row<T> }) => ReactElement;
@@ -28,7 +29,6 @@ export interface ReactTableProps<T> {
   getRowId?: (originalRow: T, index: number, parent?: Row<T>) => string;
   totalElements?: number;
   pinningColumns?: string[];
-  paginateByServer?: (pagination: { page: number; limit: number }) => void;
   manualPagination?: boolean;
   manualSorting?: boolean;
   sortByServer?: (sorting: SortingState) => void;

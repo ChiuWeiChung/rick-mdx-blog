@@ -33,24 +33,26 @@ const buttonVariants = cva(
 );
 
 function Button({
-	className,
-	variant,
-	size,
-	asChild = false,
-	...props
+  className,
+  variant,
+  size,
+  asChild = false,
+  type = 'button',
+  ...props
 }: React.ComponentProps<'button'> &
-	VariantProps<typeof buttonVariants> & {
-		asChild?: boolean;
-	}) {
-	const Comp = asChild ? Slot : 'button';
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+  }) {
+  const Comp = asChild ? Slot : 'button';
 
-	return (
-		<Comp
-			data-slot="button"
-			className={cn(buttonVariants({ variant, size, className }), 'cursor-pointer')}
-			{...props}
-		/>
-	);
+  return (
+    <Comp
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }), 'cursor-pointer')}
+      {...props}
+      type={type}
+    />
+  );
 }
 
 export { Button, buttonVariants };

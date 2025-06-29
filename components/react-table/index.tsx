@@ -1,24 +1,24 @@
 'use client';
-import { Fragment, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { Fragment, useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
 import {
-	flexRender,
-	getCoreRowModel,
-	getPaginationRowModel,
-	useReactTable,
-	getExpandedRowModel,
-	type VisibilityOptions,
-	type PaginationState,
-	getSortedRowModel,
-	type Column,
-	type SortingState,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+  getExpandedRowModel,
+  type VisibilityOptions,
+  type PaginationState,
+  getSortedRowModel,
+  type Column,
+  type SortingState,
 } from '@tanstack/react-table';
 import {
-	TableRow,
-	TableHead,
-	TableCell,
-	TableHeader,
-	Table,
-	TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  TableHeader,
+  Table,
+  TableBody,
 } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
@@ -27,137 +27,132 @@ import { CylinderIcon, MoveUp } from 'lucide-react';
 import { TableId } from '@/enums/table';
 import type { ReactTableProps } from './types';
 import Pagination from './pagination';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getUpdatedSearchParams } from '@/utils/form-utils';
+import LinkPagination from './link-pagination';
 
 const emptyData: unknown[] = [];
 
 function ReactTable<T>({
-	columns,
-	// Avoid assigning data = [] directly to prevent creating a new reference on every render cycle,
-	// which would cause an infinite loop due to the constant re-rendering.
-	data,
-	meta,
-	isLoading = false,
-	totalElements = 0,
-	limit = 10,
-	headerHide,
-	renderSubComponent,
-	visibilityState = {},
-	className,
-	showPagination = true,
-	rowSelection,
-	onRowSelectionChange,
-	getRowId,
-	pinningColumns = undefined,
-	paginateByServer,
-	manualPagination,
-	manualSorting,
-	sortByServer,
+  columns,
+  // Avoid assigning data = [] directly to prevent creating a new reference on every render cycle,
+  // which would cause an infinite loop due to the constant re-rendering.
+  data,
+  meta,
+  isLoading = false,
+  totalElements = 0,
+  currentLimit = 10,
+  currentPage = 1,
+  headerHide,
+  renderSubComponent,
+  visibilityState = {},
+  className,
+  showPagination = true,
+  rowSelection,
+  onRowSelectionChange,
+  getRowId,
+  pinningColumns = undefined,
+  manualPagination,
+  manualSorting,
+  sortByServer,
 }: ReactTableProps<T>) {
-	const [columnVisibility, setColumnVisibility] = useState(visibilityState); // TODO 從 localStorage 存取既有設定
-	const [pagination, setPagination] = useState<PaginationState>({
-		pageIndex: 0,
-		pageSize: limit,
-	});
-	const [sorting, setSorting] = useState<SortingState>([]);
-	const [isClient, setIsClient] = useState(false);
-	const table = useReactTable({
-		data: data ?? (emptyData as T[]),
-		columns,
-		getRowCanExpand: () => {
-			return true;
-		},
-		getExpandedRowModel: getExpandedRowModel(),
-		getCoreRowModel: getCoreRowModel(), // required
-		getSortedRowModel: getSortedRowModel(),
-		getPaginationRowModel: getPaginationRowModel(),
-		onRowSelectionChange,
-		onPaginationChange: setPagination,
-		onSortingChange: setSorting,
-		state: {
-			columnVisibility,
-			pagination,
-			rowSelection,
-			sorting,
-			columnPinning: {
-				left: pinningColumns,
-			},
-		},
-		initialState: { pagination: { pageSize: limit } }, // 預設 pageSize
-		manualPagination,
-		manualSorting,
-		defaultColumn: { size: 120 }, // 預設 column 最大寬度為 140px
-		meta,
-		onColumnVisibilityChange: setColumnVisibility as VisibilityOptions['onColumnVisibilityChange'],
-		enableRowSelection: Boolean(rowSelection),
-		getRowId,
-	});
-	const pageSize = table.getState().pagination.pageSize;
-	const sortingState = table.getState().sorting;
+  // const searchParams = useSearchParams();
+  const router = useRouter();
+  const [columnVisibility, setColumnVisibility] = useState(visibilityState); // TODO 從 localStorage 存取既有設定
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: currentPage - 1,
+    pageSize: currentLimit,
+  });
+  // const [isClient, setIsClient] = useState(false);
+  const table = useReactTable({
+    data: data ?? (emptyData as T[]),
+    columns,
+    getRowCanExpand: () => {
+      return true;
+    },
+    getExpandedRowModel: getExpandedRowModel(),
+    getCoreRowModel: getCoreRowModel(), // required
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onRowSelectionChange,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    state: {
+      columnVisibility,
+      pagination,
+      rowSelection,
+      sorting,
+      columnPinning: {
+        left: pinningColumns,
+      },
+    },
+    initialState: { pagination: { pageSize: currentLimit } }, // 預設 pageSize
+    manualPagination,
+    manualSorting,
+    defaultColumn: { size: 120 }, // 預設 column 最大寬度為 140px
+    meta,
+    onColumnVisibilityChange: setColumnVisibility as VisibilityOptions['onColumnVisibilityChange'],
+    enableRowSelection: Boolean(rowSelection),
+    getRowId,
+  });
+  const pageSize = table.getState().pagination.pageSize;
+  const sortingState = table.getState().sorting;
 
-	const tableSkeleton = useMemo(() => {
-		const skeletonArray = new Array(pageSize).fill('skeleton').map((item: string, key: number) => {
-			return `${item}_${String(key)}`;
-		});
-		return skeletonArray.map(skeletonKey => {
-			return table.getHeaderGroups().map(headerGroup => {
-				return (
-					<TableRow key={headerGroup.id}>
-						{headerGroup.headers.map(header => {
-							const size = header.getSize();
-							const style = { width: size, maxWidth: size };
-							return (
-								<TableCell
-									className="animate-fade h-11 last:!w-full"
-									style={style}
-									key={`${skeletonKey}-${header.id}`}
-								>
-									<Skeleton className="bg-secondary h-8" style={{ width: size * 0.85 }} />
-								</TableCell>
-							);
-						})}
-					</TableRow>
-				);
-			});
-		});
-	}, [pageSize, table]);
+  const tableSkeleton = useMemo(() => {
+    const skeletonArray = new Array(pageSize).fill('skeleton').map((item: string, key: number) => {
+      return `${item}_${String(key)}`;
+    });
+    return skeletonArray.map(skeletonKey => {
+      return table.getHeaderGroups().map(headerGroup => {
+        return (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map(header => {
+              const size = header.getSize();
+              const style = { width: size, maxWidth: size };
+              return (
+                <TableCell
+                  className="animate-fade h-11 last:!w-full"
+                  style={style}
+                  key={`${skeletonKey}-${header.id}`}
+                >
+                  <Skeleton className="bg-secondary h-8" style={{ width: size * 0.85 }} />
+                </TableCell>
+              );
+            })}
+          </TableRow>
+        );
+      });
+    });
+  }, [pageSize, table]);
 
-	const getCommonPinningStyles = (
-		column: Column<T>,
-		backgroundColor: string,
-		rowClassName?: string
-	): CSSProperties => {
-		const isPinned = column.getIsPinned();
-		const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
+  const getCommonPinningStyles = (
+    column: Column<T>,
+    backgroundColor: string,
+    rowClassName?: string
+  ): CSSProperties => {
+    const isPinned = column.getIsPinned();
+    const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
 
-		return {
-			boxShadow: isLastLeftPinnedColumn ? '-4px 0 2px -4px gray inset' : undefined,
-			left: isPinned === 'left' ? `${String(column.getStart('left'))}px` : undefined,
-			outline: isPinned ? '0.2px solid lightgray' : undefined,
-			// 暫時 hardcode 處理
-			backgroundColor: rowClassName ? '#ffdbdb' : isPinned ? backgroundColor : '',
-			position: isPinned ? 'sticky' : 'relative',
-			width: column.getSize(),
-			zIndex: isPinned ? 30 : undefined,
-		};
-	};
+    return {
+      boxShadow: isLastLeftPinnedColumn ? '-4px 0 2px -4px gray inset' : undefined,
+      left: isPinned === 'left' ? `${String(column.getStart('left'))}px` : undefined,
+      outline: isPinned ? '0.2px solid lightgray' : undefined,
+      // 暫時 hardcode 處理
+      backgroundColor: rowClassName ? '#ffdbdb' : isPinned ? backgroundColor : '',
+      position: isPinned ? 'sticky' : 'relative',
+      width: column.getSize(),
+      zIndex: isPinned ? 30 : undefined,
+    };
+  };
 
-	useEffect(() => {
-		setIsClient(true);
-	}, []);
+  useEffect(() => {
+    if (sortByServer) sortByServer(sortingState);
+  }, [sortingState, sortByServer]);
 
-	useEffect(() => {
-		if (sortByServer) sortByServer(sortingState);
-	}, [sortingState, sortByServer]);
-
-	if (!isClient) return null;
-	return (
+  return (
     <div className={cn('mx-auto flex w-full flex-col justify-between', className)}>
-      <div
-        className="relative flex w-full flex-col overflow-hidden rounded-sm"
-        // style={{
-        //   maxHeight: 'calc(100vh - 240px)',
-        // }}
-      >
+      <div className="relative flex w-full flex-col overflow-hidden rounded-sm">
         <Table aria-label="table" className="caption-top">
           {!headerHide && (
             <TableHeader className="sticky top-0 z-40 bg-neutral-600 shadow-lg">
@@ -274,18 +269,22 @@ function ReactTable<T>({
         )}
       </div>
 
-      {/* Pagination */}
-      {data?.length && !isLoading ? (
+      {manualPagination ? (
+        <LinkPagination showPagination={showPagination} totalElements={totalElements} />
+      ) : (
         <div className="mt-2 flex items-center justify-center gap-4 pb-2">
-          <Pagination
-            table={table}
-            showPagination={showPagination}
-            totalElements={totalElements}
-            paginateByServer={paginateByServer}
-          />
-          <p className="font-bold">總共 {totalElements} 筆</p>
+          {data?.length && !isLoading ? (
+            <>
+              <Pagination
+                table={table}
+                showPagination={showPagination}
+                totalElements={totalElements}
+              />
+              <p className="font-bold">總共 {totalElements} 筆</p>
+            </>
+          ) : null}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
