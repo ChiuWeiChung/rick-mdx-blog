@@ -11,14 +11,11 @@ import InputField from '@/components/form-fields/input-field';
 import MultiSelectField from '@/components/form-fields/multi-select-field';
 import SingleSelectField from '@/components/form-fields/single-select-field';
 import SmartForm from '@/components/smart-form';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
 import { FieldErrors, useForm } from 'react-hook-form';
 import SwitchField from '@/components/form-fields/switch-field';
 import { Button } from '@/components/ui/button';
-import { FormMessage } from '@/components/ui/form';
 import { createNote } from '@/actions/notes';
 import DialogContainer from '@/components/dialog-container';
 import { useRouter } from 'next/navigation';
@@ -34,13 +31,14 @@ import { cn } from '@/lib/utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
 
 interface NoteEditorFormProps {
-  id?: string;
+  existingNote?: Partial<CreateNote>;
   categoryOptions: Option<string>[];
   tagOptions: Option<string>[];
+  markdown?: string;
 }
 
-const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps) => {
-  const isCreate = !id;
+const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEditorFormProps) => {
+  const isCreate = !existingNote;
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const isMobile = useIsMobile();
@@ -48,7 +46,10 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
 
   const form = useForm({
     resolver: zodResolver(createNoteSchema),
-    defaultValues: defaultCreateNoteValues,
+    defaultValues: {
+      ...defaultCreateNoteValues,
+      ...existingNote,
+    },
   });
 
   const [markdown, manualUpload] = form.watch([
@@ -215,7 +216,7 @@ const NoteEditorForm = ({ id, categoryOptions, tagOptions }: NoteEditorFormProps
 
       <ForwardRefEditor
         markdown={markdown}
-        contentEditableClassName="prose lg:prose-lg"
+        contentEditableClassName="prose-sm lg:prose-lg"
         onChange={handleMarkdownChange}
       />
 

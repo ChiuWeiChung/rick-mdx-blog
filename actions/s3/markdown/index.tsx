@@ -1,6 +1,7 @@
 'use server';
-import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import s3 from '@/lib/s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // TODO 應該與 .../actions/image/index.tsx 合併 並且將 saveMarkdownFile 改名為 saveFile
 
@@ -43,4 +44,20 @@ const saveMarkdownFile = async (request: SaveMarkdownFileRequest) => {
   }
 };
 
-export { saveMarkdownFile };
+const getMarkdownResource = async (filePath: string) => {
+  const command = new GetObjectCommand({
+    Bucket: process.env.S3_BUCKET_NAME!,
+    Key: filePath,
+  });
+
+  const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
+  return signedUrl;
+};
+
+const getMarkdownContent = async (resource: string) => {
+  const res = await fetch(resource);
+  const markdown = await res.text();
+  return markdown;
+};
+
+export { saveMarkdownFile, getMarkdownResource, getMarkdownContent };

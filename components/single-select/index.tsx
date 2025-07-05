@@ -1,7 +1,5 @@
 'use client';
-
 import { Check, ChevronsUpDown, X, XIcon } from 'lucide-react';
-
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -22,7 +20,7 @@ export interface SingleSelectProps<
   placeholder?: string;
   options: Option<T>[];
   value: T;
-  onChange: (value?: T) => void;
+  onChange: (value?: T|null) => void;
   creatable?: boolean;
   clearable?: boolean;
 }
@@ -62,7 +60,7 @@ export function SingleSelect<T extends string | number = string | number>({
               className="text-card-foreground hover:text-destructive absolute top-1/2 right-8 ml-auto h-4 w-4 -translate-y-1/2"
               onClick={e => {
                 e.stopPropagation();
-                onChange(undefined);
+                onChange(null);
               }}
             />
           )}

@@ -31,7 +31,7 @@ export interface ReactTableProps<T> {
   pinningColumns?: string[];
   manualPagination?: boolean;
   manualSorting?: boolean;
-  sortByServer?: (sorting: SortingState) => void;
+  onSortingChange?: (sorting: SortingState) => void;
 }
 
 export interface PaginationState {

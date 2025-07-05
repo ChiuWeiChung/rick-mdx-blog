@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
   Pagination,
   PaginationContent,
@@ -10,7 +10,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-import { Table } from '@tanstack/react-table';
+import { cn } from '@/lib/utils';
+import { getUpdatedSearchParams } from '@/utils/form-utils';
 
 export interface LinkPaginationProps<T> {
   className?: string;
@@ -23,7 +24,6 @@ const LinkPagination = <T,>({
   showPagination,
   totalElements,
 }: LinkPaginationProps<T>) => {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const pageSize = Number(searchParams.get('limit') ?? '10');
@@ -34,13 +34,12 @@ const LinkPagination = <T,>({
 
   // 構建 URL 的輔助函數
   const buildUrl = (page: number) => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.set('page', page.toString());
-    return `${pathname}?${params.toString()}`;
+    const param = getUpdatedSearchParams({ page }, searchParams);
+    return `${pathname}?${param.toString()}`;
   };
 
   // 生成要顯示的頁碼數組
-  const getPageNumbers = () => {
+  const getPageNumbers = () => {  
     const delta = 2; // 當前頁面前後顯示的頁數
     const pages: (number | 'ellipsis')[] = [];
 
@@ -85,7 +84,7 @@ const LinkPagination = <T,>({
   const pageNumbers = getPageNumbers();
 
   return (
-    <Pagination className={className}>
+    <Pagination className={cn('mt-2', className)}>
       <PaginationContent>
         {/* 上一頁按鈕 */}
         <PaginationItem>

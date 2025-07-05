@@ -169,6 +169,7 @@ export default function Pagination<T>({
           className="w-12 px-1 py-0 text-center"
         />
       </div>
+      <p className="font-bold">總共 {totalElements} 筆</p>
     </div>
   );
 }

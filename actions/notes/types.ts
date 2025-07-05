@@ -66,17 +66,17 @@ const defaultCreateNoteValues = getDefaultValues(createNoteSchema);
 const queryNoteSchema = z
   .object({
     title: z.string().default(''),
-    visible: z.boolean().optional(),
+    visible: z.boolean().nullish(),
     category: z.number().nullish(),
-    tags: z.array(z.number()).optional(),
+    tags: z.array(z.number()).nullish(),
     startCreatedTime: z.number().nullish(),
     endCreatedTime: z.number().nullish(),
     startUpdatedTime: z.number().nullish(),
     endUpdatedTime: z.number().nullish(),
-    page: z.number().optional(),
-    limit: z.number().optional(),
-    sort: z.enum(NoteQuerySort).optional(),
-    order: z.enum(QueryOrder).optional(),
+    page: z.number().nullish(),
+    limit: z.number().nullish(),
+    sort: z.enum(NoteQuerySort).nullish(),
+    order: z.enum(QueryOrder).nullish(),
   })
   .check(ctx => {
     if (
@@ -107,28 +107,42 @@ const queryNoteSchema = z
 type QueryNote = z.infer<typeof queryNoteSchema>;
 const queryNoteKeys = queryNoteSchema.keyof().enum;
 const defaultQueryNoteValues = getDefaultValues(queryNoteSchema);
-const coerceQueryNote = queryNoteSchema.extend({
+const coerceQueryNoteSchema = queryNoteSchema.extend({
   page: z.coerce.number().default(1),
   limit: z.coerce.number().default(10),
-  visible: z.coerce.boolean().optional(),
+  visible: z.preprocess(val => {
+    if (typeof val === 'string') {
+      return val === 'true';
+    }
+    return val;
+  }, z.boolean().nullish()),
   category: z.coerce.number().nullish(),
   tags: z.preprocess(val => {
     if (typeof val === 'string' && val) {
       return val.split(',').map(s => parseInt(s, 10));
     }
-
     // 若已經是陣列就原封不動
-    if (Array.isArray(val)) {
-      return val;
-    }
-
-    return undefined; // fallback 預設空陣列
-  }, z.array(z.number()).optional()),
+    if (Array.isArray(val)) return val;
+    return undefined;
+  }, z.array(z.number()).nullish()),
   startCreatedTime: z.coerce.number().nullish(),
   endCreatedTime: z.coerce.number().nullish(),
   startUpdatedTime: z.coerce.number().nullish(),
   endUpdatedTime: z.coerce.number().nullish(),
+  sort: z.enum(NoteQuerySort).nullish(),
+  order: z.enum(QueryOrder).nullish(),
 });
+
+const noteDetailSchema = noteSchema.extend({
+  noteId: z.number(),
+  title: z.string(),
+  visible: z.boolean(),
+  createdAt: z.date(),
+  category: z.string(), 
+  filePath: z.string(),
+  tags: z.array(z.string()),
+});
+type NoteDetail = z.infer<typeof noteDetailSchema>;
 
 export {
   // 查看筆記
@@ -142,10 +156,13 @@ export {
   createNoteSchemaKeys,
   defaultCreateNoteValues, // 預設值
 
-  // 搜尋筆記
+  // 搜尋筆記清單
   type QueryNote,
   queryNoteSchema, // 搜尋參數的 schema
   queryNoteKeys, // 搜尋參數的 key
-  coerceQueryNote, // 將搜尋參數轉換為 QueryNote 型別
+  coerceQueryNoteSchema, // 將搜尋參數轉換為 QueryNote 型別
   defaultQueryNoteValues, // 預設值
+
+  // 筆記詳細資訊
+  type NoteDetail,
 };

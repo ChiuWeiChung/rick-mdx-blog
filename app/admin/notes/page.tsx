@@ -1,5 +1,6 @@
 import { getCategories } from '@/actions/categories';
-import { coerceQueryNote, defaultQueryNoteValues, QueryNote } from '@/actions/notes/types';
+import { queryNoteList } from '@/actions/notes';
+import { coerceQueryNoteSchema, defaultQueryNoteValues, QueryNote } from '@/actions/notes/types';
 import { getTags } from '@/actions/tags';
 import SpinnerLoader from '@/components/spinner-loader';
 import { Button } from '@/components/ui/button';
@@ -15,25 +16,28 @@ interface NotePageProps {
   searchParams?: Promise<Partial<QueryNote>>;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const NotesPage = async (props: NotePageProps) => {
   const categories = await getCategories();
   const tags = await getTags();
-
   const categoryOptions = toOption(categories);
   const tagOptions = toOption(tags);
 
+  // 取得查詢參數
   const searchParams = await props.searchParams;
-  const queryRequest = coerceQueryNote.parse(searchParams);
-  console.log('queryRequest', queryRequest);
+  // 解析查詢參數
+  const queryRequest = coerceQueryNoteSchema.parse(searchParams);
+  // 取得筆記列表
+  const { data, totalCount } = await queryNoteList({ ...queryRequest });
+  
   return (
     <div className="relative mx-4 flex flex-col gap-4">
       <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">筆記管理</h1>
 
       {/* Add Notes Section */}
-      <Button type="button" className="absolute top-0 right-0">
-        <Link href="/admin/notes/editor" className="flex items-center gap-2">
-          <Plus /> 新增筆記
+      <Button type="button" className="absolute top-0 right-0" asChild>
+        <Link href="/admin/notes/editor">
+          <Plus />
+          新增筆記
         </Link>
       </Button>
 
@@ -45,9 +49,7 @@ const NotesPage = async (props: NotePageProps) => {
       />
 
       {/* Notes Table Section */}
-      {/* <Suspense fallback={<SpinnerLoader />} key={getUpdatedSearchParams(queryRequest).toString()}>
-      </Suspense> */}
-      <NoteTable queryRequest={queryRequest} />
+      <NoteTable data={data} totalCount={totalCount} />
     </div>
   );
 };

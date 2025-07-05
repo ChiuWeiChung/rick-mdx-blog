@@ -28,8 +28,7 @@ const AdminHomePage = async () => {
 		totalCategories: 8,
 		totalTags: 23,
 		totalImages: 156,
-		recentPosts: 12,
-		activeUsers: 3,
+		recentPosts: 12, 
 		monthlyViews: 2840,
 		weeklyPosts: 4,
 	};

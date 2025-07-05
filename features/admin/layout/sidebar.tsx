@@ -67,8 +67,8 @@ export default function AdminSidebar() {
 							{items.map(item => (
 								<SidebarMenuItem key={item.title}>
 									<SidebarMenuButton asChild>
-										<NavLink href={item.url} className="flex h-12 items-center gap-2 !text-lg">
-											<item.icon className="!size-6" />
+										<NavLink href={item.url} className="flex h-12 items-center gap-2 !text-[1rem]">
+											<item.icon className="!size-4" />
 											{item.title}
 										</NavLink>
 									</SidebarMenuButton>

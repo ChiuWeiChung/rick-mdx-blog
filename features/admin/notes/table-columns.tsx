@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { EditIcon, TrashIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 const { accessor, display } = createColumnHelper<Note>();
 
@@ -14,12 +15,13 @@ const columns = [
   display({
     id: TableId.Number,
     header: 'No.',
-    size: 80,
+    size: 60,
   }),
 
   display({
     id: TableId.Editor,
     header: '操作',
+    enableSorting: false,
     cell: ({ table, row }) => {
       const { onModalOpen, onDataDelete } = table.options.meta ?? {};
 
@@ -38,8 +40,11 @@ const columns = [
             variant="outline"
             className="h-8 w-8 justify-center text-neutral-800"
             onClick={dataEditHandler}
+            asChild
           >
-            <EditIcon />
+            <Link href={`/admin/notes/editor?noteId=${row.original.id}`}>
+              <EditIcon />
+            </Link>
           </Button>
           <Button
             variant="outline"
@@ -54,8 +59,9 @@ const columns = [
     },
   }),
   accessor(NoteKeys.title, {
-    header: '標題',
+    header: '文章標題',
     size: 200,
+    enableSorting: false,
   }),
   display({
     id: NoteKeys.visible,
@@ -67,13 +73,19 @@ const columns = [
         onDataEdit?.(newStore);
       };
 
-      return <Switch checked={row.original.visible} onCheckedChange={dataToggleHandler} />;
+      return (
+        <Switch
+          checked={row.original.visible}
+          onCheckedChange={dataToggleHandler}
+        />
+      );
     },
+    size: 150,
   }),
-
-  accessor(NoteKeys.username, {
-    header: '作者',
-  }),
+  // accessor(NoteKeys.username, {
+  //   header: '作者',
+  //   enableSorting: false,
+  // }),
   accessor(NoteKeys.category, {
     header: '分類',
   }),
@@ -92,14 +104,7 @@ const columns = [
       );
     },
     size: 250,
-  }),
-  accessor(NoteKeys.filePath, {
-    header: '檔案路徑',
-    size: 250,
-  }),
-  accessor(NoteKeys.coverPath, {
-    header: '封面路徑',
-    size: 250,
+    enableSorting: false,
   }),
   accessor(NoteKeys.createdAt, {
     header: '建立時間',
@@ -116,6 +121,16 @@ const columns = [
       return format(value, 'yyyy/MM/dd HH:mm');
     },
     size: 150,
+  }),
+  accessor(NoteKeys.filePath, {
+    header: '檔案路徑',
+    size: 250,
+    enableSorting: false,
+  }),
+  accessor(NoteKeys.coverPath, {
+    header: '封面路徑',
+    size: 250,
+    enableSorting: false,
   }),
 ];
 

@@ -1,6 +1,6 @@
 'use server';
 import pool from '@/lib/db';
-import { CreateNote, Note, QueryNote } from './types';
+import { CreateNote, Note, NoteDetail, QueryNote } from './types';
 import { toCamelCase } from '@/utils/format-utils';
 import { auth } from '@/auth';
 import { getUser } from '../users';
@@ -9,6 +9,7 @@ import { createTags } from '../tags';
 import { saveMarkdownFile } from '../s3/markdown';
 import { checkFileExists } from '../s3/image';
 import { createNoteTags } from '../note-tags';
+import { NoteQuerySort } from '@/enums/query';
 
 export const queryNoteList = async (request: QueryNote) => {
   const {
@@ -20,6 +21,8 @@ export const queryNoteList = async (request: QueryNote) => {
     endCreatedTime,
     startUpdatedTime,
     endUpdatedTime,
+    sort,
+    order,
     page = 1,
     limit = 10,
   } = request;
@@ -66,11 +69,17 @@ export const queryNoteList = async (request: QueryNote) => {
 
   if (tags && tags.length > 0) {
     values.push(tags);
+    values.push(tags.length);
+
     where.push(`
-      posts.id IN (
-        SELECT post_id FROM post_tags WHERE tag_id = ANY($${values.length})
-      )
-    `);
+    posts.id IN (
+      SELECT post_id
+      FROM post_tags
+      WHERE tag_id = ANY($${values.length - 1})
+      GROUP BY post_id
+      HAVING COUNT(DISTINCT tag_id) = $${values.length}
+    )
+  `);
   }
 
   const whereClause = where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
@@ -84,7 +93,7 @@ export const queryNoteList = async (request: QueryNote) => {
     values.push(limit);
     paginationClause += `LIMIT $${values.length} `;
   }
-  if (typeof page === 'number') {
+  if (typeof page === 'number' && typeof limit === 'number') {
     // calculate offset through page
     const offset = (page - 1) * limit;
     values.push(offset);
@@ -102,6 +111,23 @@ export const queryNoteList = async (request: QueryNote) => {
     whereValues
   );
   const totalCount = Number(countResult.rows[0].count);
+
+  
+  let sortClause = 'ORDER BY posts.created_at DESC'; // 預設排序
+  if (sort && Object.values(NoteQuerySort).includes(sort)) {
+    const direction = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
+    // 注意：category、username 並非 posts 的欄位，要額外對應
+    const sortField = (() => {
+      switch (sort) {
+        case NoteQuerySort.UPDATED_AT:
+          return 'posts.updated_at';
+        case NoteQuerySort.CREATED_AT:
+        default:
+          return 'posts.created_at';
+      }
+    })();
+    sortClause = `ORDER BY ${sortField} ${direction}`;
+  }
 
   // 查詢實際資料
   const { rows } = await pool.query(
@@ -128,8 +154,7 @@ export const queryNoteList = async (request: QueryNote) => {
       posts.id,
       users.username,
       categories.name
-    ORDER BY
-      posts.created_at DESC
+    ${sortClause}
     ${paginationClause}
   `,
     values
@@ -234,4 +259,30 @@ export const createNote = async (note: CreateNote) => {
     // release client
     client.release();
   }
+};
+
+
+export const getNoteInfoById = async (noteId: string) => {
+  const { rows } = await pool.query(
+    `
+    SELECT posts.id AS note_id, title, visible, created_at, categories.name AS category, file_path, STRING_AGG(tags.name, ', ') AS tags
+    FROM posts 
+    LEFT JOIN post_tags ON post_tags.post_id = posts.id
+    LEFT JOIN tags ON tags.id = post_tags.tag_id
+    LEFT JOIN categories ON categories.id = posts.category_id
+    WHERE posts.id = $1
+    GROUP BY posts.id, categories.name
+    `,
+    [noteId]
+  );
+  
+  if(rows.length === 0) return null;
+
+  const [camelCaseRow] = toCamelCase<Record<string, unknown>>(rows);
+
+  const rowTags = camelCaseRow.tags as string;
+  const tags = rowTags.split(', ')
+    .map(tag => tag.trim())
+    .filter(Boolean) ?? [];
+  return { ...camelCaseRow, tags } as NoteDetail;
 };

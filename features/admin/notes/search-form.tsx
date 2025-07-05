@@ -34,23 +34,17 @@ interface QuerySearchFormProps {
 const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySearchFormProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const form = useForm({
-    resolver: zodResolver(queryNoteSchema),
-    defaultValues,
-  });
+  const form = useForm({ resolver: zodResolver(queryNoteSchema), defaultValues });
 
   const onReset = () => {
-    console.log('defaultQueryNoteValues', defaultQueryNoteValues);
-    form.reset({ ...defaultQueryNoteValues });
+    form.reset(defaultQueryNoteValues);
+    router.push('?');
   };
 
   const onSubmit = (values: Partial<QueryNote>) => {
     const params = getUpdatedSearchParams(values, searchParams);
     router.push(`?${params.toString()}`);
   };
-
-  const watchedValues = form.watch();
-  console.log('watchedValues', watchedValues);
 
   return (
     <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
@@ -80,7 +74,6 @@ const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySe
                 { label: '不顯示', value: false },
               ]}
               className="col-span-4 lg:col-span-2 xl:col-span-1"
-              // clearable={false}
             />
             <SingleSelectField
               name={queryNoteKeys.category}
@@ -96,7 +89,6 @@ const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySe
               placeholder="選擇標籤"
               options={tagOptions}
               className="col-span-4 lg:col-span-2 xl:col-span-1"
-              description="符合任一選擇條件"
             />
 
             <div className="col-span-4 flex w-full flex-col gap-2 2xl:col-span-2">

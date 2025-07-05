@@ -1,4 +1,4 @@
-import { Code } from 'lucide-react';
+import { Code, Code2Icon } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import { auth } from '@/auth';
@@ -49,7 +49,7 @@ const Navbar = async () => {
 					href="/"
 					className="text-primary mr-2 flex items-center gap-2 text-sm font-bold md:text-2xl"
 				>
-					<Code className="size-6" /> Rick&apos;s DevNotes
+					<Code2Icon className="size-6" /> Rick&apos;s DevNotes
 				</Link>
 
 				{/* section for navigation */}

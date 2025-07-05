@@ -60,11 +60,21 @@ export default function InitializedMDXEditor({
 				codeMirrorPlugin({
 					codeBlockLanguages: {
 						js: 'JavaScript',
+						javascript: 'JavaScript',
+						ts: 'TypeScript',
+						typescript: 'TypeScript',
 						css: 'CSS',
 						mermaid: 'Mermaid',
 						react: 'React',
-						typescript: 'TypeScript',
 						console: 'Console',
+						sql: 'SQL',
+						python: 'Python',
+						java: 'Java',
+						html: 'HTML',
+						json: 'JSON',
+						yaml: 'YAML',
+						bash: 'Bash',
+						plaintext: 'Plain Text',
 					},
 				}),
 				imagePlugin({
@@ -85,6 +95,7 @@ export default function InitializedMDXEditor({
 						<>
 							<DiffSourceToggleWrapper>
 								<div className="flex items-center gap-2">
+								{/* <div className="grid xl:grid-cols-8 grid-cols-4 gap-2"> */}
 									<UndoRedo />
 									<div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
 									<BlockTypeSelect />
