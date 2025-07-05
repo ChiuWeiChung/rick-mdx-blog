@@ -98,7 +98,6 @@ export function SingleSelect<T extends string | number = string | number>({
                     size="icon"
                     className="ml-auto"
                     onClick={() => {
-                      console.log('close create');
                       setQuery('');
                     }}
                   >

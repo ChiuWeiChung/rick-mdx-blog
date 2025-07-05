@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import {
   playgroundFormDefaultValues,
   playgroundFormKeys,
@@ -43,7 +43,6 @@ const PlaygroundForm = () => {
   });
 
   const onSubmit = (values: Partial<PlaygroundFormSchema>) => {
-    console.log('values', values);
     openAlertModal({
       title: 'Form Submitted',
       description: JSON.stringify(values),

@@ -13,17 +13,13 @@ import {
 import { cn } from '@/lib/utils';
 import { getUpdatedSearchParams } from '@/utils/form-utils';
 
-export interface LinkPaginationProps<T> {
+export interface LinkPaginationProps {
   className?: string;
   showPagination?: boolean;
   totalElements: number;
 }
 
-const LinkPagination = <T,>({
-  className,
-  showPagination,
-  totalElements,
-}: LinkPaginationProps<T>) => {
+const LinkPagination = ({ className, showPagination, totalElements }: LinkPaginationProps) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const pageSize = Number(searchParams.get('limit') ?? '10');

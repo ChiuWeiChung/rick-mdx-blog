@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { type HandleQueryRes, type HandleMutationRes, type Handler } from './types';
+import { mutationResponseSchema, type HandleMutationRes, type Handler } from './types';
 
 /**
  * React Query Handler
@@ -33,28 +31,23 @@ const logWithStyle = (type: keyof typeof logStyles, message: unknown) => {
 const handler: Handler = async (serverAction, args, logKey) => {
   try {
     logWithStyle('Request', logKey);
-    // 過濾 React Query 的 client 和 signal 屬性
-    let cleanArgs: unknown = args;
-    // 檢查是否為物件且包含 client 或 signal 屬性
-    if (args && typeof args === 'object' && !Array.isArray(args)) {
-      const argsObject = args as Record<string, unknown>;
-      if ('client' in argsObject || 'signal' in argsObject) {
-        // 創建一個新物件，排除 client 和 signal 屬性
-        const { client: _client, signal: _signal, ...filteredArgs } = argsObject;
-        cleanArgs = filteredArgs;
+    const result = await serverAction(args);
+    logWithStyle('Response', result);
+
+    
+    const mutationResponse = mutationResponseSchema.safeParse(result);
+    // 如果解析成功，則檢查是否成功
+    if (mutationResponse.success) {
+      // 如果回傳的結果不是成功，則拋出錯誤 (mutationResponse.data.success = false)
+      if (!mutationResponse.data.success) {
+        throw new Error(mutationResponse.data.message);
       }
     }
-    const result = await serverAction(cleanArgs as any);
-    logWithStyle('Response', result);
+
     return result;
   } catch (error) {
     logWithStyle('Server Error', error);
-    // 確保錯誤被正確傳播
-    if (error instanceof Error) {
-      throw error;
-    }
-
-    throw new Error(error instanceof Error ? error.message : String(error));
+    throw new Error(error instanceof Error ? error.message : '系統異常');
   }
 };
 
@@ -72,24 +65,5 @@ const handler: Handler = async (serverAction, args, logKey) => {
 export const mutationHandler: HandleMutationRes = serverAction => {
   return async args => {
     return await handler(serverAction, args, args);
-  };
-};
-
-/**
- * 查詢處理器 (Query Handler)
- * 用於處理資料獲取類的 API 呼叫
- * 與 React Query 的 useQuery 配合使用
- *
- * 使用範例:
- *
- * const data = useQuery(
- *   ['TODOS'],
- *   queryHandler(getTodos)
- * );
- */
-export const queryHandler: HandleQueryRes = serverAction => {
-  return async context => {
-    const result = await handler(serverAction, context, context.queryKey);
-    return result;
   };
 };

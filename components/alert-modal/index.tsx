@@ -42,10 +42,17 @@ export default function AlertModal() {
     <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <div className="flex items-center gap-2">
+          <AlertDialogTitle>
+            <div className="flex items-center gap-2">
+              {renderStatusIcon()}
+              {dialog.title ?? ''}
+            </div>
+          </AlertDialogTitle>
+
+          {/* <div className="flex items-center gap-2">
             {renderStatusIcon()}
             {dialog.title && <AlertDialogTitle>{dialog.title}</AlertDialogTitle>}
-          </div>
+          </div> */}
           <AlertDialogDescription className="break-all">
             {dialog.description}
           </AlertDialogDescription>

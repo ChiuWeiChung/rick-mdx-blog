@@ -28,6 +28,7 @@ export default function Providers({ children }: { children: ReactNode }) {
     _variables?: unknown
   ) => {
     openAlertModal({
+      title: '系統錯誤',
       status: 'error',
       description: error.message,
       confirmText: '確認',

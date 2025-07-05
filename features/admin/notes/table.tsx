@@ -7,7 +7,6 @@ import { FC } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
 import { deleteNote, updateNoteVisible } from '@/actions/notes';
-import { toast } from 'sonner';
 import { useAlertModal } from '@/hooks/use-alert-modal';
 
 interface NoteTableProps {
@@ -49,7 +48,7 @@ const NoteTable:FC<NoteTableProps> = ({ data, totalCount }) => {
       ),
       confirmText: '確定刪除',
       cancelText: '取消',
-      onConfirm: () => deleteNoteMutation(data.id),
+      onConfirm: () => deleteNoteMutation(data.id)
     });
   };
 

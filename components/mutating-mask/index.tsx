@@ -7,7 +7,7 @@ import SpinnerLoader from '../spinner-loader';
 const MutatingMask = () => {
   const isMutating = useIsMutating({
     predicate: mutation => {
-      const variables = mutation.state.variables as any;
+      const variables = mutation.state.variables;
 
       // TODO: 這邊可以改成用 mutation.options.meta 來判斷，但目前還沒有這個屬性
       // 如果是更新筆記的 visible 狀態，則不顯示遮罩

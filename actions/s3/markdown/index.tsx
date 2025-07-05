@@ -50,9 +50,13 @@ const getMarkdownResource = async (filePath: string) => {
     Bucket: process.env.S3_BUCKET_NAME!,
     Key: filePath,
   });
-
-  const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
-  return signedUrl;
+  try{
+    const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
+    return signedUrl;
+  } catch (error) {
+    console.error('Error getting markdown resource:', error);
+    throw error;
+  }
 };
 
 /** 取得 Markdown 檔案的內容 */
@@ -72,7 +76,7 @@ const deleteMarkdownFile = async (filePath: string) => {
       await s3.send(command);
     } catch (error) {
       console.error('❌ 刪除失敗:', error);
-      throw error;
+      return { success: false, message: 'Failed to delete markdown file' };
     }
 };
 

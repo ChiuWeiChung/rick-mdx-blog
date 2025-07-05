@@ -23,10 +23,9 @@ import { ForwardRefEditor } from '@/components/mdx-editor';
 import { Edit } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { PreventNavigation } from '@/components/prevent-navigation';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
 import { toast } from 'sonner';
-import SpinnerLoader from '@/components/spinner-loader';
 import { cn } from '@/lib/utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
 

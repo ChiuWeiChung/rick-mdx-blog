@@ -28,7 +28,7 @@ export const queryNoteList = async (request: QueryNote) => {
     limit = 10,
   } = request;
 
-  const values: any[] = [];
+  const values: unknown[] = [];
   const where: string[] = [];
 
   if (typeof visible === 'boolean') {
@@ -238,8 +238,8 @@ export const createNote = async (note: CreateNoteRequest) => {
   } catch (error) {
     // ====================== Rollback Transaction ======================
     await client.query('ROLLBACK');
-    console.error(error);
-    throw new Error('Failed to create note');
+    console.error('Create note error:', error);
+    return { success: false, message: 'Failed to create note' };
   } finally {
     // release client
     client.release();
@@ -298,7 +298,7 @@ export const updateNote = async (note: UpdateNoteRequest) => {
     const coverPath = isCoverExist ? `${category}/card.png` : null;
 
     // 更新 post
-    const { rows } = await client.query(
+    await client.query(
       'UPDATE posts SET title = $1, updated_at = $2, category_id = $3, file_path = $4, cover_path = $5 WHERE id = $6 RETURNING *',
       [title, new Date(), selectedCategory.id, filePath, coverPath, id]
     );
@@ -315,12 +315,12 @@ export const updateNote = async (note: UpdateNoteRequest) => {
 
     // ====================== Commit Transaction ======================
     await client.query('COMMIT');
-    return toCamelCase<Note>(rows)[0];
+    return { success: true, message: 'Note updated successfully' };
   } catch (error) {
     // ====================== Rollback Transaction ======================
     await client.query('ROLLBACK');
-    console.error(error);
-    throw new Error('Failed to update note');
+    console.error('Update note error:', error);
+    return { success: false, message: 'Failed to update note' };
   } finally {
     // release client
     client.release();
@@ -377,7 +377,7 @@ export const deleteNote = async (noteId: number) => {
     // ====================== Rollback Transaction ======================
     await client.query('ROLLBACK');
     console.error('Delete note error:', error);
-    throw new Error('Failed to delete note');
+    return { success: false, message: 'Failed to delete note' };
   } finally {
     // release client
     client.release();
@@ -415,9 +415,14 @@ export const getNoteInfoById = async (noteId: string) => {
 /** 更新筆記的 visible 狀態 */
 export const updateNoteVisible = async (request: { noteId: number; visible: boolean }) => {
   const { noteId, visible } = request;
-  await pool.query('UPDATE posts SET visible = $1 WHERE id = $2 RETURNING *', [
-    visible,
-    noteId,
-  ]);
-  return { success: true, message: 'Note visible updated successfully' };
+  try{
+    await pool.query('UPDATE posts SET visible = $1 WHERE id = $2 RETURNING *', [
+      visible,
+      noteId,
+    ]);
+    return { success: true, message: 'Note visible updated successfully' };
+  } catch (error) {
+    console.error('Update note visible error:', error);
+    return { success: false, message: 'Note visible update failed' };
+  }
 };

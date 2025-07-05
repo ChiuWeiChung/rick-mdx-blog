@@ -178,4 +178,5 @@ export {
 
   // 筆記詳細資訊
   type NoteDetail,
+  noteDetailSchema,
 };

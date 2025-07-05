@@ -1,4 +1,4 @@
-import { Code, Code2Icon } from 'lucide-react';
+import { Code2Icon, LogOutIcon, SettingsIcon } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 import { auth } from '@/auth';
@@ -10,32 +10,33 @@ const Navbar = async () => {
 	const session = await auth();
 
 	const navItems = [
-		{ name: 'Notes', href: '/notes' },
-		{ name: 'About Me', href: '/about' },
-		{ name: 'Projects', href: '/projects' },
+		{ name: '筆記', href: '/notes' },
+		{ name: '關於我', href: '/about' },
+		{ name: '專案', href: '/projects' },
 	];
 
 	const dropdownItems = [
-		{ name: 'Playground', href: '/form-playground' },
-		{
-			name: '管理後台',
-			href: '/admin',
-		},
-		{
-			name: 'logout',
-			element: (
-				<form action={signOutAction}>
-					<button type="submit" className="w-full text-left">
-						Sign Out
-					</button>
-				</form>
-			),
-		},
-	];
+    {
+      name: '管理後台',
+      href: '/admin',
+      icon: <SettingsIcon className="size-4" />,
+    },
+    {
+      name: 'logout',
+      element: (
+        <form action={signOutAction} className="w-full">
+          <button type="submit" className="w-full flex items-center gap-2 text-left cursor-pointer">
+            <LogOutIcon className="size-4" />
+            登出
+          </button>
+        </form>
+      ),
+    },
+  ];
 
 	const renderNavItems = () => {
 		return navItems.map(item => (
-			<Button variant="ghost" asChild className="text-lg font-bold" key={item.href}>
+			<Button variant="ghost" asChild className="text-lg font-bold hover:scale-110 hover:text-primary hover:bg-primary-foreground" key={item.href}>
 				<Link href={item.href}>{item.name}</Link>
 			</Button>
 		));

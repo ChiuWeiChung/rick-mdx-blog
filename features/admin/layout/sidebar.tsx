@@ -1,6 +1,6 @@
 'use client';
 
-import { Code2, Edit, Flame, Image, Notebook, PenTool, Settings, Tag } from 'lucide-react';
+import { Code2, Flame, Image, Notebook, PenTool, Settings, Tag } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,

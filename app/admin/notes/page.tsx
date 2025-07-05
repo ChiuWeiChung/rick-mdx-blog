@@ -2,15 +2,13 @@ import { getCategories } from '@/actions/categories';
 import { queryNoteList } from '@/actions/notes';
 import { coerceQueryNoteSchema, defaultQueryNoteValues, QueryNote } from '@/actions/notes/types';
 import { getTags } from '@/actions/tags';
-import SpinnerLoader from '@/components/spinner-loader';
 import { Button } from '@/components/ui/button';
 import QuerySearchForm from '@/features/admin/notes/search-form';
 import NoteTable from '@/features/admin/notes/table';
-import { getUpdatedSearchParams } from '@/utils/form-utils';
 import { toOption } from '@/utils/format-utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
-import React, { Suspense } from 'react';
+import React from 'react';
 
 interface NotePageProps {
   searchParams?: Promise<Partial<QueryNote>>;

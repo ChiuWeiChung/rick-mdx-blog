@@ -161,7 +161,7 @@ function ReactTable<T>({
         router.push(`?${updatedParams.toString()}`, { scroll: false });
       }
     }
-  }, [sortingState, onSortingChange, manualSorting]);
+  }, [sortingState, onSortingChange, manualSorting, router, searchParams]);
 
   return (
     <div
