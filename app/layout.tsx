@@ -4,6 +4,7 @@ import './globals.css';
 import AlertModal from '@/components/alert-modal';
 import QueryProvider from '@/components/query-provider';
 import { Toaster } from '@/components/ui/sonner';
+import MutatingMask from '@/components/mutating-mask';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,6 +33,7 @@ export default function RootLayout({
           {children}
           <AlertModal />
           <Toaster richColors />
+          <MutatingMask />
         </QueryProvider>
       </body>
     </html>

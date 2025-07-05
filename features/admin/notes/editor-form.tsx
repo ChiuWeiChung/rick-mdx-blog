@@ -3,7 +3,7 @@ import {
   defaultCreateNoteValues,
   createNoteSchemaKeys,
   createNoteSchema,
-  CreateNote,
+  CreateNoteRequest,
 } from '@/actions/notes/types';
 import { Option } from '@/types/global';
 import FileUploadField from '@/components/form-fields/file-upload-field';
@@ -16,14 +16,14 @@ import React, { useState } from 'react';
 import { FieldErrors, useForm } from 'react-hook-form';
 import SwitchField from '@/components/form-fields/switch-field';
 import { Button } from '@/components/ui/button';
-import { createNote } from '@/actions/notes';
+import { createNote, updateNote } from '@/actions/notes';
 import DialogContainer from '@/components/dialog-container';
 import { useRouter } from 'next/navigation';
 import { ForwardRefEditor } from '@/components/mdx-editor';
 import { Edit } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { PreventNavigation } from '@/components/prevent-navigation';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
 import { toast } from 'sonner';
 import SpinnerLoader from '@/components/spinner-loader';
@@ -31,7 +31,7 @@ import { cn } from '@/lib/utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
 
 interface NoteEditorFormProps {
-  existingNote?: Partial<CreateNote>;
+  existingNote?: Partial<CreateNoteRequest> & { id: number };
   categoryOptions: Option<string>[];
   tagOptions: Option<string>[];
   markdown?: string;
@@ -57,16 +57,24 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
     createNoteSchemaKeys.manualUpload,
   ]);
 
-  const { mutate: createNoteMutation, isPending } = useMutation({
+  const mutateSuccessHandler = (message: string) => {
+    toast.success(message);
+    router.push('/admin/notes');
+  };
+
+  const { mutate: createNoteMutation, isPending: isCreatePending } = useMutation({
     mutationFn: mutationHandler(createNote),
-    onSuccess: () => {
-      toast.success('筆記建立成功');
-      router.push('/admin/notes');
-    },
+    onSuccess: () => mutateSuccessHandler('筆記建立成功'),
   });
 
-  const onSubmit = (data: CreateNote) => {
-    createNoteMutation(data);
+  const { mutate: updateNoteMutation, isPending: isUpdatePending } = useMutation({
+    mutationFn: mutationHandler(updateNote),
+    onSuccess: () => mutateSuccessHandler('筆記更新成功'),
+  });
+
+  const onSubmit = (data: CreateNoteRequest) => {
+    if (existingNote) updateNoteMutation({ ...data, id: existingNote.id });
+    else createNoteMutation(data);
   };
 
   const handleMarkdownChange = (markdown: string) => {
@@ -82,7 +90,7 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
   };
 
   const handleSaveBtnClick = () => {
-    const onInvalid = (errors: FieldErrors<CreateNote>) => {
+    const onInvalid = (errors: FieldErrors<CreateNoteRequest>) => {
       const messages = Object.keys(errors).map(key => errors[key as keyof typeof errors]?.message);
       openAlertModal({
         status: 'error',
@@ -99,6 +107,8 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
 
     form.handleSubmit(onSubmit, onInvalid)();
   };
+
+  const isPending = isCreatePending || isUpdatePending;
 
   return (
     <>
@@ -127,6 +137,7 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
             name={createNoteSchemaKeys.fileName}
             label="檔案名稱"
             placeholder="請輸入檔案名稱"
+            disabled={!isCreate}
           />
           <SingleSelectField
             name={createNoteSchemaKeys.category}
@@ -135,7 +146,6 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
             options={categoryOptions}
             creatable
           />
-
           <MultiSelectField
             name={createNoteSchemaKeys.tags}
             label="標籤"
@@ -143,9 +153,12 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
             options={tagOptions}
             creatable
           />
-
           <div className="flex items-center justify-evenly gap-4">
-            <SwitchField name={createNoteSchemaKeys.visible} label="是否公開" />
+            <SwitchField
+              name={createNoteSchemaKeys.visible}
+              label="是否公開"
+              disabled={!isCreate}
+            />
             <div className="h-full w-[2px] bg-gray-200" />
             <SwitchField
               name={createNoteSchemaKeys.manualUpload}
@@ -153,7 +166,6 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
               disabled={!isCreate}
             />
           </div>
-
           <div className="col-span-2 h-33 w-full">
             {manualUpload && (
               <FileUploadField
@@ -163,7 +175,6 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
               />
             )}
           </div>
-
           <div className="flex items-center justify-end gap-4">
             <Button type="button" variant="outline" onClick={() => router.back()}>
               取消
@@ -216,16 +227,9 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
 
       <ForwardRefEditor
         markdown={markdown}
-        contentEditableClassName="prose-sm lg:prose-lg"
+        contentEditableClassName="prose prose-sm lg:prose-lg"
         onChange={handleMarkdownChange}
       />
-
-      {/* Full page mask */}
-      {isPending && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50">
-          <SpinnerLoader />
-        </div>
-      )}
     </>
   );
 };

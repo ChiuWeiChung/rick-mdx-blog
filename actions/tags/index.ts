@@ -29,7 +29,7 @@ export const checkTagExist = async (name: string, client?: PoolClient) => {
 };
 
 /** 新增標籤 */
-export const createTags = async (names: string[], client?: PoolClient) => {
+export const findOrCreateTags = async (names: string[], client?: PoolClient) => {
   try {
     const tags = await Promise.all(
       names.map(async name => {

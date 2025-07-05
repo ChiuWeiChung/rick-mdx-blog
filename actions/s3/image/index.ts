@@ -1,11 +1,9 @@
-// app/upload/action.ts
 'use server';
-
 import s3 from '@/lib/s3';
 import { HeadObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
-// import { revalidatePath } from 'next/cache';
 
 // TODO 應該與 .../actions/markdown/index.tsx 合併 並且將 uploadImage 改名為 saveFile
+/** 上傳圖片 */
 export async function uploadImage(request: { file: File; fileName: string; folder: string }) {
 	const { file, fileName, folder } = request;
 	if (!file || file.size === 0) {
@@ -28,11 +26,11 @@ export async function uploadImage(request: { file: File; fileName: string; folde
 		ContentType: file.type,
 	});
 
-	// console.log('command', command);
 	await s3.send(command);
 	return objectKey;
 }
 
+/** 檢查檔案是否存在 */
 export async function checkFileExists(filePath: string) {
   try {
     const command = new HeadObjectCommand({ Bucket: process.env.S3_BUCKET_NAME!, Key: filePath });

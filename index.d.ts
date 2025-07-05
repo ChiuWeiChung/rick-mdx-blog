@@ -32,6 +32,7 @@ declare module '@tanstack/react-query' {
       invalidateQueryKeys?: QueryKey;
       successMessage?: ToastMessage;
       errorMessage?: ToastMessage;
+      shouldRefresh?: boolean;
     };
   }
 }

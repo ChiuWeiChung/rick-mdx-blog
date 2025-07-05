@@ -29,7 +29,7 @@ export const checkCategoryExist = async (name: string, client?: PoolClient) => {
 };
 
 /** 新增分類 */
-export const createCategory = async (name: string, client?: PoolClient) => {
+export const findOrCreateCategory = async (name: string, client?: PoolClient) => {
   try {
     const category = await checkCategoryExist(name, client);
     if (category) return category;

@@ -23,25 +23,15 @@ const columns = [
     header: '操作',
     enableSorting: false,
     cell: ({ table, row }) => {
-      const { onModalOpen, onDataDelete } = table.options.meta ?? {};
-
-      const dataEditHandler = () => {
-        onModalOpen?.(row.original);
-      };
+      const { onModalOpen } = table.options.meta ?? {};
 
       const dataDeleteHandler = () => {
-        onDataDelete?.(row.original);
+        onModalOpen?.(row.original);
       };
 
       return (
         <div className="flex gap-2">
-          <Button
-            size="icon"
-            variant="outline"
-            className="h-8 w-8 justify-center text-neutral-800"
-            onClick={dataEditHandler}
-            asChild
-          >
+          <Button size="icon" variant="outline" className="h-8 w-8 justify-center text-neutral-800">
             <Link href={`/admin/notes/editor?noteId=${row.original.id}`}>
               <EditIcon />
             </Link>
@@ -68,17 +58,11 @@ const columns = [
     header: '顯示',
     cell: ({ table, row }) => {
       const { onDataEdit } = table.options.meta ?? {};
-      const dataToggleHandler = (checked: boolean) => {
-        const newStore = { ...row.original, visible: checked };
-        onDataEdit?.(newStore);
+      const onCheckedChange = (checked: boolean) => {
+        onDataEdit?.({ ...row.original, visible: checked });
       };
 
-      return (
-        <Switch
-          checked={row.original.visible}
-          onCheckedChange={dataToggleHandler}
-        />
-      );
+      return <Switch checked={row.original.visible} onCheckedChange={onCheckedChange} />;
     },
     size: 150,
   }),
@@ -110,7 +94,7 @@ const columns = [
     header: '建立時間',
     cell: ({ getValue }) => {
       const value = getValue();
-      return format(value, 'yyyy/MM/dd HH:mm');
+      return format(value, 'yy/MM/dd HH:mm');
     },
     size: 150,
   }),
@@ -118,7 +102,7 @@ const columns = [
     header: '更新時間',
     cell: ({ getValue }) => {
       const value = getValue();
-      return format(value, 'yyyy/MM/dd HH:mm');
+      return format(value, 'yy/MM/dd HH:mm');
     },
     size: 150,
   }),

@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation';
 import { getQueryClient } from './utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
 import { toast } from 'sonner';
+import SpinnerLoader from '../spinner-loader';
 
 export default function Providers({ children }: { children: ReactNode }) {
   const { openAlertModal } = useAlertModal();
@@ -53,7 +54,7 @@ export default function Providers({ children }: { children: ReactNode }) {
     mutation: Mutation<unknown, unknown>
   ) => {
     // get meta from mutation
-    const { invalidateQueryKeys, successMessage } = mutation.options.meta ?? {};
+    const { invalidateQueryKeys, successMessage, shouldRefresh } = mutation.options.meta ?? {};
 
     if (invalidateQueryKeys) {
       void queryClient.invalidateQueries({ queryKey: invalidateQueryKeys });
@@ -61,6 +62,10 @@ export default function Providers({ children }: { children: ReactNode }) {
 
     if (successMessage) {
       toast.success(successMessage.title, { description: successMessage.description });
+    }
+
+    if (shouldRefresh) {
+      router.refresh();
     }
   };
 

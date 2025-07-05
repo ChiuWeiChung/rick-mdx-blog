@@ -58,7 +58,7 @@ const createNoteSchema = noteSchema
       });
     }
   });
-type CreateNote = z.infer<typeof createNoteSchema>;
+type CreateNoteRequest = z.infer<typeof createNoteSchema>;
 const createNoteSchemaKeys = createNoteSchema.keyof().enum;
 const defaultCreateNoteValues = getDefaultValues(createNoteSchema);
 
@@ -133,15 +133,24 @@ const coerceQueryNoteSchema = queryNoteSchema.extend({
   order: z.enum(QueryOrder).nullish(),
 });
 
-const noteDetailSchema = noteSchema.extend({
-  noteId: z.number(),
-  title: z.string(),
-  visible: z.boolean(),
-  createdAt: z.date(),
-  category: z.string(), 
-  filePath: z.string(),
-  tags: z.array(z.string()),
+const updateNoteSchema = createNoteSchema.omit({
+  file: true,
+  manualUpload: true,
+  visible: true,
+}).extend({
+  id: z.number(),
 });
+type UpdateNoteRequest = z.infer<typeof updateNoteSchema>;
+
+const noteDetailSchema = noteSchema
+  .extend({
+    title: z.string(),
+    visible: z.boolean(),
+    createdAt: z.date(),
+    category: z.string(),
+    filePath: z.string(),
+    tags: z.array(z.string()),
+  })
 type NoteDetail = z.infer<typeof noteDetailSchema>;
 
 export {
@@ -151,10 +160,14 @@ export {
   NoteKeys,
 
   // 新增筆記
-  type CreateNote,
+  type CreateNoteRequest,
   createNoteSchema,
   createNoteSchemaKeys,
   defaultCreateNoteValues, // 預設值
+
+  // 更新筆記
+  type UpdateNoteRequest,
+  updateNoteSchema,
 
   // 搜尋筆記清單
   type QueryNote,

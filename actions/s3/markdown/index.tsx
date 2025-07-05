@@ -1,5 +1,5 @@
 'use server';
-import { GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import s3 from '@/lib/s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
@@ -44,6 +44,7 @@ const saveMarkdownFile = async (request: SaveMarkdownFileRequest) => {
   }
 };
 
+/** 取得 Markdown 檔案的 S3 資源 */
 const getMarkdownResource = async (filePath: string) => {
   const command = new GetObjectCommand({
     Bucket: process.env.S3_BUCKET_NAME!,
@@ -54,10 +55,25 @@ const getMarkdownResource = async (filePath: string) => {
   return signedUrl;
 };
 
+/** 取得 Markdown 檔案的內容 */
 const getMarkdownContent = async (resource: string) => {
   const res = await fetch(resource);
   const markdown = await res.text();
   return markdown;
 };
 
-export { saveMarkdownFile, getMarkdownResource, getMarkdownContent };
+const deleteMarkdownFile = async (filePath: string) => {
+    const command = new DeleteObjectCommand({
+      Bucket: process.env.S3_BUCKET_NAME!,
+      Key: filePath, // 例如 'markdown/test/hello.md'
+    });
+
+    try {
+      await s3.send(command);
+    } catch (error) {
+      console.error('❌ 刪除失敗:', error);
+      throw error;
+    }
+};
+
+export { saveMarkdownFile, getMarkdownResource, getMarkdownContent, deleteMarkdownFile };

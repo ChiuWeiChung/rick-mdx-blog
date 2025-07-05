@@ -35,7 +35,6 @@ import {
 import '@mdxeditor/editor/style.css';
 import AddImage from './component/image-dialog';
 
-// Only import this to the next file
 export default function InitializedMDXEditor({
 	editorRef,
 	...props
@@ -43,9 +42,6 @@ export default function InitializedMDXEditor({
 	return (
 		<MDXEditor
 			plugins={[
-				// Example Plugin Usage
-				// directivesPlugin({ directiveDescriptors: [AdmonitionDirectiveDescriptor] }),
-				// insert block type plugin
 				frontmatterPlugin(),
 				headingsPlugin(),
 				listsPlugin(),
@@ -61,6 +57,8 @@ export default function InitializedMDXEditor({
 					codeBlockLanguages: {
 						js: 'JavaScript',
 						javascript: 'JavaScript',
+						jsx: 'JavaScript',
+						tsx: 'TypeScript',
 						ts: 'TypeScript',
 						typescript: 'TypeScript',
 						css: 'CSS',
@@ -87,7 +85,7 @@ export default function InitializedMDXEditor({
 					// },
 				}),
 				tablePlugin(),
-				markdownShortcutPlugin(), // 需要在最底下，以支援上述的 plugin shortcut
+				markdownShortcutPlugin(), // 需要在最底下，才可支援上述的 plugin shortcut
 				diffSourcePlugin({ diffMarkdown: props.markdown, viewMode: 'rich-text' }),
 				toolbarPlugin({
 					toolbarClassName: 'my-classname',

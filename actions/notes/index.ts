@@ -1,16 +1,17 @@
 'use server';
 import pool from '@/lib/db';
-import { CreateNote, Note, NoteDetail, QueryNote } from './types';
+import { CreateNoteRequest, Note, NoteDetail, QueryNote, UpdateNoteRequest } from './types';
 import { toCamelCase } from '@/utils/format-utils';
 import { auth } from '@/auth';
 import { getUser } from '../users';
-import { createCategory } from '../categories';
-import { createTags } from '../tags';
-import { saveMarkdownFile } from '../s3/markdown';
+import { findOrCreateCategory } from '../categories';
+import { findOrCreateTags } from '../tags';
+import { saveMarkdownFile, deleteMarkdownFile } from '../s3/markdown';
 import { checkFileExists } from '../s3/image';
 import { createNoteTags } from '../note-tags';
 import { NoteQuerySort } from '@/enums/query';
 
+/** 查詢筆記列表 */
 export const queryNoteList = async (request: QueryNote) => {
   const {
     title,
@@ -112,7 +113,6 @@ export const queryNoteList = async (request: QueryNote) => {
   );
   const totalCount = Number(countResult.rows[0].count);
 
-  
   let sortClause = 'ORDER BY posts.created_at DESC'; // 預設排序
   if (sort && Object.values(NoteQuerySort).includes(sort)) {
     const direction = order?.toUpperCase() === 'ASC' ? 'ASC' : 'DESC';
@@ -177,10 +177,9 @@ export const queryNoteList = async (request: QueryNote) => {
   };
 };
 
-export const createNote = async (note: CreateNote) => {
+/** 新增筆記 */
+export const createNote = async (note: CreateNoteRequest) => {
   const { title, content, file, category, tags, visible, fileName, manualUpload } = note;
-
-  // 獲取數據庫客戶端連接
   const client = await pool.connect();
 
   try {
@@ -188,7 +187,6 @@ export const createNote = async (note: CreateNote) => {
     await client.query('BEGIN');
 
     const session = await auth();
-
     if (!session?.user || !session.user.email || !session.provider) {
       throw new Error('Unauthorized');
     }
@@ -199,33 +197,22 @@ export const createNote = async (note: CreateNote) => {
     } = session;
 
     const user = await getUser({ provider, email }, client);
-
-    if (!user) {
-      throw new Error('User not found');
-    }
+    if (!user) throw new Error('User not found');
 
     // 如果 category 存在，則取得 category_id，若無則新增 category 並取得 category_id
-    const createdCategory = await createCategory(category, client);
-    if (!createdCategory) {
-      throw new Error('Category not found');
-    }
+    const selectedCategory = await findOrCreateCategory(category, client);
+    if (!selectedCategory) throw new Error('Category not found');
 
     // 如果 tags 存在，則取得 tag_id，若無則新增 tag 並取得 tag_id
-    const createdTags = await createTags(tags, client);
-    if (!createdTags) {
-      throw new Error('Tags not found');
-    }
-
-    let filePath = '';
+    const selectedTags = await findOrCreateTags(tags, client);
+    if (!selectedTags) throw new Error('Tags not found');
 
     // 如果是上傳檔案，則上傳檔案
+    let filePath = '';
     const saveRequest =
       file && manualUpload ? { file, category, fileName } : { content, category, fileName };
     filePath = await saveMarkdownFile(saveRequest);
-
-    if (!filePath) {
-      throw new Error('Failed to save markdown file');
-    }
+    if (!filePath) throw new Error('Failed to save markdown file');
 
     // 取得 category 對應的封面
     const isCoverExist = await checkFileExists(`${category}/card.png`);
@@ -234,21 +221,19 @@ export const createNote = async (note: CreateNote) => {
     // 新增 post
     const { rows } = await client.query(
       'INSERT INTO posts (title, user_id, visible, created_at, updated_at, category_id, file_path, cover_path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-      [title, user.id, visible, new Date(), new Date(), createdCategory.id, filePath, coverPath]
+      [title, user.id, visible, new Date(), new Date(), selectedCategory.id, filePath, coverPath]
     );
-
     const noteId = toCamelCase<Note>(rows)[0].id;
 
     // 新增 tags 的關聯，以及 post_tags 的關聯
     await createNoteTags(
       noteId,
-      createdTags.map(tag => tag.id),
+      selectedTags.map(tag => tag.id),
       client
     );
 
     // ====================== Commit Transaction ======================
     await client.query('COMMIT');
-
     return toCamelCase<Note>(rows)[0];
   } catch (error) {
     // ====================== Rollback Transaction ======================
@@ -261,11 +246,149 @@ export const createNote = async (note: CreateNote) => {
   }
 };
 
+/** 更新筆記 */
+export const updateNote = async (note: UpdateNoteRequest) => {
+  const { id, title, content, category, tags, fileName } = note;
+  const client = await pool.connect();
 
+  try {
+    // ====================== 開始 Transaction ======================
+    await client.query('BEGIN');
+
+    const session = await auth();
+    if (!session?.user || !session.user.email || !session.provider) {
+      throw new Error('Unauthorized');
+    }
+
+    const {
+      provider,
+      user: { email },
+    } = session;
+
+    const user = await getUser({ provider, email }, client);
+    if (!user) throw new Error('User not found');
+
+    // 檢查筆記是否存在
+    const existingNoteResult = await client.query(
+      'SELECT id, user_id, file_path FROM posts WHERE id = $1',
+      [id]
+    );
+    if (existingNoteResult.rows.length === 0) throw new Error('Note not found');
+
+    // 暫時不檢查是否屬於當前使用者，因為筆記的 owner 是 admin
+    // const existingNote = existingNoteResult.rows[0];
+    // if (existingNote.user_id !== user.id) {
+    //   throw new Error('Unauthorized to update this note');
+    // }
+
+    // 如果 category 存在，則取得 category_id，若無則新增 category 並取得 category_id
+    const selectedCategory = await findOrCreateCategory(category, client);
+    if (!selectedCategory) throw new Error('Category not found');
+
+    // 如果 tags 存在，則取得 tag_id，若無則新增 tag 並取得 tag_id
+    const selectedTags = await findOrCreateTags(tags, client);
+    if (!selectedTags) throw new Error('Tags not found');
+
+    // 更新 markdown 檔案內容
+    const filePath = await saveMarkdownFile({ content, category, fileName });
+    if (!filePath) throw new Error('Failed to save markdown file');
+
+    // 取得 category 對應的封面
+    const isCoverExist = await checkFileExists(`${category}/card.png`);
+    const coverPath = isCoverExist ? `${category}/card.png` : null;
+
+    // 更新 post
+    const { rows } = await client.query(
+      'UPDATE posts SET title = $1, updated_at = $2, category_id = $3, file_path = $4, cover_path = $5 WHERE id = $6 RETURNING *',
+      [title, new Date(), selectedCategory.id, filePath, coverPath, id]
+    );
+
+    // 刪除舊的 post_tags 關聯
+    await client.query('DELETE FROM post_tags WHERE post_id = $1', [id]);
+
+    // 新增新的 post_tags 關聯
+    await createNoteTags(
+      id,
+      selectedTags.map(tag => tag.id),
+      client
+    );
+
+    // ====================== Commit Transaction ======================
+    await client.query('COMMIT');
+    return toCamelCase<Note>(rows)[0];
+  } catch (error) {
+    // ====================== Rollback Transaction ======================
+    await client.query('ROLLBACK');
+    console.error(error);
+    throw new Error('Failed to update note');
+  } finally {
+    // release client
+    client.release();
+  }
+};
+
+/** 刪除筆記 */
+export const deleteNote = async (noteId: number) => {
+  const client = await pool.connect();
+
+  try {
+    // ====================== 開始 Transaction ======================
+    await client.query('BEGIN');
+
+    // 檢查用戶認證
+    const session = await auth();
+    if (!session?.user || !session.user.email || !session.provider) {
+      throw new Error('Unauthorized');
+    }
+
+    const {
+      provider,
+      user: { email },
+    } = session;
+
+    const user = await getUser({ provider, email }, client);
+    if (!user) throw new Error('User not found');
+
+    // 獲取筆記資訊，包括檔案路徑
+    const noteResult = await client.query(
+      'SELECT id, title, file_path, user_id FROM posts WHERE id = $1',
+      [noteId]
+    );
+
+    if (noteResult.rows.length === 0) throw new Error('Note not found');
+    const note = noteResult.rows[0];
+
+    // 暫時不檢查是否屬於當前使用者，因為筆記的 owner 是 admin
+    // if (note.user_id !== user.id) {
+    //   throw new Error('Unauthorized to delete this note');
+    // }
+
+    // 刪除筆記記錄
+    await client.query('DELETE FROM posts WHERE id = $1', [noteId]);
+    // 注意：由於 post_tags 表有 ON DELETE CASCADE 約束，刪除 posts 記錄時會自動刪除相關的 post_tags 記錄
+
+    // 如果有關聯的 markdown 檔案，從 S3 刪除
+    if (note.file_path) await deleteMarkdownFile(note.file_path);
+
+    // ====================== Commit Transaction ======================
+    await client.query('COMMIT');
+    return { success: true, message: 'Note deleted successfully' };
+  } catch (error) {
+    // ====================== Rollback Transaction ======================
+    await client.query('ROLLBACK');
+    console.error('Delete note error:', error);
+    throw new Error('Failed to delete note');
+  } finally {
+    // release client
+    client.release();
+  }
+};
+
+/** 取得單一筆記的基本資訊，包含 title、visible、created_at、category、file_path、tags */
 export const getNoteInfoById = async (noteId: string) => {
   const { rows } = await pool.query(
     `
-    SELECT posts.id AS note_id, title, visible, created_at, categories.name AS category, file_path, STRING_AGG(tags.name, ', ') AS tags
+    SELECT posts.id AS id, title, visible, created_at, categories.name AS category, file_path, STRING_AGG(tags.name, ', ') AS tags
     FROM posts 
     LEFT JOIN post_tags ON post_tags.post_id = posts.id
     LEFT JOIN tags ON tags.id = post_tags.tag_id
@@ -275,14 +398,26 @@ export const getNoteInfoById = async (noteId: string) => {
     `,
     [noteId]
   );
-  
-  if(rows.length === 0) return null;
+
+  if (rows.length === 0) return null;
 
   const [camelCaseRow] = toCamelCase<Record<string, unknown>>(rows);
 
-  const rowTags = camelCaseRow.tags as string;
-  const tags = rowTags.split(', ')
-    .map(tag => tag.trim())
-    .filter(Boolean) ?? [];
+  const rowTags = camelCaseRow.tags as string | null;
+  const tags =
+    rowTags
+      ?.split(', ')
+      .map(tag => tag.trim())
+      .filter(Boolean) ?? [];
   return { ...camelCaseRow, tags } as NoteDetail;
+};
+
+/** 更新筆記的 visible 狀態 */
+export const updateNoteVisible = async (request: { noteId: number; visible: boolean }) => {
+  const { noteId, visible } = request;
+  await pool.query('UPDATE posts SET visible = $1 WHERE id = $2 RETURNING *', [
+    visible,
+    noteId,
+  ]);
+  return { success: true, message: 'Note visible updated successfully' };
 };

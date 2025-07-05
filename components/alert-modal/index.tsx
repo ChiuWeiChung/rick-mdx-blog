@@ -52,10 +52,12 @@ export default function AlertModal() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           {dialog.cancelText && (
-            <AlertDialogCancel onClick={handleCancel}>{dialog.cancelText}</AlertDialogCancel>
+            <AlertDialogCancel onClick={handleCancel} className="cursor-pointer">
+              {dialog.cancelText}
+            </AlertDialogCancel>
           )}
 
-          <AlertDialogAction onClick={handleConfirm}>
+          <AlertDialogAction onClick={handleConfirm} className="cursor-pointer">
             {dialog.confirmText ?? '確認'}
           </AlertDialogAction>
         </AlertDialogFooter>

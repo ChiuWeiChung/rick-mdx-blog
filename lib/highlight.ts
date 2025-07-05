@@ -64,7 +64,7 @@ export function highlightTextInBlock(
 			try {
 				range.surroundContents(span);
 			} catch (err) {
-				console.warn('無法高亮：', err);
+				console.warn('無法 Highlight：', err);
 			}
 		}
 	});
