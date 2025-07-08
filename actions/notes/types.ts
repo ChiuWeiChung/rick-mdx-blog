@@ -2,7 +2,7 @@ import { NoteQuerySort, QueryOrder } from '@/enums/query';
 import { getDefaultValues } from '@/utils/form-utils';
 import { z } from 'zod/v4';
 
-// note schema
+/** 筆記的 response schema */
 const noteSchema = z.object({
   id: z.number(),
   title: z.string().min(1, '請輸入文章標題'),
@@ -15,10 +15,14 @@ const noteSchema = z.object({
   updatedAt: z.date(),
   tags: z.array(z.string(), '請提供標籤').min(1, '請選擇標籤'),
 });
+
+/** 筆記的 response type */
 type Note = z.infer<typeof noteSchema>;
+
+/** 筆記的 key */
 const NoteKeys = noteSchema.keyof().enum;
 
-// create note schema
+/** 新增筆記的 request schema */
 const createNoteSchema = noteSchema
   .omit({
     id: true,
@@ -58,11 +62,17 @@ const createNoteSchema = noteSchema
       });
     }
   });
+
+/** 新增筆記的 request type */
 type CreateNoteRequest = z.infer<typeof createNoteSchema>;
+
+/** 新增筆記的 request schema 的 key */
 const createNoteSchemaKeys = createNoteSchema.keyof().enum;
+
+/** 新增筆記的 request schema 的預設值 */
 const defaultCreateNoteValues = getDefaultValues(createNoteSchema);
 
-// query note schema
+/** 搜尋筆記的 request schema */
 const queryNoteSchema = z
   .object({
     title: z.string().default(''),
@@ -104,9 +114,17 @@ const queryNoteSchema = z
       });
     }
   });
+
+/** 搜尋筆記的 request type */
 type QueryNote = z.infer<typeof queryNoteSchema>;
+
+/** 搜尋筆訊的 request schema 的 key */
 const queryNoteKeys = queryNoteSchema.keyof().enum;
+
+/** 搜尋筆訊的 request schema 的預設值 */
 const defaultQueryNoteValues = getDefaultValues(queryNoteSchema);
+
+/** 搜尋筆訊的 request schema 的 coerce */
 const coerceQueryNoteSchema = queryNoteSchema.extend({
   page: z.coerce.number().default(1),
   limit: z.coerce.number().default(10),
@@ -133,6 +151,7 @@ const coerceQueryNoteSchema = queryNoteSchema.extend({
   order: z.enum(QueryOrder).nullish(),
 });
 
+/** 更新筆訊的 request schema */
 const updateNoteSchema = createNoteSchema.omit({
   file: true,
   manualUpload: true,
@@ -140,8 +159,11 @@ const updateNoteSchema = createNoteSchema.omit({
 }).extend({
   id: z.number(),
 });
+
+/** 更新筆訊的 request type */
 type UpdateNoteRequest = z.infer<typeof updateNoteSchema>;
 
+/** 筆訊的詳細資訊的 schema */
 const noteDetailSchema = noteSchema
   .extend({
     title: z.string(),
@@ -151,6 +173,8 @@ const noteDetailSchema = noteSchema
     filePath: z.string(),
     tags: z.array(z.string()),
   })
+
+/** 筆訊的詳細資訊的 type */
 type NoteDetail = z.infer<typeof noteDetailSchema>;
 
 export {

@@ -9,14 +9,9 @@ import {
 } from './types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import SmartForm from '@/components/smart-form';
-import InputField from '@/components/form-fields/input-field';
 import { Button } from '@/components/ui/button';
-import SingleSelectField from '@/components/form-fields/single-select-field';
-import MultiSelectField from '@/components/form-fields/multi-select-field';
-import SwitchField from '@/components/form-fields/switch-field';
-import FileUploadField from '@/components/form-fields/file-upload-field';
 import { useAlertModal } from '@/hooks/use-alert-modal';
-import DatePickerField from '@/components/form-fields/date-picker-field';
+import { InputField, SingleSelectField, MultiSelectField, SwitchField, FileUploadField, DatePickerField } from '@/components/form-fields';
 
 const options = [
   { label: 'Option 1', value: 'option1' },

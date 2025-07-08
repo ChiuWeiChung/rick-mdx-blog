@@ -1,4 +1,4 @@
-import { getCategories } from '@/actions/categories';
+import { getAllCategories } from '@/actions/categories';
 import { getTags } from '@/actions/tags';
 import { Option } from '@/types/global';
 import NoteEditorForm from '@/features/admin/notes/editor-form';
@@ -34,7 +34,7 @@ const NoteEditorPage = async ({ searchParams }: NoteEditorPageProps) => {
       };
     }
   }
-  const categories = await getCategories();
+  const categories = await getAllCategories();
   const tags = await getTags();
 
   const categoryOptions: Option<string>[] = categories.map(({ name }) => ({

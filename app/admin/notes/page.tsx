@@ -1,4 +1,4 @@
-import { getCategories } from '@/actions/categories';
+import { getAllCategories } from '@/actions/categories';
 import { queryNoteList } from '@/actions/notes';
 import { coerceQueryNoteSchema, defaultQueryNoteValues, QueryNote } from '@/actions/notes/types';
 import { getTags } from '@/actions/tags';
@@ -15,7 +15,7 @@ interface NotePageProps {
 }
 
 const NotesPage = async (props: NotePageProps) => {
-  const categories = await getCategories();
+  const categories = await getAllCategories();
   const tags = await getTags();
   const categoryOptions = toOption(categories);
   const tagOptions = toOption(tags);

@@ -20,7 +20,7 @@ interface MultiSelectFieldProps<TFieldValues extends FieldValues = FieldValues>
   description?: ReactNode;
 }
 
-const MultiSelectField = (props: MultiSelectFieldProps) => {
+export const MultiSelectField = (props: MultiSelectFieldProps) => {
   const { control, name, label, description, className, ...multiSelectProps } = props;
   return (
     <FormField
@@ -45,5 +45,3 @@ const MultiSelectField = (props: MultiSelectFieldProps) => {
     />
   );
 };
-
-export default MultiSelectField;

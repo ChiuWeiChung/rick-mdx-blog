@@ -5,15 +5,12 @@ import {
   queryNoteKeys,
   defaultQueryNoteValues,
 } from '@/actions/notes/types';
-import InputField from '@/components/form-fields/input-field';
-import MultiSelectField from '@/components/form-fields/multi-select-field';
-import SingleSelectField from '@/components/form-fields/single-select-field';
+import { InputField, MultiSelectField, SingleSelectField, DatePickerField } from '@/components/form-fields';
 import SmartForm from '@/components/smart-form';
 import { Button } from '@/components/ui/button';
 import { Option } from '@/types/global';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import DatePickerField from '@/components/form-fields/date-picker-field';
 import { MinusIcon } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import {

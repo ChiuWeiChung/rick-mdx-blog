@@ -13,7 +13,7 @@ interface FileUploadFieldProps<TFieldValues extends FieldValues = FieldValues>
 	description?: ReactNode;
 }
 
-const FileUploadField = (props: FileUploadFieldProps) => {
+export const FileUploadField = (props: FileUploadFieldProps) => {
 	const { control, name, description, className, ...inputProps } = props;
 	return (
 		<FormField
@@ -37,5 +37,3 @@ const FileUploadField = (props: FileUploadFieldProps) => {
 		/>
 	);
 };
-
-export default FileUploadField;

@@ -20,7 +20,7 @@ interface SwitchFieldProps<TFieldValues extends FieldValues = FieldValues>
 	description?: ReactNode;
 }
 
-const SwitchField = (props: SwitchFieldProps) => {
+export const SwitchField = (props: SwitchFieldProps) => {
 	const { control, name, label, description, className, ...switchProps } = props;
 	return (
 		<FormField
@@ -39,5 +39,3 @@ const SwitchField = (props: SwitchFieldProps) => {
 		/>
 	);
 };
-
-export default SwitchField;

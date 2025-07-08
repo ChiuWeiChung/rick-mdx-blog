@@ -19,7 +19,7 @@ interface InputFieldProps<TFieldValues extends FieldValues = FieldValues>
 	description?: ReactNode;
 }
 
-const InputField = (props: InputFieldProps) => {
+export const InputField = (props: InputFieldProps) => {
 	const { control, name, label, placeholder, description, className, ...inputProps } = props;
 	return (
 		<FormField
@@ -38,5 +38,3 @@ const InputField = (props: InputFieldProps) => {
 		/>
 	);
 };
-
-export default InputField;

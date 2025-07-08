@@ -20,7 +20,7 @@ interface DatePickerFieldProps<TFieldValues extends FieldValues = FieldValues>
   description?: ReactNode;
 }
 
-const DatePickerField = (props: DatePickerFieldProps) => {
+export const DatePickerField = (props: DatePickerFieldProps) => {
   const { control, name, label, description, className, ...datePickerProps } = props;
   return (
     <FormField
@@ -56,4 +56,4 @@ const DatePickerField = (props: DatePickerFieldProps) => {
   );
 };
 
-export default DatePickerField;
+

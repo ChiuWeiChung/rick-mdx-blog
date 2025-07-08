@@ -19,7 +19,7 @@ interface SingleSelectFieldProps<TFieldValues extends FieldValues = FieldValues>
 	description?: ReactNode;
 }
 
-const SingleSelectField = (props: SingleSelectFieldProps) => {
+export const SingleSelectField = (props: SingleSelectFieldProps) => {
 	const { control, name, label, description, className, ...singleSelectProps } = props;
 	return (
 		<FormField
@@ -40,5 +40,3 @@ const SingleSelectField = (props: SingleSelectFieldProps) => {
 		/>
 	);
 };
-
-export default SingleSelectField;

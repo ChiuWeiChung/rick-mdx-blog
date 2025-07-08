@@ -1,10 +1,11 @@
 export enum NoteQuerySort {
   CREATED_AT = 'createdAt',
   UPDATED_AT = 'updatedAt',
-  // TITLE = 'title',
-  // CATEGORY = 'category',
-  // TAGS = 'tags',
-  // VISIBLE = 'visible',
+}
+
+export enum CategoryQuerySort {
+  POST_COUNT = 'postCount',
+  NAME = 'name',
 }
 
 export enum QueryOrder {

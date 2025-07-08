@@ -6,15 +6,17 @@ import {
   CreateNoteRequest,
 } from '@/actions/notes/types';
 import { Option } from '@/types/global';
-import FileUploadField from '@/components/form-fields/file-upload-field';
-import InputField from '@/components/form-fields/input-field';
-import MultiSelectField from '@/components/form-fields/multi-select-field';
-import SingleSelectField from '@/components/form-fields/single-select-field';
+import {
+  FileUploadField,
+  InputField,
+  MultiSelectField,
+  SingleSelectField,
+  SwitchField,
+} from '@/components/form-fields';
 import SmartForm from '@/components/smart-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useState } from 'react';
 import { FieldErrors, useForm } from 'react-hook-form';
-import SwitchField from '@/components/form-fields/switch-field';
 import { Button } from '@/components/ui/button';
 import { createNote, updateNote } from '@/actions/notes';
 import DialogContainer from '@/components/dialog-container';
