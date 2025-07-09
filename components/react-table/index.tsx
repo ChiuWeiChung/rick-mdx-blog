@@ -89,7 +89,7 @@ function ReactTable<T>({
     initialState: { pagination: { pageSize: currentLimit } }, // 預設 pageSize
     manualPagination,
     manualSorting,
-    defaultColumn: { size: 120 }, // 預設 column 最大寬度為 140px
+    defaultColumn: { size: 120, enableSorting: false }, // 預設 column 最大寬度為 140px
     meta,
     onColumnVisibilityChange: setColumnVisibility,
     enableRowSelection: Boolean(rowSelection),

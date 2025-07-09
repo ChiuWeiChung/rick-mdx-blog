@@ -25,6 +25,7 @@ export interface MultiSelectProps<T extends string | number = string | number> {
   value?: T[];
   onChange: (value: T[]) => void;
   creatable?: boolean;
+  disabled?: boolean;
 }
 
 const matches = (str: string, query: string, exact: boolean = false) =>
@@ -38,6 +39,7 @@ export function MultiSelect<T extends string | number = string | number>({
   placeholder,
   onChange,
   creatable = false,
+  disabled = false,
 }: MultiSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [currentOptions, setCurrentOptions] = useState(options);
@@ -68,6 +70,7 @@ export function MultiSelect<T extends string | number = string | number>({
           variant="outline"
           role="combobox"
           className={cn('h-9 justify-between', !selectedOptions.length && 'text-muted-foreground')}
+          disabled={disabled}
         >
           <div className="flex flex-wrap gap-1">
             {selectedOptions.length > 0 ? (

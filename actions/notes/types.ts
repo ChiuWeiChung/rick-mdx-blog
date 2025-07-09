@@ -7,7 +7,6 @@ const noteSchema = z.object({
   id: z.number(),
   title: z.string().min(1, '請輸入文章標題'),
   filePath: z.string(),
-  coverPath: z.string(),
   username: z.string(),
   category: z.string().min(1, '請選擇分類'),
   visible: z.boolean(),
@@ -29,7 +28,6 @@ const createNoteSchema = noteSchema
     createdAt: true,
     updatedAt: true,
     filePath: true,
-    coverPath: true,
     username: true,
   })
   .extend({

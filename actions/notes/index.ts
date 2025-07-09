@@ -7,7 +7,6 @@ import { getUser } from '../users';
 import { findOrCreateCategory } from '../categories';
 import { findOrCreateTags } from '../tags';
 import { saveMarkdownFile, deleteMarkdownFile } from '../s3/markdown';
-import { checkFileExists } from '../s3/image';
 import { createNoteTags } from '../note-tags';
 import { NoteQuerySort } from '@/enums/query';
 
@@ -140,7 +139,6 @@ export const queryNoteList = async (request: QueryNote) => {
       categories.name AS category,
       STRING_AGG(tags.name, ', ') AS tags,
       posts.file_path,
-      posts.cover_path,
       posts.created_at,
       posts.updated_at
     FROM
@@ -214,14 +212,10 @@ export const createNote = async (note: CreateNoteRequest) => {
     filePath = await saveMarkdownFile(saveRequest);
     if (!filePath) throw new Error('Failed to save markdown file');
 
-    // 取得 category 對應的封面
-    const isCoverExist = await checkFileExists(`${category}/card.png`);
-    const coverPath = isCoverExist ? `${category}/card.png` : null;
-
     // 新增 post
     const { rows } = await client.query(
-      'INSERT INTO posts (title, user_id, visible, created_at, updated_at, category_id, file_path, cover_path) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *',
-      [title, user.id, visible, new Date(), new Date(), selectedCategory.id, filePath, coverPath]
+      'INSERT INTO posts (title, user_id, visible, created_at, updated_at, category_id, file_path) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [title, user.id, visible, new Date(), new Date(), selectedCategory.id, filePath]
     );
     const noteId = toCamelCase<Note>(rows)[0].id;
 
@@ -293,14 +287,11 @@ export const updateNote = async (note: UpdateNoteRequest) => {
     const filePath = await saveMarkdownFile({ content, category, fileName });
     if (!filePath) throw new Error('Failed to save markdown file');
 
-    // 取得 category 對應的封面
-    const isCoverExist = await checkFileExists(`${category}/card.png`);
-    const coverPath = isCoverExist ? `${category}/card.png` : null;
 
     // 更新 post
     await client.query(
-      'UPDATE posts SET title = $1, updated_at = $2, category_id = $3, file_path = $4, cover_path = $5 WHERE id = $6 RETURNING *',
-      [title, new Date(), selectedCategory.id, filePath, coverPath, id]
+      'UPDATE posts SET title = $1, updated_at = $2, category_id = $3, file_path = $4 WHERE id = $5 RETURNING *',
+      [title, new Date(), selectedCategory.id, filePath, id]
     );
 
     // 刪除舊的 post_tags 關聯

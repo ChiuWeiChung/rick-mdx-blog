@@ -21,7 +21,6 @@ const columns = [
   display({
     id: TableId.Editor,
     header: '操作',
-    enableSorting: false,
     cell: ({ table, row }) => {
       const { onModalOpen } = table.options.meta ?? {};
 
@@ -51,7 +50,6 @@ const columns = [
   accessor(NoteKeys.title, {
     header: '文章標題',
     size: 200,
-    enableSorting: false,
   }),
   display({
     id: NoteKeys.visible,
@@ -88,7 +86,6 @@ const columns = [
       );
     },
     size: 250,
-    enableSorting: false,
   }),
   accessor(NoteKeys.createdAt, {
     header: '建立時間',
@@ -105,16 +102,11 @@ const columns = [
       return format(value, 'yy/MM/dd HH:mm');
     },
     size: 150,
+    enableSorting: true,
   }),
   accessor(NoteKeys.filePath, {
     header: '檔案路徑',
     size: 250,
-    enableSorting: false,
-  }),
-  accessor(NoteKeys.coverPath, {
-    header: '封面路徑',
-    size: 250,
-    enableSorting: false,
   }),
 ];
 

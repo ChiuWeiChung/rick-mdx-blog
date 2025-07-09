@@ -23,6 +23,7 @@ export interface SingleSelectProps<
   onChange: (value?: T|null) => void;
   creatable?: boolean;
   clearable?: boolean;
+  disabled?: boolean;
 }
 
 const matches = (str: string, query: string, exact: boolean = false) =>
@@ -37,6 +38,7 @@ export function SingleSelect<T extends string | number = string | number>({
   onChange,
   creatable = false,
   clearable = true,
+  disabled = false,
 }: SingleSelectProps<T>) {
   const [open, setOpen] = useState(false);
   const [currentOptions, setCurrentOptions] = useState(options);
@@ -46,25 +48,26 @@ export function SingleSelect<T extends string | number = string | number>({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className="relative w-full">
-          <Button
-            variant="outline"
-            role="combobox"
-            className={cn('w-full justify-between', !selectedLabel && 'text-muted-foreground')}
-          >
-            {selectedLabel ?? placeholder ?? ''}
-            <ChevronsUpDown className="opacity-50" />
-          </Button>
+        <Button
+          variant="outline"
+          role="combobox"
+          className={cn('w-full justify-between', !selectedLabel && 'text-muted-foreground')}
+          disabled={disabled}
+        >
+          {selectedLabel ?? placeholder ?? ''}
           {selectedLabel && clearable && (
-            <X
-              className="text-card-foreground hover:text-destructive absolute top-1/2 right-8 ml-auto h-4 w-4 -translate-y-1/2"
+            <span
               onClick={e => {
-                e.stopPropagation();
-                onChange(null);
+                e.stopPropagation(); // 不要讓外層 Button 展開下拉
+                onChange(null); // 清空選項
               }}
-            />
+              className="hover:text-destructive ml-auto cursor-pointer p-1"
+            >
+              <X className="pointer-events-auto h-4 w-4" /> {/* 2) 或直接開啟 pointer-events */}
+            </span>
           )}
-        </div>
+          <ChevronsUpDown className="opacity-50" />
+        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
         <Command>

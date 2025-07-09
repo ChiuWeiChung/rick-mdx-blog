@@ -18,7 +18,6 @@ const columns = [
   display({
     id: TableId.Editor,
     header: '操作',
-    enableSorting: false,
     cell: ({ table, row }) => {
       const { onModalOpen } = table.options.meta ?? {};
 
@@ -48,7 +47,6 @@ const columns = [
   accessor(tableCategorySchemaKeys.name, {
     header: '類別名稱',
     size: 200,
-    enableSorting: false,
   }),
   accessor(tableCategorySchemaKeys.coverPath, {
     header: '封面路徑',
