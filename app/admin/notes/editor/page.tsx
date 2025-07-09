@@ -1,6 +1,5 @@
-import { getAllCategories } from '@/actions/categories';
-import { getTags } from '@/actions/tags';
-import { Option } from '@/types/global';
+import { getCategoryOptions } from '@/actions/categories';
+import { getTagOptions } from '@/actions/tags';
 import NoteEditorForm from '@/features/admin/notes/editor-form';
 import React from 'react';
 import { getNoteInfoById } from '@/actions/notes';
@@ -34,17 +33,9 @@ const NoteEditorPage = async ({ searchParams }: NoteEditorPageProps) => {
       };
     }
   }
-  const categories = await getAllCategories();
-  const tags = await getTags();
 
-  const categoryOptions: Option<string>[] = categories.map(({ name }) => ({
-    label: name,
-    value: name,
-  }));
-  const tagOptions: Option<string>[] = tags.map(({ name }) => ({
-    label: name,
-    value: name,
-  }));
+  const categoryOptions = await getCategoryOptions();
+  const tagOptions = await getTagOptions();
 
   return (
     <NoteEditorForm

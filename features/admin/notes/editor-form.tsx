@@ -33,8 +33,8 @@ import { useAlertModal } from '@/hooks/use-alert-modal';
 
 interface NoteEditorFormProps {
   existingNote?: Partial<CreateNoteRequest> & { id: number };
-  categoryOptions: Option<string>[];
-  tagOptions: Option<string>[];
+  categoryOptions: Option<number>[];
+  tagOptions: Option<number>[];
   markdown?: string;
 }
 
@@ -52,6 +52,8 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
       ...existingNote,
     },
   });
+
+  console.log('existingNote', existingNote);
 
   const [markdown, manualUpload] = form.watch([
     createNoteSchemaKeys.content,
@@ -110,6 +112,7 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
   };
 
   const isPending = isCreatePending || isUpdatePending;
+  console.log('form errors', form.formState.errors);
 
   return (
     <>
@@ -213,7 +216,7 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
               <div className="space-y-1 text-sm text-gray-600">
                 {renderBasicInfo('文章標題', form.watch(createNoteSchemaKeys.title))}
                 {renderBasicInfo('檔案名稱', form.watch(createNoteSchemaKeys.fileName))}
-                {renderBasicInfo('分類', form.watch(createNoteSchemaKeys.category))}
+                {renderBasicInfo('分類', categoryOptions.find(option => option.value === form.watch(createNoteSchemaKeys.category))?.label || '未設定')}
                 {renderBasicInfo('標籤', form.watch(createNoteSchemaKeys.tags)?.join(', '))}
                 {renderBasicInfo(
                   '是否公開',

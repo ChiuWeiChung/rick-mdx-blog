@@ -1,6 +1,6 @@
 'use client';
 import ReactTable from '@/components/react-table';
-import columns from './table-columns';
+import columns from './data-columns';
 import {  Note, NoteKeys } from '@/actions/notes/types';
 import { TableId } from '@/enums/table';
 import { FC } from 'react';

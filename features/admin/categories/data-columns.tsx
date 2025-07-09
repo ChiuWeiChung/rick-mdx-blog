@@ -1,7 +1,7 @@
 'use client';
 import { createColumnHelper } from '@tanstack/react-table';
 import { TableId } from '@/enums/table';
-import { TableCategory, tableCategorySchemaKeys } from '@/actions/categories/types';
+import { TableCategory, tableCategoryKeys } from '@/actions/categories/types';
 import { Button } from '@/components/ui/button';
 import { EditIcon, TrashIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -27,11 +27,15 @@ const columns = [
 
       return (
         <div className="flex gap-2">
-          <Button size="icon" variant="outline" className="h-8 w-8 justify-center text-neutral-800">
-            <Link href={`/admin/notes/editor?noteId=${row.original.id}`}>
+          <Link href={`/admin/categories/editor?categoryId=${row.original.id}`}>
+            <Button
+              size="icon"
+              variant="outline"
+              className="h-8 w-8 justify-center text-neutral-800"
+            >
               <EditIcon />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
           <Button
             variant="outline"
             size="icon"
@@ -44,19 +48,19 @@ const columns = [
       );
     },
   }),
-  accessor(tableCategorySchemaKeys.name, {
+  accessor(tableCategoryKeys.name, {
     header: '類別名稱',
     size: 200,
   }),
-  accessor(tableCategorySchemaKeys.coverPath, {
+  accessor(tableCategoryKeys.coverPath, {
     header: '封面路徑',
     size: 250,
   }),
-  accessor(tableCategorySchemaKeys.iconPath, {
+  accessor(tableCategoryKeys.iconPath, {
     header: '圖示路徑',
     size: 250,
   }),
-  accessor(tableCategorySchemaKeys.postCount, {
+  accessor(tableCategoryKeys.postCount, {
     header: '文章數量',
     enableSorting: true,
   }),

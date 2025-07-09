@@ -11,7 +11,7 @@ interface DialogContainerProps {
   description: string;
   children: React.ReactNode;
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export default function DialogContainer({

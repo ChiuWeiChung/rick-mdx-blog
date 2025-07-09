@@ -34,6 +34,8 @@ const createNoteSchema = noteSchema
     file: z.instanceof(File).nullable(),
     content: z.string(),
     manualUpload: z.boolean(),
+    category: z.union([z.string().min(1, '請選擇分類'), z.number('請選擇分類')]),
+    tags: z.array(z.union([z.string().min(1, '請選擇標籤'), z.number('請選擇標籤')])),
     fileName: z
       .string()
       .min(1, '請提供檔案名稱')
@@ -169,7 +171,7 @@ const noteDetailSchema = noteSchema
     createdAt: z.date(),
     category: z.string(),
     filePath: z.string(),
-    tags: z.array(z.string()),
+    tags: z.array(z.number()),
   })
 
 /** 筆訊的詳細資訊的 type */

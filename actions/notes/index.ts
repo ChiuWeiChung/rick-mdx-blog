@@ -208,7 +208,9 @@ export const createNote = async (note: CreateNoteRequest) => {
     // 如果是上傳檔案，則上傳檔案
     let filePath = '';
     const saveRequest =
-      file && manualUpload ? { file, category, fileName } : { content, category, fileName };
+      file && manualUpload
+        ? { file, category: selectedCategory.name, fileName }
+        : { content, category: selectedCategory.name, fileName };
     filePath = await saveMarkdownFile(saveRequest);
     if (!filePath) throw new Error('Failed to save markdown file');
 
@@ -284,7 +286,7 @@ export const updateNote = async (note: UpdateNoteRequest) => {
     if (!selectedTags) throw new Error('Tags not found');
 
     // 更新 markdown 檔案內容
-    const filePath = await saveMarkdownFile({ content, category, fileName });
+    const filePath = await saveMarkdownFile({ content, category: selectedCategory.name, fileName });
     if (!filePath) throw new Error('Failed to save markdown file');
 
 
@@ -379,13 +381,13 @@ export const deleteNote = async (noteId: number) => {
 export const getNoteInfoById = async (noteId: string) => {
   const { rows } = await pool.query(
     `
-    SELECT posts.id AS id, title, visible, created_at, categories.name AS category, file_path, STRING_AGG(tags.name, ', ') AS tags
+    SELECT posts.id AS id, title, visible, created_at, categories.id AS category, file_path, STRING_AGG(tags.id::text, ', ') AS tags
     FROM posts 
     LEFT JOIN post_tags ON post_tags.post_id = posts.id
     LEFT JOIN tags ON tags.id = post_tags.tag_id
     LEFT JOIN categories ON categories.id = posts.category_id
     WHERE posts.id = $1
-    GROUP BY posts.id, categories.name
+    GROUP BY posts.id, categories.id
     `,
     [noteId]
   );
@@ -398,7 +400,7 @@ export const getNoteInfoById = async (noteId: string) => {
   const tags =
     rowTags
       ?.split(', ')
-      .map(tag => tag.trim())
+      .map(tag => Number(tag.trim()))
       .filter(Boolean) ?? [];
   return { ...camelCaseRow, tags } as NoteDetail;
 };

@@ -1,15 +1,20 @@
 'use server';
 import pool from '@/lib/db';
 import { toCamelCase } from '@/utils/format-utils';
-import { Category, QueryCategory, TableCategory } from './types';
+import { Category, CreateCategoryRequest, QueryCategory, TableCategory } from './types';
 import { PoolClient } from 'pg';
 import { CategoryQuerySort } from '@/enums/query';
+import { uploadImage } from '../s3/image';
 
 /** 取得所有分類 */
-export const getAllCategories = async () => {
+export const getCategoryOptions = async () => {
   try {
     const { rows } = await pool.query('SELECT * FROM categories');
-    return toCamelCase<Category>(rows);
+    const categories = toCamelCase<Category>(rows);
+    return categories.map(({ name,id }) => ({
+      label: name,
+      value: id,
+    }));
   } catch (error) {
     console.error(error);
     return [];
@@ -17,10 +22,10 @@ export const getAllCategories = async () => {
 };
 
 /** 檢查分類是否存在 */
-export const checkCategoryExist = async (name: string, client?: PoolClient) => {
+export const checkCategoryExist = async (categoryId: number, client?: PoolClient) => {
   try {
     const queryExecutor = client || pool;
-    const { rows } = await queryExecutor.query('SELECT * FROM categories WHERE name = $1', [name]);
+    const { rows } = await queryExecutor.query('SELECT * FROM categories WHERE id = $1', [categoryId]);
     if (rows.length === 0) return null;
     return toCamelCase<Category>(rows)[0];
   } catch (error) {
@@ -30,12 +35,25 @@ export const checkCategoryExist = async (name: string, client?: PoolClient) => {
 };
 
 /** 新增分類 */
-export const createCategory = async (name: string, client?: PoolClient) => {
+export const createCategory = async (
+  request: { name: string; coverFile?: File | null; iconFile?: File | null },
+  client?: PoolClient
+) => {
   try {
     const queryExecutor = client || pool;
+    const { name, coverFile, iconFile } = request;
+
+    // 上傳檔案
+    const coverPath = coverFile
+      ? await uploadImage({ file: coverFile, fileName: 'cover', folder: `categories/${name}` })
+      : null;
+    const iconPath = iconFile
+      ? await uploadImage({ file: iconFile, fileName: 'icon', folder: `categories/${name}` })
+      : null;
+
     const { rows } = await queryExecutor.query(
-      'INSERT INTO categories (name) VALUES ($1) RETURNING *',
-      [name]
+      'INSERT INTO categories (name, cover_path, icon_path) VALUES ($1, $2, $3) RETURNING *',
+      [name, coverPath, iconPath]
     );
     return toCamelCase<Category>(rows)[0];
   } catch (error) {
@@ -44,24 +62,110 @@ export const createCategory = async (name: string, client?: PoolClient) => {
   }
 };
 
+/** 更新分類 */
+export const updateCategory = async (
+  request: CreateCategoryRequest & { id: number },
+  client?: PoolClient
+) => {
+  try {
+    const queryExecutor = client || pool;
+    const { id, name, coverFile, iconFile } = request;
+
+    const updates: string[] = ['name = $1'];
+    const values: (string | number)[] = [name];
+    let paramIndex = 2;
+
+    // 處理封面圖片
+    if (coverFile) {
+      const coverPath = await uploadImage({
+        file: coverFile,
+        fileName: 'cover',
+        folder: `categories/${name}`,
+      });
+      updates.push(`cover_path = $${paramIndex++}`);
+      values.push(coverPath);
+    }
+
+    // 處理圖示圖片
+    if (iconFile) {
+      const iconPath = await uploadImage({
+        file: iconFile,
+        fileName: 'icon',
+        folder: `categories/${name}`,
+      });
+      updates.push(`icon_path = $${paramIndex++}`);
+      values.push(iconPath);
+    }
+
+    // id 為最後一個參數
+    values.push(id);
+
+    const sql = `
+      UPDATE categories
+      SET ${updates.join(', ')}
+      WHERE id = $${paramIndex}
+      RETURNING *
+    `;
+
+    const { rows } = await queryExecutor.query(sql, values);
+    return toCamelCase<Category>(rows)[0];
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+
 /** 檢查分類是否存在，不存在則新增，存在則返回該分類 */
 export const findOrCreateCategory = async (
-  name: string,
+  idOrName: string|number,
   client?: PoolClient,
   throwErrorIfExists?: boolean
 ) => {
   try {
-    const existingCategory = await checkCategoryExist(name, client);
-    if (existingCategory) {
-      if (throwErrorIfExists) throw new Error('分類已存在');
-      return existingCategory;
+    if(typeof idOrName === 'number') {
+      const existingCategory = await checkCategoryExist(idOrName, client);
+      if (existingCategory) {
+        if (throwErrorIfExists) throw new Error('分類已存在');
+        return existingCategory;
+      }
+    } 
+
+    if(typeof idOrName === 'string') {
+      const newCategory = await createCategory({ name: idOrName }, client);
+      if(!newCategory) throw new Error('新增分類失敗');
+      return newCategory;
     }
 
-    const newCategory = await createCategory(name, client);
-    return newCategory;
+    throw new Error('分類不存在');
+
   } catch (error) {
     console.error(error);
     return null;
+  }
+};
+
+/** 新增分類 (支援上傳檔案) */
+export const createCategoryWithFile = async (request: CreateCategoryRequest) => {
+  try {
+    const category = await createCategory(request);
+    if (!category) throw new Error('Create category failed');
+    return category;
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: 'Create category failed' };
+  }
+};
+
+/** 更新分類 (支援上傳檔案) */
+export const updateCategoryWithFile = async (request: CreateCategoryRequest & { id: number }) => {
+  try {
+    const category = await updateCategory(request);
+    if (!category) throw new Error('Update category failed');
+    return category;
+  } catch (error) {
+    console.error(error);
+    return { success: false, error: 'Update category failed' };
   }
 };
 

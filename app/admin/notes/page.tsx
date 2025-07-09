@@ -1,11 +1,10 @@
-import { getAllCategories } from '@/actions/categories';
+import { getCategoryOptions } from '@/actions/categories';
 import { queryNoteList } from '@/actions/notes';
 import { coerceQueryNoteSchema, defaultQueryNoteValues, QueryNote } from '@/actions/notes/types';
-import { getTags } from '@/actions/tags';
+import { getTagOptions } from '@/actions/tags';
 import { Button } from '@/components/ui/button';
 import QuerySearchForm from '@/features/admin/notes/search-form';
-import NoteTable from '@/features/admin/notes/table';
-import { toOption } from '@/utils/format-utils';
+import NoteTable from '@/features/admin/notes/data-table';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
@@ -15,18 +14,13 @@ interface NotePageProps {
 }
 
 const NotesPage = async (props: NotePageProps) => {
-  const categories = await getAllCategories();
-  const tags = await getTags();
-  const categoryOptions = toOption(categories);
-  const tagOptions = toOption(tags);
+  const categoryOptions = await getCategoryOptions();
+  const tagOptions = await getTagOptions();
 
-  // 取得查詢參數
-  const searchParams = await props.searchParams;
-  // 解析查詢參數
-  const queryRequest = coerceQueryNoteSchema.parse(searchParams);
-  // 取得筆記列表
-  const { data, totalCount } = await queryNoteList({ ...queryRequest });
-  
+  const searchParams = await props.searchParams; // 取得查詢參數
+  const queryRequest = coerceQueryNoteSchema.parse(searchParams); // 解析查詢參數
+  const { data, totalCount } = await queryNoteList({ ...queryRequest }); // 取得筆記列表
+
   return (
     <div className="relative mx-4 flex flex-col gap-4">
       <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">筆記管理</h1>

@@ -13,7 +13,7 @@ export interface FileUploadProps extends Omit<React.ComponentProps<'input'>, 'va
   value?: File | null;
 }
 
-export function FileUpload({ value, ...props }: FileUploadProps) {
+export function FileUpload({ value, width, ...props }: FileUploadProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [image, setImage] = useState<{ src: string; width: number; height: number } | null>(null);
 
@@ -27,7 +27,17 @@ export function FileUpload({ value, ...props }: FileUploadProps) {
     }
 
     if (image) {
-      return <Image src={image.src} alt="file" width={image.width} height={image.height} />;
+      return (
+        <Image
+          src={image.src}
+          alt="file"
+          width={image.width}
+          height={image.height}
+          className="object-cover"
+          style={{ width: width || image.width }}
+        />
+      );
+      // return <Image src={image.src} alt="file" fill className="object-cover" priority />;
     }
     return <p className="text-lg font-bold text-gray-500">{value.name}</p>;
   };

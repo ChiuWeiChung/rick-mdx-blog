@@ -10,7 +10,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import {
   QueryCategory,
   queryCategorySchema,
-  queryCategorySchemaKeys,
+  queryCategoryKeys,
 } from '@/actions/categories/types';
 
 interface QuerySearchFormProps {
@@ -42,7 +42,7 @@ const QuerySearchForm = ({ defaultValues }: QuerySearchFormProps) => {
       className="flex items-end w-fit gap-2"
     >
       <InputField
-        name={queryCategorySchemaKeys.name}
+        name={queryCategoryKeys.name}
         label="類別名稱"
         placeholder="搜尋類別名稱"
       />

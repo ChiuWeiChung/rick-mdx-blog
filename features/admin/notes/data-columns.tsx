@@ -30,11 +30,15 @@ const columns = [
 
       return (
         <div className="flex gap-2">
-          <Button size="icon" variant="outline" className="h-8 w-8 justify-center text-neutral-800">
-            <Link href={`/admin/notes/editor?noteId=${row.original.id}`}>
+          <Link href={`/admin/notes/editor?noteId=${row.original.id}`}>
+            <Button
+              size="icon"
+              variant="outline"
+              className="h-8 w-8 justify-center text-neutral-800"
+            >
               <EditIcon />
-            </Link>
-          </Button>
+            </Button>
+          </Link>
           <Button
             variant="outline"
             size="icon"

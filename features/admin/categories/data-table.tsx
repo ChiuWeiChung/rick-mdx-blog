@@ -1,6 +1,6 @@
 'use client';
 import ReactTable from '@/components/react-table';
-import columns from './table-columns';
+import columns from './data-columns';
 import { TableId } from '@/enums/table';
 import { FC } from 'react';
 // import { useMutation } from '@tanstack/react-query';
@@ -57,7 +57,7 @@ const CategoryTable:FC<CategoryTableProps> = ({ data, totalCount }) => {
 
   return (
     <div>
-      <h1 className="mb-1 text-2xl font-bold">筆記列表</h1>
+      <h1 className="mb-1 text-2xl font-bold">類別列表</h1>
       <ReactTable
         data={data}
         columns={columns}

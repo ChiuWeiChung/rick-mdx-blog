@@ -3,8 +3,6 @@ import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand } from '@aws-sd
 import s3 from '@/lib/s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-// TODO 應該與 .../actions/image/index.tsx 合併 並且將 saveMarkdownFile 改名為 saveFile
-
 type SaveMarkdownFileRequest =
   | { content: string; category: string; fileName: string }
   | { file: File; category: string; fileName: string };
