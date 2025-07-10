@@ -1,5 +1,5 @@
 'use client';
-import { Fragment, useEffect, useMemo, useState, type CSSProperties } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useMemo, useState, type CSSProperties } from 'react';
 import {
   flexRender,
   getCoreRowModel,
@@ -25,10 +25,10 @@ import { Button } from '@/components/ui/button';
 import { CylinderIcon, MoveUp } from 'lucide-react';
 import { TableId } from '@/enums/table';
 import type { ReactTableProps } from './types';
-import Pagination from './pagination';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { getUpdatedSearchParams } from '@/utils/form-utils';
-import LinkPagination from './link-pagination';
+import ServerPagination from './server-pagination';
+import ClientPagination from './client-pagination';
 import { QueryOrder } from '@/enums/query';
 
 const emptyData: unknown[] = [];
@@ -56,6 +56,7 @@ function ReactTable<T>({
 }: ReactTableProps<T>) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isMounted, setIsMounted] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState(visibilityState); // TODO 從 localStorage 存取既有設定
   const [sorting, setSorting] = useState<SortingState>([]);
   const [pagination, setPagination] = useState<PaginationState>({
@@ -145,6 +146,12 @@ function ReactTable<T>({
     };
   };
 
+  const renderPagination = () => {
+    if (!data || isLoading || !showPagination) return null;
+    if (manualPagination) return <ServerPagination totalElements={totalElements} />;
+    return <ClientPagination table={table} totalElements={totalElements} />;
+  };
+
   useEffect(() => {
     if (manualSorting) {
       if (onSortingChange) onSortingChange(sortingState);
@@ -163,9 +170,19 @@ function ReactTable<T>({
     }
   }, [sortingState, onSortingChange, manualSorting, router, searchParams]);
 
+  // ref: Can't perform a React state update on a component that hasn't mounted yet #5026
+  // https://github.com/TanStack/table/issues/5026
+  useLayoutEffect(() => {
+    setIsMounted(true);
+  }, []);
+  if (!isMounted) return null;
+
   return (
     <div
-      className={cn('relative mx-auto flex w-full flex-col overflow-hidden rounded-sm', className)}
+      className={cn(
+        'border-border relative mx-auto flex w-full flex-col overflow-hidden rounded-sm border',
+        className
+      )}
     >
       <Table aria-label="table" className="caption-top">
         {!headerHide && (
@@ -278,7 +295,8 @@ function ReactTable<T>({
         </div>
       )}
 
-      {manualPagination ? (
+      {renderPagination()}
+      {/* {manualPagination ? (
         <LinkPagination showPagination={showPagination} totalElements={totalElements} />
       ) : (
         <div className="mt-2 flex items-center justify-center gap-4 pb-2">
@@ -290,7 +308,7 @@ function ReactTable<T>({
             />
           ) : null}
         </div>
-      )}
+      )} */}
     </div>
   );
 }

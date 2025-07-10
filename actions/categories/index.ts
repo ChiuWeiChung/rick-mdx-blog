@@ -4,7 +4,7 @@ import { toCamelCase } from '@/utils/format-utils';
 import { Category, CreateCategoryRequest, QueryCategory, TableCategory } from './types';
 import { PoolClient } from 'pg';
 import { CategoryQuerySort } from '@/enums/query';
-import { uploadImage } from '../s3/image';
+import { deleteImagesByFolders, renameImages, uploadImage } from '../s3/image';
 
 /** 取得所有分類 */
 export const getCategoryOptions = async () => {
@@ -35,7 +35,7 @@ export const checkCategoryExist = async (categoryId: number, client?: PoolClient
 };
 
 /** 新增分類 */
-export const createCategory = async (
+const createCategory = async (
   request: { name: string; coverFile?: File | null; iconFile?: File | null },
   client?: PoolClient
 ) => {
@@ -64,16 +64,28 @@ export const createCategory = async (
 
 /** 更新分類 */
 export const updateCategory = async (
-  request: CreateCategoryRequest & { id: number },
+  request: CreateCategoryRequest & { id: number; oldName: string },
   client?: PoolClient
 ) => {
   try {
     const queryExecutor = client || pool;
-    const { id, name, coverFile, iconFile } = request;
+    const { id, name, coverFile, iconFile, oldName, iconPath, coverPath } = request;
 
     const updates: string[] = ['name = $1'];
     const values: (string | number)[] = [name];
     let paramIndex = 2;
+
+    // 如果 name 有變更，且有舊圖片，則搬移圖片
+    if (name !== oldName && (iconPath || coverPath)) {
+      const copyResults = await renameImages({ oldFolder: `categories/${oldName}`, newFolder: `categories/${name}` });
+      if(copyResults?.length) {
+        console.log('copyResults', copyResults);
+        copyResults.forEach((key) => {
+          updates.push(`${key.includes('cover') ? 'cover_path' : 'icon_path'} = $${paramIndex++}`);
+          values.push(key);
+        });
+      }
+    }
 
     // 處理封面圖片
     if (coverFile) {
@@ -153,19 +165,25 @@ export const createCategoryWithFile = async (request: CreateCategoryRequest) => 
     return category;
   } catch (error) {
     console.error(error);
-    return { success: false, error: 'Create category failed' };
+    return { success: false, message: 'Create category failed' };
   }
 };
 
 /** 更新分類 (支援上傳檔案) */
 export const updateCategoryWithFile = async (request: CreateCategoryRequest & { id: number }) => {
   try {
-    const category = await updateCategory(request);
-    if (!category) throw new Error('Update category failed');
-    return category;
+    // 取得原分類資訊
+    const category = await getCategoryById(request.id);
+    if(!category) throw new Error('Category not found');
+
+    // 更新分類
+    const updatedCategory = await updateCategory({...request, oldName: category.name});
+    if (!updatedCategory) throw new Error('Update category failed');
+
+    return updatedCategory;
   } catch (error) {
     console.error(error);
-    return { success: false, error: 'Update category failed' };
+    return { success: false, message: 'Update category failed' };
   }
 };
 
@@ -239,4 +257,31 @@ export const getCategoryWithNoteCount = async (request: QueryCategory) => {
     data: toCamelCase<TableCategory>(rows),
     totalCount,
   };
+};
+
+export const getCategoryById = async (id: number) => {
+  const { rows } = await pool.query('SELECT * FROM categories WHERE id = $1', [id]);
+  if(rows.length === 0) return null;
+  return toCamelCase<Category>(rows)[0];
+};
+
+export const deleteCategoryById = async (id: number) => {
+  try {
+    // 取得分類資訊
+    const category = await getCategoryById(id);
+    if(!category) throw new Error('Category not found');
+
+    // 刪除圖片
+    const folders = []
+    if(category.coverPath) folders.push(category.coverPath);
+    if(category.iconPath) folders.push(category.iconPath);
+    if(folders.length)await deleteImagesByFolders(folders);
+
+    // 刪除分類
+    const { rows } = await pool.query('DELETE FROM categories WHERE id = $1', [id]);
+    return rows.length > 0;
+  } catch (error) {
+    console.error(error);
+    return { success: false, message: 'Delete category failed' };
+  }
 };

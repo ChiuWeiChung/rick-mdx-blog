@@ -16,13 +16,13 @@ const NoteEditorPage = async ({ searchParams }: NoteEditorPageProps) => {
   const { noteId } = await searchParams;
 
   // 如果有 noteId ，則獲取筆記資訊，並且獲取筆記的 markdown 內容
-  let existingNote: Partial<CreateNoteRequest> & { id: number } | undefined;
+  let noteToEdit: Partial<CreateNoteRequest> & { id: number } | undefined;
   if (noteId) {
     const note = await getNoteInfoById(noteId);
     if (note) {
       const resource = await getMarkdownResource(note.filePath);
       const content = await getMarkdownContent(resource);
-      existingNote = {
+      noteToEdit = {
         id: note.id,
         title: note.title,
         category: note.category,
@@ -39,7 +39,7 @@ const NoteEditorPage = async ({ searchParams }: NoteEditorPageProps) => {
 
   return (
     <NoteEditorForm
-      existingNote={existingNote}
+      noteToEdit={noteToEdit}
       categoryOptions={categoryOptions}
       tagOptions={tagOptions}
     />

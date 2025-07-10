@@ -34,7 +34,6 @@ const handler: Handler = async (serverAction, args, logKey) => {
     const result = await serverAction(args);
     logWithStyle('Response', result);
 
-    
     const mutationResponse = mutationResponseSchema.safeParse(result);
     // 如果解析成功，則檢查是否成功
     if (mutationResponse.success) {

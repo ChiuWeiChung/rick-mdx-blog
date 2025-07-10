@@ -8,37 +8,45 @@ import { cn } from '@/lib/utils';
 import { Label } from '../ui/label';
 import SpinnerLoader from '../spinner-loader';
 
+export interface ImageStateProps {
+  src: string;
+  width: number;
+  height: number;
+}
 export interface FileUploadProps extends Omit<React.ComponentProps<'input'>, 'value'> {
   label?: string;
   value?: File | null;
+  aspectRatio?: string;
+  defaultImage?: ImageStateProps;
+  // imageSrc?: string;
 }
 
-export function FileUpload({ value, width, ...props }: FileUploadProps) {
+
+export function FileUpload({ value, width, aspectRatio, defaultImage, ...props }: FileUploadProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [image, setImage] = useState<{ src: string; width: number; height: number } | null>(null);
+  const [image, setImage] = useState<ImageStateProps | undefined>(defaultImage);
 
   const renderUploadFile = () => {
-    if (!value) {
-      return <Upload className="h-12 w-12 text-gray-400" />;
-    }
-
-    if (isLoading) {
-      return <SpinnerLoader />;
-    }
-
+    if (isLoading) return <SpinnerLoader />;
+    
     if (image) {
       return (
         <Image
-          src={image.src}
-          alt="file"
-          width={image.width}
-          height={image.height}
-          className="object-cover"
-          style={{ width: width || image.width }}
+        src={image.src}
+        alt="file"
+        width={image.width}
+        height={image.height}
+        className="object-cover"
+        style={{ width: width || image.width, aspectRatio: aspectRatio}}
+        // TODO 圖片載入時，顯示預設圖片
+        // placeholder="blur"
+        // blurDataURL='/assets/images/gaoyi.jpeg'
         />
       );
-      // return <Image src={image.src} alt="file" fill className="object-cover" priority />;
     }
+
+    if (!value) return <Upload className="h-12 w-12 text-gray-400" />;
+
     return <p className="text-lg font-bold text-gray-500">{value.name}</p>;
   };
 
@@ -81,7 +89,7 @@ export function FileUpload({ value, width, ...props }: FileUploadProps) {
             )}
             htmlFor={props.name}
           >
-            {value ? (
+            {value || image ? (
               <div className="bg-secondary flex items-center justify-center rounded-full p-2">
                 <Edit className="size-6 text-gray-400" />
               </div>

@@ -7,7 +7,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AdminSidebar />
       <PageContent>
-        <SidebarTrigger />
+        <SidebarTrigger className="-translate-4" />
         {children}
       </PageContent>
     </SidebarProvider>

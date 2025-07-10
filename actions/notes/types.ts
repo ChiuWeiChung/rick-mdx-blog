@@ -5,7 +5,7 @@ import { z } from 'zod/v4';
 /** 筆記的 response schema */
 const noteSchema = z.object({
   id: z.number(),
-  title: z.string().min(1, '請輸入文章標題'),
+  title: z.string().min(1, '請輸入文章標題').trim(),
   filePath: z.string(),
   username: z.string(),
   category: z.string().min(1, '請選擇分類'),
@@ -39,6 +39,7 @@ const createNoteSchema = noteSchema
     fileName: z
       .string()
       .min(1, '請提供檔案名稱')
+      .trim()
       .regex(/^[a-zA-Z0-9_-]+$/, '檔案名稱只能包含英文、數字、底線和連字號'),
   })
   .check(ctx => {

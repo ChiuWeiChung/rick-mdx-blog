@@ -3,38 +3,30 @@ import ReactTable from '@/components/react-table';
 import columns from './data-columns';
 import { TableId } from '@/enums/table';
 import { FC } from 'react';
-// import { useMutation } from '@tanstack/react-query';
-// import { mutationHandler } from '@/utils/react-query-handler';
+import { useMutation } from '@tanstack/react-query';
+import { mutationHandler } from '@/utils/react-query-handler';
 import { useAlertModal } from '@/hooks/use-alert-modal';
-import { TableCategory,  } from '@/actions/categories/types';
+import { TableCategory } from '@/actions/categories/types';
+import { deleteCategoryById } from '@/actions/categories';
 
 interface CategoryTableProps {
   data: TableCategory[];
   totalCount: number;
 }
 
-const CategoryTable:FC<CategoryTableProps> = ({ data, totalCount }) => {
+const CategoryTable: FC<CategoryTableProps> = ({ data, totalCount }) => {
   const { openAlertModal } = useAlertModal();
 
-  // // 刪除筆記
-  // const { mutate: deleteNoteMutation } = useMutation({
-  //   mutationFn: mutationHandler(deleteNote),
-  //   meta: {
-  //     successMessage: { title: '筆記刪除成功' },
-  //     shouldRefresh: true,
-  //   },
-  // });
-  
-  // // 更新筆記的 visible 狀態
-  // const { mutate: updateNoteVisibleMutation } = useMutation({
-  //   mutationFn: mutationHandler(updateNoteVisible),
-  //   meta: {
-  //     successMessage: { title: '更新筆記狀態成功' },
-  //     shouldRefresh: true,
-  //   },
-  // });
+  // 刪除筆記
+  const deleteCategoryMutation = useMutation({
+    mutationFn: mutationHandler(deleteCategoryById),
+    meta: {
+      successMessage: { title: '筆記刪除成功' },
+      shouldRefresh: true,
+    },
+  });
 
-  const onModalOpen = (data: TableCategory) => {
+  const onDataDelete = (data: TableCategory) => {
     openAlertModal({
       title: `刪除類別 (名稱: ${data.name})`,
       status: 'warning',
@@ -47,12 +39,8 @@ const CategoryTable:FC<CategoryTableProps> = ({ data, totalCount }) => {
       ),
       confirmText: '確定刪除',
       cancelText: '取消',
-      // onConfirm: () => deleteNoteMutation(data.id),
+      onConfirm: () => deleteCategoryMutation.mutate(data.id),
     });
-  };
-
-  const onDataEdit = (data: TableCategory) => {
-    console.log('data', data);
   };
 
   return (
@@ -65,7 +53,7 @@ const CategoryTable:FC<CategoryTableProps> = ({ data, totalCount }) => {
         manualPagination
         manualSorting
         pinningColumns={[TableId.Number, TableId.Editor]}
-        meta={{ onModalOpen, onDataEdit }}
+        meta={{ onDataDelete }}
       />
     </div>
   );

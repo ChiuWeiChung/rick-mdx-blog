@@ -22,19 +22,20 @@ import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { createCategoryWithFile, updateCategoryWithFile } from '@/actions/categories';
 import { mutationHandler } from '@/utils/react-query-handler';
+import { useMemo } from 'react';
 // import { mutationHandler } from '@/utils/query-utils';
 
 interface CategoryEditorProps {
-  existingCategory?: Partial<Category> & { id: number };
+  category?: Partial<Category> & { id: number };
 }
 
-const CategoryEditor = ({ existingCategory }: CategoryEditorProps) => {
+const CategoryEditor = ({ category }: CategoryEditorProps) => {
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(createCategorySchema),
     defaultValues: {
       ...getDefaultValues(createCategorySchema),
-      ...existingCategory,
+      ...category,
     },
   });
 
@@ -53,57 +54,58 @@ const CategoryEditor = ({ existingCategory }: CategoryEditorProps) => {
     onSuccess: () => mutateSuccessHandler('類別更新成功'),
   });
 
+  const defaultIconImage = useMemo(() => {
+    if(!category || !category.iconPath) return undefined;
+    const src = `${window.location.origin}/api/image?key=${category.iconPath}`;
+    return { src, width: 64, height: 64 };
+  }, [category]);
+
+  const defaultCoverImage = useMemo(() => {
+    if(!category || !category.coverPath) return undefined;
+    const src = `${window.location.origin}/api/image?key=${category.coverPath}`;
+    return { src, width: 256, height: 144 };
+  }, [category]);
+
   const onSubmit = (data: CreateCategoryRequest) => {
-    if (existingCategory) updateMutation.mutate({ ...data, id: existingCategory.id });
+    if (category) updateMutation.mutate({ ...data, id: category.id });
     else createMutation.mutate(data);
   };
 
   const isPending = updateMutation.isPending || createMutation.isPending;
 
   return (
-    <>
-      {/* <Button type="button" onClick={() => setOpen(true)} className="w-fit self-end">
-        <Plus />
-        新增類別
-      </Button> */}
-
-      <SmartForm
-        {...form}
-        onSubmit={onSubmit}
-        className={cn('flex flex-col gap-4', isPending && 'pointer-events-none')}
-      >
-        <InputField name={createCategoryKeys.name} label="類別名稱" placeholder="請輸入類別名稱" />
-        <FileUploadField
-          name={createCategoryKeys.iconFile}
-          label="類別 Icon"
-          description="建議使用 32x32 的圖片，作為類別列表的圖示"
-          width={128}
-          height={128}
-        />
-        <FileUploadField
-          name={createCategoryKeys.coverFile}
-          label="類別封面"
-          description="建議使用 800x450 的圖片，作為文章的封面" // 16:9
-          width={256}
-          // height={144}
-        />
-        <div className="flex justify-end gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => {
-              // setOpen(false);
-              router.back();
-            }}
-          >
-            取消
-          </Button>
-          <Button type="submit" disabled={isPending}>
-            送出
-          </Button>
-        </div>
-      </SmartForm>
-    </>
+    <SmartForm
+      {...form}
+      onSubmit={onSubmit}
+      className={cn('flex flex-col gap-4', isPending && 'pointer-events-none')}
+    >
+      <InputField name={createCategoryKeys.name} label="類別名稱" placeholder="請輸入類別名稱" />
+      <FileUploadField
+        name={createCategoryKeys.iconFile}
+        label="類別 Icon"
+        description="建議使用 32x32 的圖片，作為類別的圖示"
+        width={32}
+        height={32}
+        aspectRatio="1/1"
+        defaultImage={defaultIconImage}
+      />
+      <FileUploadField
+        name={createCategoryKeys.coverFile}
+        label="類別封面"
+        description="建議使用 256x144 的圖片，作為文章的封面" // 16:9
+        width={256}
+        aspectRatio="16/9"
+        defaultImage={defaultCoverImage}
+      />
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="outline" onClick={() => router.back()}>
+          取消
+        </Button>
+        <Button type="submit" disabled={isPending}>
+          送出
+        </Button>
+      </div>
+    </SmartForm>
   );
 };
 

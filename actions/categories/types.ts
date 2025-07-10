@@ -3,7 +3,7 @@ import { z } from 'zod/v4';
 
 const categorySchema = z.object({
   id: z.number(),
-  name: z.string().min(1, '類別名稱不能為空'),
+  name: z.string().min(1, '類別名稱不能為空').trim(),
   iconPath: z.string().nullable(),
   coverPath: z.string().nullable(),
 });

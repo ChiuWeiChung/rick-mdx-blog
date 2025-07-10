@@ -1,6 +1,7 @@
 import React from 'react';
-import { CreateCategoryRequest } from '@/actions/categories/types';
+import { Category } from '@/actions/categories/types';
 import CategoryEditor from '@/features/admin/categories/category-editor';
+import { getCategoryById } from '@/actions/categories';
 
 interface CategoryEditorPageProps {
   searchParams: Promise<{
@@ -10,16 +11,14 @@ interface CategoryEditorPageProps {
 
 const CategoryEditorPage = async ({ searchParams }: CategoryEditorPageProps) => {
   const { categoryId } = await searchParams;
-
   // 如果有 categoryId ，則獲取筆記資訊，並且獲取筆記的 markdown 內容
-  let existingCategory: (Partial<CreateCategoryRequest> & { id: number }) | undefined;
+  let category: Category | null | undefined = undefined;
   if (categoryId) {
-    // const category = await getCategoryById(categoryId);
-    // if (category) {
-    // }
+    category = await getCategoryById(Number(categoryId));
+    if (!category) throw new Error('Category not found');
   }
 
-  return <CategoryEditor existingCategory={existingCategory} />;
+  return <CategoryEditor category={category} />;
 };
 
 export default CategoryEditorPage;

@@ -2,11 +2,13 @@
 import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import s3 from '@/lib/s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { BUCKET_NAME } from '@/constants/environment';
 
 type SaveMarkdownFileRequest =
   | { content: string; category: string; fileName: string }
   | { file: File; category: string; fileName: string };
 
+/** 儲存 Markdown 檔案 */
 const saveMarkdownFile = async (request: SaveMarkdownFileRequest) => {
   const { category, fileName } = request;
 
@@ -27,7 +29,7 @@ const saveMarkdownFile = async (request: SaveMarkdownFileRequest) => {
   const filePath = `markdown/${category}/${fileName}.md`;
 
   const command = new PutObjectCommand({
-    Bucket: process.env.S3_BUCKET_NAME!,
+    Bucket: BUCKET_NAME,
     Key: filePath,
     Body: buffer,
     ContentType: 'text/markdown',
@@ -45,7 +47,7 @@ const saveMarkdownFile = async (request: SaveMarkdownFileRequest) => {
 /** 取得 Markdown 檔案的 S3 資源 */
 const getMarkdownResource = async (filePath: string) => {
   const command = new GetObjectCommand({
-    Bucket: process.env.S3_BUCKET_NAME!,
+    Bucket: BUCKET_NAME,
     Key: filePath,
   });
   try{
@@ -64,9 +66,10 @@ const getMarkdownContent = async (resource: string) => {
   return markdown;
 };
 
+/** 刪除 Markdown 檔案 */
 const deleteMarkdownFile = async (filePath: string) => {
     const command = new DeleteObjectCommand({
-      Bucket: process.env.S3_BUCKET_NAME!,
+      Bucket: BUCKET_NAME,
       Key: filePath, // 例如 'markdown/test/hello.md'
     });
 

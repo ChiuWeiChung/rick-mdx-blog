@@ -32,14 +32,14 @@ import { cn } from '@/lib/utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
 
 interface NoteEditorFormProps {
-  existingNote?: Partial<CreateNoteRequest> & { id: number };
+  noteToEdit?: Partial<CreateNoteRequest> & { id: number };
   categoryOptions: Option<number>[];
   tagOptions: Option<number>[];
   markdown?: string;
 }
 
-const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEditorFormProps) => {
-  const isCreate = !existingNote;
+const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorFormProps) => {
+  const isCreate = !noteToEdit;
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const isMobile = useIsMobile();
@@ -49,11 +49,9 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
     resolver: zodResolver(createNoteSchema),
     defaultValues: {
       ...defaultCreateNoteValues,
-      ...existingNote,
+      ...noteToEdit,
     },
   });
-
-  console.log('existingNote', existingNote);
 
   const [markdown, manualUpload] = form.watch([
     createNoteSchemaKeys.content,
@@ -76,7 +74,7 @@ const NoteEditorForm = ({ existingNote, categoryOptions, tagOptions }: NoteEdito
   });
 
   const onSubmit = (data: CreateNoteRequest) => {
-    if (existingNote) updateNoteMutation({ ...data, id: existingNote.id });
+    if (noteToEdit) updateNoteMutation({ ...data, id: noteToEdit.id });
     else createNoteMutation(data);
   };
 

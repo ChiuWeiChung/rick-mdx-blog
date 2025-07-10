@@ -13,20 +13,19 @@ import {
 import { cn } from '@/lib/utils';
 import { getUpdatedSearchParams } from '@/utils/form-utils';
 
-export interface LinkPaginationProps {
+export interface ServerPaginationProps {
   className?: string;
-  showPagination?: boolean;
   totalElements: number;
 }
 
-const LinkPagination = ({ className, showPagination, totalElements }: LinkPaginationProps) => {
+export default function ServerPagination({ className,  totalElements }: ServerPaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const pageSize = Number(searchParams.get('limit') ?? '10');
   const currentPage = Number(searchParams.get('page') ?? '1');
   const totalPages = Math.ceil(totalElements / pageSize);
 
-  if (!showPagination || totalPages <= 1) return null;
+  if (totalPages <= 1) return null;
 
   // 構建 URL 的輔助函數
   const buildUrl = (page: number) => {
@@ -114,5 +113,3 @@ const LinkPagination = ({ className, showPagination, totalElements }: LinkPagina
     </Pagination>
   );
 };
-
-export default LinkPagination;
