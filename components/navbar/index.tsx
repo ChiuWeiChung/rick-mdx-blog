@@ -11,8 +11,8 @@ const Navbar = async () => {
 
 	const navItems = [
 		{ name: '筆記', href: '/notes' },
-		{ name: '關於我', href: '/about' },
-		{ name: '專案', href: '/projects' },
+		{ name: '關於我', href: '/profile' },
+		{ name: '專案', href: '/portfolios' },
 	];
 
 	const dropdownItems = [

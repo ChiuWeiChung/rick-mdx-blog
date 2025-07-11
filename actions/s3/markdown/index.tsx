@@ -50,7 +50,7 @@ const getMarkdownResource = async (filePath: string) => {
     Bucket: BUCKET_NAME,
     Key: filePath,
   });
-  try{
+  try {
     const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
     return signedUrl;
   } catch (error) {
@@ -68,17 +68,50 @@ const getMarkdownContent = async (resource: string) => {
 
 /** 刪除 Markdown 檔案 */
 const deleteMarkdownFile = async (filePath: string) => {
-    const command = new DeleteObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: filePath, // 例如 'markdown/test/hello.md'
-    });
+  const command = new DeleteObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: filePath, // 例如 'markdown/test/hello.md'
+  });
 
-    try {
-      await s3.send(command);
-    } catch (error) {
-      console.error('❌ 刪除失敗:', error);
-      return { success: false, message: 'Failed to delete markdown file' };
-    }
+  try {
+    await s3.send(command);
+  } catch (error) {
+    console.error('❌ 刪除失敗:', error);
+    return { success: false, message: 'Failed to delete markdown file' };
+  }
 };
 
-export { saveMarkdownFile, getMarkdownResource, getMarkdownContent, deleteMarkdownFile };
+/** 儲存 Profile 檔案 */
+const saveProfileFile = async (request: { content: string }) => {
+  const { content } = request;
+
+  const blob = new Blob([content], { type: 'text/markdown' });
+  const arrayBuffer = await blob.arrayBuffer();
+  const buffer = Buffer.from(arrayBuffer);
+
+  const filePath = `profile/profile.md`;
+
+  const command = new PutObjectCommand({
+    Bucket: BUCKET_NAME,
+    Key: filePath,
+    Body: buffer,
+    ContentType: 'text/markdown',
+  });
+
+  try {
+    await s3.send(command);
+    return filePath;
+  } catch (error) {
+    console.error('Error uploading markdown file:', error);
+    throw error;
+  }
+};
+
+
+export {
+  saveMarkdownFile,
+  getMarkdownResource,
+  getMarkdownContent,
+  deleteMarkdownFile,
+  saveProfileFile,
+};

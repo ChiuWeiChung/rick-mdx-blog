@@ -38,12 +38,12 @@ const items = [
   },
   {
     title: '自我介紹管理',
-    url: '/admin/about-me',
+    url: '/admin/profile',
     icon: UserPen,
   },
   {
     title: '作品集管理',
-    url: '/admin/portfolio',
+    url: '/admin/portfolios',
     icon: Library,
   },
 ];

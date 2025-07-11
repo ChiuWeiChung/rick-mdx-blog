@@ -29,10 +29,10 @@ export function FeatureCard({
 						<Image
 							src={imageUrl}
 							alt={title}
-							fill
+							width={1152}
+							height={768}
 							priority
-							sizes="(min-width: 1024px) 320px, (min-width: 768px) 350px, 100vw"
-							className="object-cover"
+							className="object-cover h-full"
 						/>
 					</div>
 				)}

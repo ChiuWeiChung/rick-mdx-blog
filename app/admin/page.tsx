@@ -6,14 +6,12 @@ import {
 	Flame,
 	Tag,
 	Image as ImageIcon,
-	Plus,
 	BarChart3,
 	FileText,
 	Activity,
 	TrendingUp,
 	Calendar
 } from 'lucide-react';
-import Link from 'next/link';
 
 const AdminHomePage = async () => {
 
@@ -27,41 +25,10 @@ const AdminHomePage = async () => {
 		monthlyViews: 2840,
 		weeklyPosts: 4,
 	};
-
-	const quickActions = [
-		{
-			title: '新增筆記',
-			description: '建立新的部落格文章',
-			icon: Plus,
-			href: '/admin/editor-page',
-			variant: 'default' as const,
-		},
-		{
-			title: '管理類別',
-			description: '組織和分類你的內容',
-			icon: Flame,
-			href: '#',
-			variant: 'outline' as const,
-		},
-		{
-			title: '管理標籤',
-			description: '編輯和整理標籤系統',
-			icon: Tag,
-			href: '#',
-			variant: 'outline' as const,
-		},
-		{
-			title: '圖片庫',
-			description: '管理媒體資源',
-			icon: ImageIcon,
-			href: '#',
-			variant: 'outline' as const,
-		},
-	];
-
+  
 	const mockRecentActivity = [
 		{ action: '發布了新文章', item: 'React 18 新特性介紹', time: '2 小時前', type: 'post' },
-		{ action: '上傳了圖片', item: 'hero-banner.jpg', time: '4 小時前', type: 'image' },
+    // { action: '上傳了圖片', item: 'hero-banner.jpg', time: '4 小時前', type: 'image' },
 		{ action: '建立了新標籤', item: 'TypeScript', time: '1 天前', type: 'tag' },
 		{ action: '更新了文章', item: 'Next.js 完整指南', time: '2 天前', type: 'post' },
 	];
@@ -75,7 +42,7 @@ const AdminHomePage = async () => {
         </div>
 
       {/* Stats Grid */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">總文章數</CardTitle>
@@ -111,7 +78,7 @@ const AdminHomePage = async () => {
           </CardContent>
         </Card>
 
-        <Card>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">圖片資源</CardTitle>
             <ImageIcon className="text-muted-foreground h-4 w-4" />
@@ -120,32 +87,13 @@ const AdminHomePage = async () => {
             <div className="text-2xl font-bold">{stats.totalImages}</div>
             <p className="text-muted-foreground text-xs">媒體資源庫</p>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       {/* Quick Actions */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">快速操作</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {quickActions.map((action, index) => (
-            <Card key={index} className="transition-all hover:shadow-md">
-              <CardHeader className="pb-2">
-                <div className="flex items-center space-x-2">
-                  {React.createElement(action.icon, { className: "text-primary h-5 w-5" })}
-                  <CardTitle className="text-base">{action.title}</CardTitle>
-                </div>
-                <CardDescription className="text-sm">{action.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="pt-2">
-                <Link href={action.href}>
-                  <Button variant={action.variant} className="w-full">
-                    開始使用
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <h2 className="text-xl font-semibold">筆記新增趨勢</h2>
+        TODO
       </div>
 
       {/* Recent Activity & Performance */}
@@ -186,13 +134,13 @@ const AdminHomePage = async () => {
               <BarChart3 className="h-5 w-5" />
               <span>瀏覽量統計</span>
             </CardTitle>
-            <CardDescription>本月網站統計數據</CardDescription>
+            <CardDescription>本週網站統計數據</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <TrendingUp className="h-4 w-4 text-green-500" />
-                <span className="text-sm">月度瀏覽量</span>
+                <span className="text-sm">週瀏覽量</span>
               </div>
               <span className="text-2xl font-bold">{stats.monthlyViews.toLocaleString()}</span>
             </div>

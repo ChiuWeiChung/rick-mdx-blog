@@ -57,6 +57,7 @@ export default function Providers({ children }: { children: ReactNode }) {
     // get meta from mutation
     const { invalidateQueryKeys, successMessage, shouldRefresh } = mutation.options.meta ?? {};
 
+    // 目前本專案沒有使用到 useQuery 的 queryKey，所以這裡的 invalidateQueryKeys 不會被使用到
     if (invalidateQueryKeys) {
       void queryClient.invalidateQueries({ queryKey: invalidateQueryKeys });
     }
