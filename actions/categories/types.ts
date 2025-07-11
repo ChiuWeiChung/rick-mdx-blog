@@ -28,14 +28,9 @@ type QueryCategory = z.infer<typeof queryCategorySchema>;
 /** 搜尋類別的 request schema 的 key */
 const queryCategoryKeys = queryCategorySchema.keyof().enum;
 
-const tableCategorySchema = z.object({
-  id: z.number(),
-  name: z.string(),
-  postCount: z.number(),
-  iconPath: z.string().nullable(),
-  coverPath: z.string().nullable(),
-});
 
+/** =============================== 表格 =============================== */
+const tableCategorySchema = categorySchema.extend({ postCount: z.number() });
 type TableCategory = z.infer<typeof tableCategorySchema>;
 const tableCategoryKeys = tableCategorySchema.keyof().enum;
 

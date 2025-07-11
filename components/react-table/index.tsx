@@ -178,13 +178,8 @@ function ReactTable<T>({
   if (!isMounted) return null;
 
   return (
-    <div
-      className={cn(
-        'border-border relative mx-auto flex w-full flex-col overflow-hidden rounded-sm border',
-        className
-      )}
-    >
-      <Table aria-label="table" className="caption-top">
+    <div className={cn('relative mx-auto flex w-full flex-col', className)}>
+      <Table aria-label="table" className="caption-top border border-border">
         {!headerHide && (
           <TableHeader className="sticky top-0 z-40 bg-neutral-600 shadow-lg">
             <>

@@ -43,6 +43,10 @@ const createCategory = async (
     const queryExecutor = client || pool;
     const { name, coverFile, iconFile } = request;
 
+    // 檢查分類是否存在
+    const queryResult = await queryExecutor.query('SELECT * FROM categories WHERE name = $1', [name]);
+    if (queryResult.rows.length > 0) throw new Error('分類已存在');
+
     // 上傳檔案
     const coverPath = coverFile
       ? await uploadImage({ file: coverFile, fileName: 'cover', folder: `categories/${name}` })
@@ -79,7 +83,6 @@ export const updateCategory = async (
     if (name !== oldName && (iconPath || coverPath)) {
       const copyResults = await renameImages({ oldFolder: `categories/${oldName}`, newFolder: `categories/${name}` });
       if(copyResults?.length) {
-        console.log('copyResults', copyResults);
         copyResults.forEach((key) => {
           updates.push(`${key.includes('cover') ? 'cover_path' : 'icon_path'} = $${paramIndex++}`);
           values.push(key);

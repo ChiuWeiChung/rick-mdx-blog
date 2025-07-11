@@ -16,7 +16,7 @@ const PageContent = ({ children }: PageContentProps) => {
   };
 
   return (
-    <main className="flex-1 p-4" style={{ maxWidth: calculateMaxWidth() }}>
+    <main className="flex-1 p-4 relative" style={{ maxWidth: calculateMaxWidth() }}>
       {children}
     </main>
   );

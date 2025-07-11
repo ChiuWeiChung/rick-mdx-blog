@@ -8,6 +8,11 @@ export enum CategoryQuerySort {
   NAME = 'name',
 }
 
+export enum TagQuerySort {
+  POST_COUNT = 'postCount',
+  NAME = 'name',
+}
+
 export enum QueryOrder {
   ASC = 'asc',
   DESC = 'desc',

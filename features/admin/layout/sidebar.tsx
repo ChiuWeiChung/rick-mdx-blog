@@ -1,6 +1,6 @@
 'use client';
 
-import { Code2, Flame, Image, Notebook, PenTool, Settings, Tag } from 'lucide-react';
+import { Code2, Flame, Library, Notebook, PenTool, Settings, Tag, UserPen } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -32,67 +32,72 @@ const items = [
     icon: Tag,
   },
   {
-    title: '文章封面與圖示',
-    url: '/admin/image-overview',
-    icon: Image,
+    title: '修訂建議',
+    url: '/admin/revise',
+    icon: PenTool,
   },
   {
-    title: '內容修訂建議',
-    url: '/admin/editing-suggestions',
-    icon: PenTool,
+    title: '自我介紹管理',
+    url: '/admin/about-me',
+    icon: UserPen,
+  },
+  {
+    title: '作品集管理',
+    url: '/admin/portfolio',
+    icon: Library,
   },
 ];
 
 export default function AdminSidebar() {
-	return (
-		<Sidebar>
-			<SidebarContent>
-				<SidebarGroup>
-					{/* Add Home Admin Home Logo */}
-					<SidebarGroupLabel className="mb-4">
-						<Link href="/admin" className="flex items-center gap-2 text-xl">
-							<Settings /> DevNote 管理後台
-						</Link>
-					</SidebarGroupLabel>
-					{/* <SidebarGroupContent>
+  return (
+    <Sidebar>
+      <SidebarContent>
+        <SidebarGroup>
+          {/* Add Home Admin Home Logo */}
+          <SidebarGroupLabel className="mb-4">
+            <Link href="/admin" className="flex items-center gap-2 text-xl">
+              <Settings /> DevNote 管理後台
+            </Link>
+          </SidebarGroupLabel>
+          {/* <SidebarGroupContent>
 						<SidebarMenu>
 							<SidebarMenuItem>
 								<SidebarMenuButton asChild></SidebarMenuButton>
 							</SidebarMenuItem>
 						</SidebarMenu>
 					</SidebarGroupContent> */}
-					{/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
-					<SidebarGroupContent className="pl-4">
-						<SidebarMenu>
-							{items.map(item => (
-								<SidebarMenuItem key={item.title}>
-									<SidebarMenuButton asChild>
-										<NavLink href={item.url} className="flex h-12 items-center gap-2 !text-[1rem]">
-											<item.icon className="!size-4" />
-											{item.title}
-										</NavLink>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							))}
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
+          {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
+          <SidebarGroupContent className="pl-4">
+            <SidebarMenu>
+              {items.map(item => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild>
+                    <NavLink href={item.url} className="flex h-12 items-center gap-2 !text-[1rem]">
+                      <item.icon className="!size-4" />
+                      {item.title}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-				<SidebarGroup className="mb-8 flex-1 justify-end">
-					{/* <SidebarGroupLabel>Projects</SidebarGroupLabel> */}
-					<SidebarGroupContent className="pl-4">
-						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton asChild>
-									<NavLink href={'/'} className="flex h-12 items-center gap-2 !text-lg">
-										<Code2 className="!size-6" /> 返回前台
-									</NavLink>
-								</SidebarMenuButton>
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarGroupContent>
-				</SidebarGroup>
-			</SidebarContent>
-		</Sidebar>
-	);
+        <SidebarGroup className="mb-8 flex-1 justify-end">
+          {/* <SidebarGroupLabel>Projects</SidebarGroupLabel> */}
+          <SidebarGroupContent className="pl-4">
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <NavLink href={'/'} className="flex h-12 items-center gap-2 !text-lg">
+                    <Code2 className="!size-6" /> 返回前台
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+    </Sidebar>
+  );
 }

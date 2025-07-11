@@ -11,17 +11,12 @@ import {
 	FileText,
 	Activity,
 	TrendingUp,
-	Calendar,
-	User,
+	Calendar
 } from 'lucide-react';
 import Link from 'next/link';
-import { auth } from '@/auth';
-import { notFound } from 'next/navigation';
 
 const AdminHomePage = async () => {
-	const session = await auth();
 
-	if (!session) notFound();
 	// Mock data - in a real app, this would come from your database
 	const stats = {
 		totalPosts: 45,
@@ -74,16 +69,10 @@ const AdminHomePage = async () => {
 	return (
     <div className="space-y-6 p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">DASHBOARD</h1>
           <p className="text-muted-foreground">歡迎回來 Rick&apos;s DevNote 管理系統</p>
         </div>
-        <div className="mr-4 flex items-center gap-2 text-lg">
-          <User className="bg-primary mr-1 rounded-full text-white" />
-          <span className="font-bold">{session.user?.name}</span>
-        </div>
-      </div>
 
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
