@@ -32,6 +32,7 @@ export interface ReactTableProps<T> {
   manualPagination?: boolean;
   manualSorting?: boolean;
   onSortingChange?: (sorting: SortingState) => void;
+  caption?: string;
 }
 
 export interface PaginationState {

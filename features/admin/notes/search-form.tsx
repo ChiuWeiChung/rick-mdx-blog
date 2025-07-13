@@ -11,8 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Option } from '@/types/global';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { MinusIcon } from 'lucide-react';
-import { Label } from '@/components/ui/label';
 import {
   Accordion,
   AccordionContent,
@@ -89,20 +87,18 @@ const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySe
             />
 
             <div className="col-span-4 flex w-full flex-col gap-2 2xl:col-span-2">
-              <Label>建立時間</Label>
-              <div className="flex flex-col items-center gap-2 lg:flex-row">
-                <DatePickerField name={queryNoteKeys.startCreatedTime} placeholder="起始時間" />
-                <MinusIcon className="hidden lg:block" />
+              
+              <div className="flex flex-col items-end gap-2 lg:flex-row">
+                <DatePickerField name={queryNoteKeys.startCreatedTime} label="建立時間" placeholder="起始時間" />
                 <DatePickerField name={queryNoteKeys.endCreatedTime} placeholder="結束時間" />
               </div>
 
               {/* <div className="h-14 min-w-[1px] bg-gray-300" /> */}
             </div>
             <div className="col-span-4 flex w-full flex-col gap-2 2xl:col-span-2">
-              <Label>更新時間</Label>
+              
               <div className="flex flex-col items-center gap-2 lg:flex-row">
-                <DatePickerField name={queryNoteKeys.startUpdatedTime} placeholder="起始時間" />
-                <MinusIcon className="hidden lg:block" />
+                <DatePickerField name={queryNoteKeys.startUpdatedTime} label="更新時間" placeholder="起始時間" />
                 <DatePickerField name={queryNoteKeys.endUpdatedTime} placeholder="結束時間" />
               </div>
             </div>

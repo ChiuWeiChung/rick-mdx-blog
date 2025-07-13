@@ -53,6 +53,7 @@ function ReactTable<T>({
   manualPagination,
   manualSorting,
   onSortingChange,
+  caption,
 }: ReactTableProps<T>) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -179,7 +180,8 @@ function ReactTable<T>({
 
   return (
     <div className={cn('relative mx-auto flex w-full flex-col', className)}>
-      <Table aria-label="table" className="caption-top border border-border">
+      <Table aria-label="table" className="border border-border">
+        {caption && <caption className="caption-top text-2xl font-bold text-left">{caption}</caption>}
         {!headerHide && (
           <TableHeader className="sticky top-0 z-40 bg-neutral-600 shadow-lg">
             <>
@@ -283,27 +285,17 @@ function ReactTable<T>({
           {!data?.length && !isLoading && <TableRow className="h-52" />}
         </TableBody>
       </Table>
+
+      {/* 查無資料 */}
       {!data?.length && !isLoading && (
-        <div className="absolute bottom-0 left-1/2 mb-8 flex -translate-x-1/2 items-center justify-center gap-2">
+        <div className="absolute bottom-[25%] left-1/2 mb-8 flex -translate-x-1/2 items-center justify-center gap-2">
           <CylinderIcon className="text-neutral h-10 w-10" />
           <p className="m-base text-neutral py-base text-3xl">查無資料</p>
         </div>
       )}
 
+      {/* 分頁 */}
       {renderPagination()}
-      {/* {manualPagination ? (
-        <LinkPagination showPagination={showPagination} totalElements={totalElements} />
-      ) : (
-        <div className="mt-2 flex items-center justify-center gap-4 pb-2">
-          {data?.length && !isLoading ? (
-            <Pagination
-              table={table}
-              showPagination={showPagination}
-              totalElements={totalElements}
-            />
-          ) : null}
-        </div>
-      )} */}
     </div>
   );
 }

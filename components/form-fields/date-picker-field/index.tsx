@@ -48,7 +48,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
               />
             </FormControl>
             {description ? <FormDescription>{description}</FormDescription> : null}
-            <FormMessage className="absolute top-0 right-0 -translate-y-full" />
+            <FormMessage className="absolute top-0 right-0 " />
           </FormItem>
         );
       }}

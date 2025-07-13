@@ -26,12 +26,12 @@ const NotesPage = async (props: NotePageProps) => {
       <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">筆記管理</h1>
 
       {/* Add Notes Section */}
-      <Button type="button" className="absolute top-0 right-0" asChild>
-        <Link href="/admin/notes/editor">
+      <Link href="/admin/notes/editor" className="self-end">
+        <Button type="button">
           <Plus />
           新增筆記
-        </Link>
-      </Button>
+        </Button>
+      </Link>
 
       {/* Search Notes Section */}
       <QuerySearchForm

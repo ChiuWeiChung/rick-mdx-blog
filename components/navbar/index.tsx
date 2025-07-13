@@ -13,7 +13,7 @@ const Navbar = async () => {
   const navItems = [
     { name: '筆記', href: '/notes' },
     { name: '關於我', href: '/profile' },
-    { name: '專案', href: '/portfolios' },
+    { name: '作品集', href: '/portfolios' },
   ];
 
   const dropdownItems = [

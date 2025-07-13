@@ -1,19 +1,23 @@
 import React from 'react';
-import TagEditor from '@/features/admin/tags/tag-editor';
-import { getTagById } from '@/actions/tags';
+import PortfolioEditor from '@/features/admin/portfolios/portfolios-editor';
+import { getPortfolioById } from '@/actions/portfolios';
+import { Portfolio } from '@/actions/portfolios/types';
 
-interface TagEditorPageProps {
+interface PortfolioEditorPageProps {
   searchParams: Promise<{
-    tagId: string;
+    portfolioId?: string;
   }>;
 }
 
-const TagEditorPage = async ({ searchParams }: TagEditorPageProps) => {
-  const { tagId } = await searchParams;
-  const tag = await getTagById(Number(tagId));
-  if (!tag) throw new Error('Tag not found');
+const PortfolioEditorPage = async ({ searchParams }: PortfolioEditorPageProps) => {
+  const { portfolioId } = await searchParams;
+  let portfolio: Portfolio | null | undefined = undefined;
+  if (portfolioId) {
+    portfolio = await getPortfolioById(Number(portfolioId));
+    if (!portfolio) throw new Error('Portfolio not found');
+  }
 
-  return <TagEditor tag={tag} />;
+  return <PortfolioEditor portfolio={portfolio} />;
 };
 
-export default TagEditorPage;
+export default PortfolioEditorPage;

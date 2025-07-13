@@ -23,6 +23,8 @@ export default function ClientPagination<T>({
   const { pageIndex, pageSize } = table.getState().pagination;
   const totalPage = Math.ceil(totalElements / pageSize);
 
+  
+
   const handlePagination = ({ type }: { type: 'prev' | 'next' | 'first' | 'last' }) => {
     if (type === 'prev') {
       table.previousPage();
@@ -78,6 +80,7 @@ export default function ClientPagination<T>({
     setInputPage(String(pageIndex + 1));
   }, [pageIndex]);
 
+  if (totalPage <= 1) return null;
   return (
     <div className={cn('flex items-center justify-center gap-10')}>
       <ul className={cn('flex justify-center gap-2', className)}>

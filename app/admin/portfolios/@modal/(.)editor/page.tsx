@@ -1,20 +1,26 @@
-import { getTagById } from '@/actions/tags';
+import { getPortfolioById } from '@/actions/portfolios';
+import { Portfolio } from '@/actions/portfolios/types';
 import DialogContainer from '@/components/dialog-container';
-import TagEditor from '@/features/admin/tags/tag-editor';
+import PortfolioEditor from '@/features/admin/portfolios/portfolios-editor';
 
-interface TagEditorModalPageProps {
+interface PortfolioEditorModalPageProps {
   searchParams: Promise<{
-    tagId: string;
+    portfolioId: string;
   }>;
 }
 
-export default async function TagEditorModalPage({ searchParams }: TagEditorModalPageProps) {
-  const { tagId } = await searchParams;
-  const tag = await getTagById(Number(tagId));
-  if (!tag) throw new Error('Tag not found');
+export default async function PortfolioEditorModalPage({
+  searchParams,
+}: PortfolioEditorModalPageProps) {
+  const { portfolioId } = await searchParams;
+  let portfolio: Portfolio | null | undefined = undefined;
+  if (portfolioId) {
+    portfolio = await getPortfolioById(Number(portfolioId));
+    if (!portfolio) throw new Error('Portfolio not found');
+  }
   return (
-    <DialogContainer title={tag ? '編輯標籤' : '新增標籤'} description="" open={true}>
-      <TagEditor tag={tag} />
+    <DialogContainer title={portfolio ? '編輯作品集' : '新增作品集'} description="" open={true}>
+      <PortfolioEditor portfolio={portfolio} />
     </DialogContainer>
   );
 }
