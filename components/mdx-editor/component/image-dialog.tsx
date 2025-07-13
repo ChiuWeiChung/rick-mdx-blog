@@ -11,33 +11,43 @@ import SmartForm from '@/components/smart-form';
 import { imageDialogKeys, ImageDialogSchema, imageDialogSchema } from './types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { uploadImage } from '@/actions/s3/image';
+import { useMutation } from '@tanstack/react-query';
+import { mutationHandler } from '@/utils/react-query-handler';
 
 const AddImage = () => {
-  const _insertImage = usePublisher(insertImage$);
+  const insertImage = usePublisher(insertImage$);
   const [openImageDialog, seOpenImageDialog] = useState(false);
   const form = useForm({
     defaultValues: { src: '', title: '', uploadedImage: null },
     resolver: zodResolver(imageDialogSchema),
   });
 
-  const onSubmit = async (data: ImageDialogSchema) => {
-    let src = data.src;
-    if (data.uploadedImage) {
-      const key = await uploadImage({
-        file: data.uploadedImage,
-        fileName: data.title,
-        folder: 'blog-images',
-      });
-      src = `${window.location.origin}/api/image?key=${key}`;
-    }
+  const insertImageMutation = useMutation({
+    mutationFn: mutationHandler(async (data: ImageDialogSchema) => {
+      let src = data.src;
+      if (data.uploadedImage) {
+        const key = await uploadImage({
+          file: data.uploadedImage,
+          fileName: data.title,
+          folder: 'blog-images',
+        });
+        src = `${window.location.origin}/api/image?key=${key}`;
+      }
 
-    _insertImage({
-      src,
-      altText: data.title,
-      title: data.title,
-    });
-    form.reset();
-    seOpenImageDialog(false);
+      insertImage({
+        src,
+        altText: data.title,
+        title: data.title,
+      });
+    }),
+    onSuccess: () => {
+      form.reset();
+      seOpenImageDialog(false);
+    },
+  });
+
+  const onSubmit = async (data: ImageDialogSchema) => {
+    insertImageMutation.mutate(data);
   };
 
   return (

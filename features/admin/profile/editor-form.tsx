@@ -79,7 +79,7 @@ const ProfileEditor = (props: ProfileEditorProps) => {
     <>
       <div className="mb-2 flex items-center gap-4">
         <h1 className="text-2xl font-bold">個人資料</h1>
-        <div className="bg-primary-foreground flex items-center gap-2 rounded-lg p-2">
+        <div className="flex items-center gap-2">
           {editMode ? (
             <>
               <Button
@@ -88,7 +88,7 @@ const ProfileEditor = (props: ProfileEditorProps) => {
                 variant="outline"
                 onClick={() => {
                   setEditMode(false);
-                  // form.reset({ content: props.markdown ?? '' });
+                  form.reset({ content: props.markdown ?? '' });
                 }}
               >
                 取消
@@ -98,21 +98,20 @@ const ProfileEditor = (props: ProfileEditorProps) => {
               </Button>
             </>
           ) : (
-            <Button type="button" className="w-32" key="edit" onClick={() => setEditMode(true)}>
-              編輯
+            <Button type="button" variant="outline" className="w-32" key="edit" onClick={() => setEditMode(true)}>
+              開始編輯
             </Button>
           )}
         </div>
       </div>
 
-        <ForwardRefEditor
-          markdown={form.watch(upsertProfileSchemaKeys.content)}
-          readOnly={!editMode}
-          contentEditableClassName="prose prose-sm lg:prose-lg max-w-[80%] !pb-[8rem]"
-          onChange={handleMarkdownChange}
-        />
-      {/* <div className={`${editMode ? '' : 'pointer-events-none bg-neutral-400 opacity-50'}`}>
-      </div> */}
+      <ForwardRefEditor
+        key={editMode ? 'edit' : 'readOnly'}
+        markdown={form.watch(upsertProfileSchemaKeys.content)}
+        readOnly={!editMode}
+        contentEditableClassName="prose prose-sm lg:prose-lg max-w-[80%] !pb-[8rem]"
+        onChange={handleMarkdownChange}
+      />
     </>
   );
 };
