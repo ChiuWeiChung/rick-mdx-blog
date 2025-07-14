@@ -3,8 +3,10 @@ import { z } from 'zod/v4';
 const portfolioSchema = z.object({
   id: z.number(),
   projectName: z.string().min(1, { message: '專案名稱不能為空' }),
-  githubUrl: z.string().min(1, { message: 'Github 連結不能為空' }),
-  readmeUrl: z.string().min(1, { message: 'Readme 連結不能為空' }),
+  // githubUrl: z.string().min(1, { message: 'Github 連結不能為空' }),
+  githubUrl: z.url('Github 連結格式不正確'),
+  // readmeUrl: z.string().min(1, { message: 'Readme 連結不能為空' }),
+  readmeUrl: z.url('Readme 連結格式不正確'),
   startDate: z.number({ message: '請選擇開始日期' }).describe('開始日期'),
   endDate: z.number().nullable().describe('結束日期'),
 });

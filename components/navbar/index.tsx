@@ -84,7 +84,7 @@ const Navbar = async () => {
         </Popover>
 
         {session && (
-          <DropdownMenuContainer triggerName={`Hi ${session.user?.name}`} items={dropdownItems} />
+          <DropdownMenuContainer triggerName={`${session.user?.name} 👋 `} items={dropdownItems} />
         )}
       </nav>
     </div>

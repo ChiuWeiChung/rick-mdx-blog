@@ -16,6 +16,7 @@ export const getProfile = async () => {
   }
 };
 
+/** 更新個人簡介 (若無資料則新增，若有資料則更新) */
 export const upsertProfile = async (request: { content: string }) => {
   const { content } = request;
   try {

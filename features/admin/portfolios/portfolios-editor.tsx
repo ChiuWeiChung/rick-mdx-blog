@@ -40,12 +40,12 @@ const PortfolioEditor = ({ portfolio }: PortfolioEditorProps) => {
 
   const createMutation = useMutation({
     mutationFn: mutationHandler(createPortfolio),
-    onSuccess: () => mutateSuccessHandler('類別建立成功'),
+    onSuccess: () => mutateSuccessHandler('作品集建立成功'),
   });
 
   const updateMutation = useMutation({
     mutationFn: mutationHandler(updatePortfolio),
-    onSuccess: () => mutateSuccessHandler('類別更新成功'),
+    onSuccess: () => mutateSuccessHandler('作品集更新成功'),
   });
 
   const onSubmit = (data: CreatePortfolioRequest) => {

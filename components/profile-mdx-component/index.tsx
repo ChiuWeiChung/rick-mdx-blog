@@ -2,6 +2,7 @@ import React from 'react';
 import { CommonProps } from './types';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { Button } from '../ui/button';
 
 export function createMdxComponents() {
   return {
@@ -80,7 +81,7 @@ export function createMdxComponents() {
         ? '10rem'
         : props.title.includes('md')
           ? '2rem'
-          : '1rem';
+          : '1.5rem';
       return (
         <div className={cn('relative !my-0 inline-block')} style={{ width: size, height: size }}>
           <Image
@@ -108,6 +109,12 @@ export function createMdxComponents() {
         {...props}
       />
     ),
-    // a: (props: CommonProps) => <a className="text-blue-500 hover:text-blue-700" {...props} />,
+    a: (props: CommonProps) => {
+      return (
+        <Button variant="ghost" className="p-2" size="lg">
+          <a {...props} target="_blank" rel="noopener noreferrer" />
+        </Button>
+      );
+    },
   };
 }

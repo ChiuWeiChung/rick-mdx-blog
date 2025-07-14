@@ -5,9 +5,13 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
 
+interface PortfoliosPageProps {
+  searchParams?: Promise<unknown>;
+}
 
-const PortfoliosPage = async () => {
-  // const searchParams = await props.searchParams;
+const PortfoliosPage = async (props: PortfoliosPageProps) => {
+  const searchParams = await props.searchParams;
+  console.log('searchParams', searchParams);
   // const queryRequest = queryTagSchema.parse(searchParams ?? {});
   // const { data, totalCount } = await getTagWithNoteCount(queryRequest);
   const { data, totalCount } = await getPortfolios();

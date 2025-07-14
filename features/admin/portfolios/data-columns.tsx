@@ -31,7 +31,7 @@ const columns = [
 
       return (
         <div className="flex gap-2">
-          <Link href={`/admin/categories/editor?categoryId=${row.original.id}`}>
+          <Link href={`/admin/portfolios/editor?portfolioId=${row.original.id}`}>
             <Button
               size="icon"
               variant="outline"

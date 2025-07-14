@@ -21,7 +21,7 @@ export const getTagOptions = async () => {
   }
 };
 
-/** 取得標籤 */
+/** 取得特定標籤 */
 export const getTagById = async (id: number) => {
   try {
     const { rows } = await pool.query('SELECT * FROM tags WHERE id = $1', [id]);

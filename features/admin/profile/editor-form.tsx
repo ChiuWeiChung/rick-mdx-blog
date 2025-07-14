@@ -109,7 +109,7 @@ const ProfileEditor = (props: ProfileEditorProps) => {
         key={editMode ? 'edit' : 'readOnly'}
         markdown={form.watch(upsertProfileSchemaKeys.content)}
         readOnly={!editMode}
-        contentEditableClassName="prose prose-sm lg:prose-lg max-w-[80%] !pb-[8rem]"
+        contentEditableClassName="prose prose-sm lg:prose-lg max-w-[80%] !pb-[8rem] [&_img]:!m-0"
         onChange={handleMarkdownChange}
       />
     </>
