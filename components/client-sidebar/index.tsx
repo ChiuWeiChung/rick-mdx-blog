@@ -14,7 +14,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/colla
 
 export default function ClientSidebar() {
 	return (
-		<Sidebar>
+		<Sidebar variant='floating'  className="pt-18">
 			<SidebarContent>
 				<SidebarMenu>
 					<Collapsible defaultOpen className="group/collapsible">
@@ -27,14 +27,11 @@ export default function ClientSidebar() {
 							</CollapsibleTrigger>
 							<CollapsibleContent>
 								<SidebarMenuSub>
-									<SidebarMenuSubItem className="cursor-pointer">hi</SidebarMenuSubItem>
-									<SidebarMenuSubItem>hi2</SidebarMenuSubItem>
-									<SidebarMenuSubItem>hi3</SidebarMenuSubItem>
-									<SidebarMenuSubItem>hi4</SidebarMenuSubItem>
-									<SidebarMenuSubItem>hi5</SidebarMenuSubItem>
-									<SidebarMenuSubItem>hi6</SidebarMenuSubItem>
-									<SidebarMenuSubItem>hi7</SidebarMenuSubItem>
-									<SidebarMenuSubItem>hi8</SidebarMenuSubItem>
+									<SidebarMenuSubItem className="cursor-pointer">Item 1</SidebarMenuSubItem>
+									<SidebarMenuSubItem>Item 2</SidebarMenuSubItem>
+									<SidebarMenuSubItem>Item 3</SidebarMenuSubItem>
+									<SidebarMenuSubItem>Item 4</SidebarMenuSubItem>
+									<SidebarMenuSubItem>Item 5</SidebarMenuSubItem>
 								</SidebarMenuSub>
 							</CollapsibleContent>
 						</SidebarMenuItem>
