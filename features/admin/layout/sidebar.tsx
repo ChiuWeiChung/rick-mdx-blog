@@ -59,14 +59,6 @@ export default function AdminSidebar() {
               <Settings /> DevNote 管理後台
             </Link>
           </SidebarGroupLabel>
-          {/* <SidebarGroupContent>
-						<SidebarMenu>
-							<SidebarMenuItem>
-								<SidebarMenuButton asChild></SidebarMenuButton>
-							</SidebarMenuItem>
-						</SidebarMenu>
-					</SidebarGroupContent> */}
-          {/* <SidebarGroupLabel>Application</SidebarGroupLabel> */}
           <SidebarGroupContent className="pl-4">
             <SidebarMenu>
               {items.map(item => (

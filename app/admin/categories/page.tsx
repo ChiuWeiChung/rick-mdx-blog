@@ -17,7 +17,7 @@ const CategoriesPage = async (props: CategoriesPageProps) => {
   const { data, totalCount } = await getCategoryWithNoteCount(queryRequest);
 
   return (
-    <div className="relative mx-4 flex flex-col gap-4">
+    <div className="relative mx-4 flex flex-col gap-4 pb-10">
       <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">類別管理</h1>
       <div className="flex items-center justify-between">
 

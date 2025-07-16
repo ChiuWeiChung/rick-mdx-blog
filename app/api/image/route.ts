@@ -5,6 +5,8 @@ import s3 from '@/lib/s3';
 import { NextRequest, NextResponse } from 'next/server';
 import { unstable_cache } from 'next/cache';
 
+
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const key = searchParams.get('key'); // 圖片路徑，例如：images/photo.jpg
@@ -27,10 +29,11 @@ export async function GET(req: NextRequest) {
       [key],
       {
         tags: [key],
+        revalidate: 60 * 60 * 4,
       }
     );
     const signedUrl = await getCachedSignedUrl();
-    // return NextResponse.json({ url: signedUrl });
+    // const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
     return NextResponse.redirect(signedUrl);
   } catch (error) {
     console.error('Error generating signed URL:', error);

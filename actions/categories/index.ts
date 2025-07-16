@@ -11,7 +11,7 @@ export const getCategoryOptions = async () => {
   try {
     const { rows } = await pool.query('SELECT * FROM categories');
     const categories = toCamelCase<Category>(rows);
-    return categories.map(({ name,id }) => ({
+    return categories.map(({ name, id }) => ({
       label: name,
       value: id,
     }));
@@ -25,7 +25,9 @@ export const getCategoryOptions = async () => {
 export const checkCategoryExist = async (categoryId: number, client?: PoolClient) => {
   try {
     const queryExecutor = client || pool;
-    const { rows } = await queryExecutor.query('SELECT * FROM categories WHERE id = $1', [categoryId]);
+    const { rows } = await queryExecutor.query('SELECT * FROM categories WHERE id = $1', [
+      categoryId,
+    ]);
     if (rows.length === 0) return null;
     return toCamelCase<Category>(rows)[0];
   } catch (error) {
@@ -44,7 +46,9 @@ const createCategory = async (
     const { name, coverFile, iconFile } = request;
 
     // 檢查分類是否存在
-    const queryResult = await queryExecutor.query('SELECT * FROM categories WHERE name = $1', [name]);
+    const queryResult = await queryExecutor.query('SELECT * FROM categories WHERE name = $1', [
+      name,
+    ]);
     if (queryResult.rows.length > 0) throw new Error('分類已存在');
 
     // 上傳檔案
@@ -81,9 +85,12 @@ export const updateCategory = async (
 
     // 如果 name 有變更，且有舊圖片，則搬移圖片
     if (name !== oldName && (iconPath || coverPath)) {
-      const copyResults = await renameImages({ oldFolder: `categories/${oldName}`, newFolder: `categories/${name}` });
-      if(copyResults?.length) {
-        copyResults.forEach((key) => {
+      const copyResults = await renameImages({
+        oldFolder: `categories/${oldName}`,
+        newFolder: `categories/${name}`,
+      });
+      if (copyResults?.length) {
+        copyResults.forEach(key => {
           updates.push(`${key.includes('cover') ? 'cover_path' : 'icon_path'} = $${paramIndex++}`);
           values.push(key);
         });
@@ -130,30 +137,28 @@ export const updateCategory = async (
   }
 };
 
-
 /** 檢查分類是否存在，不存在則新增，存在則返回該分類 */
 export const findOrCreateCategory = async (
-  idOrName: string|number,
+  idOrName: string | number,
   client?: PoolClient,
   throwErrorIfExists?: boolean
 ) => {
   try {
-    if(typeof idOrName === 'number') {
+    if (typeof idOrName === 'number') {
       const existingCategory = await checkCategoryExist(idOrName, client);
       if (existingCategory) {
         if (throwErrorIfExists) throw new Error('分類已存在');
         return existingCategory;
       }
-    } 
+    }
 
-    if(typeof idOrName === 'string') {
+    if (typeof idOrName === 'string') {
       const newCategory = await createCategory({ name: idOrName }, client);
-      if(!newCategory) throw new Error('新增分類失敗');
+      if (!newCategory) throw new Error('新增分類失敗');
       return newCategory;
     }
 
     throw new Error('分類不存在');
-
   } catch (error) {
     console.error(error);
     return null;
@@ -177,10 +182,10 @@ export const updateCategoryWithFile = async (request: CreateCategoryRequest & { 
   try {
     // 取得原分類資訊
     const category = await getCategoryById(request.id);
-    if(!category) throw new Error('Category not found');
+    if (!category) throw new Error('Category not found');
 
     // 更新分類
-    const updatedCategory = await updateCategory({...request, oldName: category.name});
+    const updatedCategory = await updateCategory({ ...request, oldName: category.name });
     if (!updatedCategory) throw new Error('Update category failed');
 
     return updatedCategory;
@@ -203,7 +208,7 @@ export const getCategoryWithNoteCount = async (request: QueryCategory) => {
   }
 
   const whereClause = where.length > 0 ? `WHERE ${where.join(' AND ')}` : '';
-  
+
   // 查詢總數（只用 whereValues）
   const countResult = await pool.query(
     `
@@ -264,7 +269,7 @@ export const getCategoryWithNoteCount = async (request: QueryCategory) => {
 
 export const getCategoryById = async (id: number) => {
   const { rows } = await pool.query('SELECT * FROM categories WHERE id = $1', [id]);
-  if(rows.length === 0) return null;
+  if (rows.length === 0) return null;
   return toCamelCase<Category>(rows)[0];
 };
 
@@ -272,13 +277,13 @@ export const deleteCategoryById = async (id: number) => {
   try {
     // 取得分類資訊
     const category = await getCategoryById(id);
-    if(!category) throw new Error('Category not found');
+    if (!category) throw new Error('Category not found');
 
     // 刪除圖片
-    const folders = []
-    if(category.coverPath) folders.push(category.coverPath);
-    if(category.iconPath) folders.push(category.iconPath);
-    if(folders.length)await deleteImagesByFolders(folders);
+    const folders = [];
+    if (category.coverPath) folders.push(category.coverPath);
+    if (category.iconPath) folders.push(category.iconPath);
+    if (folders.length) await deleteImagesByFolders(folders);
 
     // 刪除分類
     const { rows } = await pool.query('DELETE FROM categories WHERE id = $1', [id]);

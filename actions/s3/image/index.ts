@@ -11,6 +11,7 @@ import {
   ListObjectsV2Command,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
+import { revalidateTag } from 'next/cache';
 
 /** 上傳圖片 */
 async function uploadImage(request: { file: File; fileName: string; folder: string }) {
@@ -35,6 +36,7 @@ async function uploadImage(request: { file: File; fileName: string; folder: stri
   });
 
   await s3.send(command);
+  revalidateTag(objectKey);
   return objectKey;
 }
 

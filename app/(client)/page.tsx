@@ -5,8 +5,6 @@ import { coerceQueryNoteSchema } from '@/actions/notes/types';
 import NotesSection from '@/features/client/notes-section';
 import { Suspense } from 'react';
 import SpinnerLoader from '@/components/spinner-loader';
-import { Button } from '@/components/ui/button';
-import { CircleChevronRightIcon } from 'lucide-react';
 
 export default async function LandingPage() {
   const queryRequest = coerceQueryNoteSchema.parse({ limit: 6 }); // 預設只取前六筆資料
@@ -33,10 +31,6 @@ export default async function LandingPage() {
         {/* Feature Cards */}
         <Suspense fallback={<SpinnerLoader />}>
           <NotesSection request={queryRequest} />
-          <Button variant="outline" className="w-[200px] h-12">
-            <CircleChevronRightIcon />
-            查看更多
-          </Button>
         </Suspense>
       </div>
     </div>
