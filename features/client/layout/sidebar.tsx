@@ -1,4 +1,4 @@
-import { NotebookIcon } from 'lucide-react';
+import { BlocksIcon, NotebookIcon } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -8,33 +8,31 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { getCategoryOptions } from '@/actions/categories';
 import NavLink from '../../../components/nav-link';
-import { headers } from 'next/headers';
 import Image from 'next/image';
 import { getUpdatedSearchParams } from '@/utils/form-utils';
+import { getOrigin } from '@/lib/router';
 
 export default async function ClientSidebar() {
-  const headersList = await headers();
-  const protocol = headersList.get('x-forwarded-proto') ?? 'http';
-
-  const host = headersList.get('host');
-  const origin = `${protocol}://${host}`;
+  const origin = await getOrigin();
   const categories = await getCategoryOptions();
 
-  const getSearchParams = (categoryName: string) => {
+  const getSearchParams = (categoryId?: number) => {
     const searchRequest = getUpdatedSearchParams({
-      category: categoryName,
+      category: categoryId,
     });
-    return `/notes/?${searchRequest.toString()}`;
+    return `/notes?${searchRequest.toString()}`;
   };
 
   return (
     <Sidebar variant="floating" className="pt-18">
+      {/* <SidebarTrigger className="absolute top-20 -right-6" /> */}
+      <SidebarTrigger className="absolute top-20 -right-6 hidden md:flex" />
       <SidebarContent>
         <SidebarGroup>
-          
           <SidebarGroupLabel className="mb-4 gap-2 text-xl">
             <NotebookIcon className="!size-6" />
             筆記類別
@@ -42,11 +40,19 @@ export default async function ClientSidebar() {
 
           <SidebarGroupContent>
             <SidebarMenu className="gap-2 pl-2">
+              <SidebarMenuItem className="rounded-none border-b border-gray-200">
+                <SidebarMenuButton asChild>
+                  <NavLink href={getSearchParams()} className="flex h-12 items-center gap-2">
+                    <BlocksIcon className="!size-6" />
+                    全部
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               {categories.map(cat => (
                 <SidebarMenuItem key={cat.value} className="rounded-none border-b border-gray-200">
                   <SidebarMenuButton asChild>
                     <NavLink
-                      href={getSearchParams(cat.label)}
+                      href={getSearchParams(cat.value)}
                       className="flex h-12 items-center gap-2"
                     >
                       <Image

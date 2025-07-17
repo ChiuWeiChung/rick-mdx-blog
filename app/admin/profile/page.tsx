@@ -10,5 +10,10 @@ export default async function ProfileManagementPage() {
     const resource = await getMarkdownResource(profile.profilePath);
     markdown = await getMarkdownContent(resource);
   }
-  return <ProfileEditor markdown={markdown} />;
+  return (
+    <div className="relative mx-4 flex flex-col gap-4">
+      <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">自我介紹管理</h1>
+      <ProfileEditor markdown={markdown} />
+    </div>
+  );
 }

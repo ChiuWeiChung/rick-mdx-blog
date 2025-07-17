@@ -43,7 +43,7 @@ export function FeatureCard({
       <CardContent>
         <p className="text-gray-500 dark:text-gray-400">{content}</p>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Link href={href} className="w-full">
           <Button variant={variant} className="w-full">
             {buttonText}

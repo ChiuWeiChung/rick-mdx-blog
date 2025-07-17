@@ -8,7 +8,7 @@ const noteSchema = z.object({
   title: z.string().min(1, '請輸入文章標題').trim(),
   filePath: z.string(),
   username: z.string(),
-  category: z.string().min(1, '請選擇分類'),
+  category: z.string(),
   visible: z.boolean(),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -34,8 +34,11 @@ const createNoteSchema = noteSchema
     file: z.instanceof(File).nullable(),
     content: z.string(),
     manualUpload: z.boolean(),
-    category: z.union([z.string().min(1, '請選擇分類'), z.number('請選擇分類')]),
-    tags: z.array(z.union([z.string().min(1, '請選擇標籤'), z.number('請選擇標籤')])),
+    category: z.union([z.string('請選擇分類'), z.number('請選擇分類')]),
+    tags: z.array(
+      z.union([z.string('請選擇標籤').min(1, '請選擇標籤'), z.number('請選擇標籤')]),
+      '請選擇標籤'
+    ),
     fileName: z
       .string()
       .min(1, '請提供檔案名稱')

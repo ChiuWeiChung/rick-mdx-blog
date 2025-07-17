@@ -77,9 +77,8 @@ const ProfileEditor = (props: ProfileEditorProps) => {
 
   return (
     <>
-      <div className="mb-2 flex items-center gap-4">
-        <h1 className="text-2xl font-bold">個人資料</h1>
-        <div className="flex items-center gap-2">
+      <div className="flex items-center justify-end gap-2">
+        
           {editMode ? (
             <>
               <Button
@@ -98,11 +97,16 @@ const ProfileEditor = (props: ProfileEditorProps) => {
               </Button>
             </>
           ) : (
-            <Button type="button" variant="outline" className="w-32" key="edit" onClick={() => setEditMode(true)}>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-32"
+              key="edit"
+              onClick={() => setEditMode(true)}
+            >
               開始編輯
             </Button>
           )}
-        </div>
       </div>
 
       <ForwardRefEditor

@@ -52,6 +52,7 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
       ...noteToEdit,
     },
   });
+  console.log('form.formState.errors', form.formState.errors);
 
   const [markdown, manualUpload] = form.watch([
     createNoteSchemaKeys.content,
@@ -92,13 +93,14 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
 
   const handleSaveBtnClick = () => {
     const onInvalid = (errors: FieldErrors<CreateNoteRequest>) => {
-      const messages = Object.keys(errors).map(key => errors[key as keyof typeof errors]?.message);
+      const messagesArr = Object.keys(errors).map(key => errors[key as keyof typeof errors]?.message);
+      const messageSet = new Set(messagesArr);
       openAlertModal({
         status: 'error',
         title: '請檢查以下錯誤',
         description: (
           <span className="ml-4 flex flex-col gap-2">
-            {messages.map(message => (
+            {Array.from(messageSet).map(message => (
               <li key={message}>{message}</li>
             ))}
           </span>
@@ -229,6 +231,7 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
 
       <ForwardRefEditor
         markdown={markdown}
+        className="m-4"
         contentEditableClassName="prose prose-sm lg:prose-lg"
         onChange={handleMarkdownChange}
       />

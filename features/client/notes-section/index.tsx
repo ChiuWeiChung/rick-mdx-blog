@@ -1,9 +1,11 @@
 import { queryNoteList } from '@/actions/notes';
 import { QueryNote } from '@/actions/notes/types';
 import FeatureCard from '@/components/feature-card';
+import ServerPagination from '@/components/react-table/server-pagination';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getOrigin } from '@/lib/router';
-import { CircleChevronRightIcon } from 'lucide-react';
+import { CircleChevronRightIcon, FileCode2Icon } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -13,14 +15,26 @@ interface NotesSectionProps {
 }
 
 export default async function NotesSection({ request, showPagination = false }: NotesSectionProps) {
-  const { data } = await queryNoteList(request);
+  const { data,totalCount } = await queryNoteList(request);
   const origin = await getOrigin();
+
+  const renderTags = (tags: string[]) => {
+    return (
+      <div className="flex flex-wrap gap-2">
+        {tags.map(tag => (
+          <Link href={`/tags?name=${tag}`} key={tag}>
+            <Badge key={tag} variant="outline" className="text-gray-500 hover:scale-105 cursor-pointer">
+              {tag}
+            </Badge>
+          </Link>
+        ))}
+      </div>
+    );
+    // return ;
+  };
 
   return (
     <>
-      {showPagination && (
-        <section className="mb-4">selected Tags (TODO) Tags can be removed</section>
-      )}
 
       <section className="mb-4 grid w-full max-w-5xl grid-cols-1 gap-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
         {data.map(note => (
@@ -28,22 +42,29 @@ export default async function NotesSection({ request, showPagination = false }: 
             key={note.id}
             title={
               <>
-                <h3>{note.category}</h3>
-                <span className="text-gray-500">{note.title}</span>
+                <h3>{note.title}</h3>
+                <span className="text-gray-500">{note.category}</span>
               </>
             }
-            description={note.title}
-            content={''}
-            buttonText="View"
+            description={renderTags(note.tags)}
+            content="" //TODO: 顯示筆記部分內容，內容須從 formatter 來，存擋時，需要讀取 formatter 資料，並且顯示部分內容
+            buttonText={
+              <>
+                <FileCode2Icon />
+                閱讀筆記
+              </>
+            }
+            // buttonText={<EyeIcon/>}
             href={`/notes/${note.id}`}
             imageUrl={`${origin}/api/image?key=categories/${note.category}/cover.png`}
           />
         ))}
       </section>
 
-      
       {showPagination ? (
-        <div className="center">pagination todo</div>
+        <div className="center">
+          <ServerPagination totalElements={totalCount} />
+        </div>
       ) : (
         <Link href="/notes">
           <Button variant="outline" className="h-12 w-[200px]">

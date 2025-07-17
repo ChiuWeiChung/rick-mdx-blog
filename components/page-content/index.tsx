@@ -1,5 +1,5 @@
 'use client';
-import { useSidebar } from '@/components/ui/sidebar';
+import { SidebarTrigger, useSidebar } from '@/components/ui/sidebar';
 import { SIDEBAR_WIDTH } from '@/constants/sidebar';
 import { cn } from '@/lib/utils';
 import React from 'react';
@@ -25,9 +25,12 @@ const PageContent = ({ children, className }: PageContentProps) => {
     //   )}
     //   style={{ maxWidth: calculateMaxWidth() }}
     // >
-    <main className={cn("relative flex-1", className)} style={{ maxWidth: calculateMaxWidth() }}>
-      {children}
-    </main>
+    <>
+      {isMobile && <SidebarTrigger className="fixed top-20 left-0 z-30" />}
+      <main className={cn('relative flex-1', className)} style={{ maxWidth: calculateMaxWidth() }}>
+        {children}
+      </main>
+    </>
   );
 };
 

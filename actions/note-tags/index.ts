@@ -24,3 +24,15 @@ export const createNoteTags = async (noteId: number, tagIds: number[], client?: 
 
   return toCamelCase<NoteTag>(rows);
 };
+
+export const getNoteIdsByTagId = async (tagId: number) => {
+  // join tags to get the tagName
+  const { rows } = await pool.query(
+    `SELECT post_tags.*, tags.name as tag_name 
+    FROM post_tags 
+    JOIN tags ON post_tags.tag_id = tags.id 
+    WHERE post_tags.tag_id = $1`,
+    [tagId]
+  );
+  return toCamelCase<NoteTag & { tagName: string }>(rows);
+};

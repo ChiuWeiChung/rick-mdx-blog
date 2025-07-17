@@ -11,7 +11,7 @@ type Tag = z.infer<typeof tagSchema>;
 
 /** =============================== 搜尋 =============================== */
 
-/** 搜尋類別的 request schema */
+/** 搜尋標籤的 request schema */
 const queryTagSchema = z.object({
   name: z.string().default(''),
   page: z.coerce.number().default(1),
@@ -20,10 +20,10 @@ const queryTagSchema = z.object({
   order: z.enum(QueryOrder).nullish(),
 });
 
-/** 搜尋類別的 request type */
+/** 搜尋標籤的 request type */
 type QueryTag = z.infer<typeof queryTagSchema>;
 
-/** 搜尋類別的 request schema 的 key */
+/** 搜尋標籤的 request schema 的 key */
 const queryTagKeys = queryTagSchema.keyof().enum;
 
 

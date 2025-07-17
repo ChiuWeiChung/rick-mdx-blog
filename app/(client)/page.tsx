@@ -1,17 +1,21 @@
-import LandingBackground from '@/features/client/landing-background';
+// import LandingBackground from '@/features/client/landing-background';
 import LandingDemoPage from '@/features/demo';
 import TagsSection from '@/features/client/tags-section';
 import { coerceQueryNoteSchema } from '@/actions/notes/types';
 import NotesSection from '@/features/client/notes-section';
 import { Suspense } from 'react';
 import SpinnerLoader from '@/components/spinner-loader';
+import { queryTagSchema } from '@/actions/tags/types';
+import { getTagWithNoteCount } from '@/actions/tags';
 
 export default async function LandingPage() {
   const queryRequest = coerceQueryNoteSchema.parse({ limit: 6 }); // 預設只取前六筆資料
-
+  const queryTagRequest = queryTagSchema.parse({ limit: 10000 });
+  const { data: tags } = await getTagWithNoteCount(queryTagRequest);
+  
   return (
-    <div className="relative z-10 min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 shadow-inner dark:from-gray-900 dark:to-gray-950">
-      <LandingBackground />
+    // <div className="relative z-10 min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 shadow-inner dark:from-gray-900 dark:to-gray-950">
+    //   <LandingBackground />
       <div className="container mx-auto flex flex-col items-center px-4 py-8">
         {/* Hero Section */}
         <section className="max-w-3xl text-center">
@@ -23,7 +27,7 @@ export default async function LandingPage() {
           </p>
         </section>
 
-        <TagsSection />
+        <TagsSection tags={tags} />
 
         {/* 測試區，待刪除 */}
         <LandingDemoPage />
@@ -33,6 +37,6 @@ export default async function LandingPage() {
           <NotesSection request={queryRequest} />
         </Suspense>
       </div>
-    </div>
+    // </div>
   );
 }
