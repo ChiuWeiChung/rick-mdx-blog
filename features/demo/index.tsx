@@ -30,6 +30,13 @@ export default function LandingDemoPage() {
         href="/form-playground"
         imageUrl="https://images.unsplash.com/photo-1579444741963-5ae219cfe27c?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" // new unsplash image
       />
+      <FeatureCard
+        title="Highlight Test"
+        description="Test highlight"
+        content="Test highlight"
+        buttonText="Highlight Test"
+        href="/highlight-test"
+      />
     </section>
   );
 }

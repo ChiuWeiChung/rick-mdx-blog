@@ -259,3 +259,32 @@
 	}
   }
 }
+
+/* Highlight styles */
+.highlight {
+	background-color: #fef08a; /* yellow-200 */
+	border-radius: 3px;
+	padding: 1px 2px;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	position: relative;
+	z-index: 1;
+}
+
+.highlight:hover {
+	background-color: #fde047; /* yellow-300 */
+}
+
+.highlight.with-note {
+	background-color: #bfdbfe; /* blue-200 */
+}
+
+.highlight.with-note:hover {
+	background-color: #93c5fd; /* blue-300 */
+}
+
+/* 確保每個 block 元素的選取行為獨立 */
+[data-block-id] {
+	position: relative;
+	isolation: isolate;
+}

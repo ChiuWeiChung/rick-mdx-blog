@@ -7,6 +7,11 @@ import { EvaluateOptions, MDXRemote } from 'next-mdx-remote-client/rsc';
 import { createMdxComponents } from '@/components/notes-mdx-component';
 import remarkGfm from 'remark-gfm';
 import GoBackButton from '@/components/go-back-button';
+import NoteHighlighter from '@/components/note-highlighter';
+import { auth } from '@/auth';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+// import Highlighter from '@/components/highlighter';
 
 interface ClientNotesPageProps {
   params: Promise<{ noteId: string }>;
@@ -20,6 +25,7 @@ interface ClientNotesPageProps {
 export default async function ClientNotesPage(props: ClientNotesPageProps) {
   const params = await props.params;
   const note = await getNoteInfoById(params.noteId);
+  const session = await auth();
 
   if (!note) notFound();
   // 取得對應的 URL
@@ -45,10 +51,17 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
       <div className="mb-4 flex items-center justify-between border-b pb-4">
         <GoBackButton>回筆記列表</GoBackButton>
         <p className="text-sm text-gray-500">更新時間：{note.updatedAt.toLocaleDateString()}</p>
+        {!!session && (
+          <Link href={`/admin/notes/editor?noteId=${params.noteId}`}>
+            <Button variant="outline">編輯</Button>
+          </Link>
+        )}
       </div>
       <Suspense fallback={<div className="p-4 text-center">Loading content...</div>}>
         <MDXRemote source={content} components={createMdxComponents()} options={options} />
       </Suspense>
+
+      {!!session && <NoteHighlighter noteId={params.noteId} />}
     </div>
   );
 }
