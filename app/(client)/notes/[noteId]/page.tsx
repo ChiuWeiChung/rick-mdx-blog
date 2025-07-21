@@ -12,50 +12,42 @@ interface ClientNotesPageProps {
   params: Promise<{ noteId: string }>;
 }
 
+// type Frontmatter = {
+//   title:string;
+//   updatedAt:string;
+// }
+
 export default async function ClientNotesPage(props: ClientNotesPageProps) {
   const params = await props.params;
-
-  //   const { noteId } = await searchParams;
-
-  // 如果有 noteId ，則獲取筆記資訊，並且獲取筆記的 markdown 內容
-
   const note = await getNoteInfoById(params.noteId);
 
   if (!note) notFound();
-
+  // 取得對應的 URL
   const resource = await getMarkdownResource(note.filePath);
+  // 取得對應的 markdown 資源
   const content = await getMarkdownContent(resource);
-//   const noteData = {
-//     id: note.id,
-//     title: note.title,
-//     category: note.category,
-//     visible: note.visible,
-//     tags: note.tags,
-//     content,
-//     fileName: note.filePath.split('/').pop()?.replace('.md', '') ?? '',
-//   };
 
   const options: EvaluateOptions = {
     mdxOptions: { remarkPlugins: [remarkGfm] },
-    //  parseFrontmatter: true,
-    // scope: {
-    //   readingTime: calculateSomeHow(source),
-    // },
-    //  vfileDataIntoScope: 'toc',
+    //  parseFrontmatter: true, // TODO 標題/時間可以從這邊取得 (目前是從資料庫)
+    //  vfileDataIntoScope: 'toc', // TODO table of content (目錄的概念)
   };
 
-  //   const { data } = await getNoteById(noteId);
+  // const { content, frontmatter, scope, error } = await evaluate<Frontmatter>({
+  //   source:content,
+  //   options,
+  //   components: createMdxComponents(),
+  // });
+
   return (
     <div>
-        {/* router back button */}
-        <GoBackButton> 
-            回筆記列表
-        </GoBackButton>
-      {/* <h1>{data.title}</h1> */}
+      {/* router back button */}
+      <div className="mb-4 flex items-center justify-between border-b pb-4">
+        <GoBackButton>回筆記列表</GoBackButton>
+        <p className="text-sm text-gray-500">更新時間：{note.updatedAt.toLocaleDateString()}</p>
+      </div>
       <Suspense fallback={<div className="p-4 text-center">Loading content...</div>}>
-        <article className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
-          <MDXRemote source={content} components={createMdxComponents()} options={options} />
-        </article>
+        <MDXRemote source={content} components={createMdxComponents()} options={options} />
       </Suspense>
     </div>
   );

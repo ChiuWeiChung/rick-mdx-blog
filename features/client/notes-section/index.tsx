@@ -5,7 +5,7 @@ import ServerPagination from '@/components/react-table/server-pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getOrigin } from '@/lib/router';
-import { CircleChevronRightIcon, FileCode2Icon } from 'lucide-react';
+import { CircleChevronRightIcon, ForwardIcon } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -50,11 +50,10 @@ export default async function NotesSection({ request, showPagination = false }: 
             content="" //TODO: 顯示筆記部分內容，內容須從 formatter 來，存擋時，需要讀取 formatter 資料，並且顯示部分內容
             buttonText={
               <>
-                <FileCode2Icon />
-                閱讀筆記
+                <ForwardIcon />
+                查看筆記
               </>
             }
-            // buttonText={<EyeIcon/>}
             href={`/notes/${note.id}`}
             imageUrl={`${origin}/api/image?key=categories/${note.category}/cover.png`}
           />

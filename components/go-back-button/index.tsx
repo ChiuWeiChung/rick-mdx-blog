@@ -17,7 +17,7 @@ const GoBackButton = ({ children }: GoBackButtonProps) => {
   };
 
   return (
-    <Button variant="outline" className="mb-4" type="button" onClick={handleGoBack}>
+    <Button variant="outline" type="button" onClick={handleGoBack}>
       <ArrowLeftCircleIcon className="h-4 w-4" />
       {children}
     </Button>

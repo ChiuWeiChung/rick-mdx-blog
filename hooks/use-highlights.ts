@@ -11,8 +11,13 @@ export interface HighlightData {
 	note?: string;
 }
 
-type OnClickHighlight = (data: { id: string; note?: string }, event: MouseEvent) => void;
+export type OnClickHighlight = (data: { id: string; note?: string }, event: MouseEvent) => void;
 
+/**
+ * highlight 文字
+ * @param highlights highlight 文字資料
+ * @param onClickHighlight 點擊 highlight 文字的 callback，callback 的參數為 highlight 文字資料
+ */
 export function useHighlights(highlights: HighlightData[], onClickHighlight?: OnClickHighlight) {
 	useEffect(() => {
 		// group by blockId
@@ -28,6 +33,7 @@ export function useHighlights(highlights: HighlightData[], onClickHighlight?: On
 		// apply highlight per block
 		for (const [blockId, blockHighlights] of blockMap.entries()) {
 			const el = document.querySelector<HTMLElement>(`[data-block-id="${blockId}"]`);
+			console.log('el', el);
 			if (el) {
 				highlightTextInBlock(el, blockHighlights, onClickHighlight);
 			}

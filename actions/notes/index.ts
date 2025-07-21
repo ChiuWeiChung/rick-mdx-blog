@@ -381,7 +381,7 @@ export const deleteNote = async (noteId: number) => {
 export const getNoteInfoById = async (noteId: string) => {
   const { rows } = await pool.query(
     `
-    SELECT posts.id AS id, title, visible, created_at, categories.id AS category, file_path, STRING_AGG(tags.id::text, ', ') AS tags
+    SELECT posts.id AS id, title, visible, created_at, updated_at, categories.id AS category, file_path, STRING_AGG(tags.id::text, ', ') AS tags
     FROM posts 
     LEFT JOIN post_tags ON post_tags.post_id = posts.id
     LEFT JOIN tags ON tags.id = post_tags.tag_id

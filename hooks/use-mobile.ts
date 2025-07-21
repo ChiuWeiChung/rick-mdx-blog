@@ -2,6 +2,9 @@ import * as React from "react"
 
 const MOBILE_BREAKPOINT = 768
 
+/**
+ * 判斷是否為 mobile 裝置
+ */
 export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
