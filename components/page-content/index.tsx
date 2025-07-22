@@ -26,7 +26,7 @@ const PageContent = ({ children, className }: PageContentProps) => {
     //   style={{ maxWidth: calculateMaxWidth() }}
     // >
     <>
-      {isMobile && <SidebarTrigger className="fixed top-20 left-0 z-30" />}
+      {isMobile && <SidebarTrigger className="fixed top-12 left-0 z-30" />}
       <main className={cn('relative flex-1', className)} style={{ maxWidth: calculateMaxWidth() }}>
         {children}
       </main>

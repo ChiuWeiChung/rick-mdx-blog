@@ -5,31 +5,31 @@ import { FC } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
 import { useAlertModal } from '@/hooks/use-alert-modal';
-import { Portfolio } from '@/actions/portfolios/types';
-import { deletePortfolioById } from '@/actions/portfolios';
+import { deleteNoteMemo } from '@/actions/note-memos';
+import { NoteMemo, TableNoteMemo } from '@/actions/note-memos/types';
 
-interface PortfolioTableProps {
-  data: Portfolio[];
+interface ReviseTableProps {
+  data: TableNoteMemo[];
   totalCount: number;
 }
 
-const PortfolioTable: FC<PortfolioTableProps> = ({ data, totalCount }) => {
+const ReviseTable: FC<ReviseTableProps> = ({ data, totalCount }) => {
   const { openAlertModal } = useAlertModal();
 
   // 刪除
   const deletePortfolioMutation = useMutation({
-    mutationFn: mutationHandler(deletePortfolioById),
+    mutationFn: mutationHandler(deleteNoteMemo),
     meta: {
-      successMessage: { title: '作品刪除成功' },
+      successMessage: { title: '修訂建議刪除成功' },
       shouldRefresh: true,
     },
   });
 
-  const onDataDelete = (data: Portfolio) => {
+  const onDataDelete = (data: NoteMemo) => {
     openAlertModal({
-      title: `刪除作品 (名稱: ${data.projectName})`,
+      title: `刪除修訂建議 (內容: ${data.content})`,
       status: 'warning',
-      description: <span>確定要在資料庫中刪除此作品嗎？</span>,
+      description: <span>確定要在資料庫中刪除此修訂建議嗎？</span>,
       confirmText: '確定刪除',
       cancelText: '取消',
       onConfirm: () => deletePortfolioMutation.mutate(data.id),
@@ -38,13 +38,15 @@ const PortfolioTable: FC<PortfolioTableProps> = ({ data, totalCount }) => {
 
   return (
     <ReactTable
-      caption="作品列表"
+      caption="修訂建議列表"
       data={data}
       columns={columns}
       totalElements={totalCount}
+      manualPagination
+      manualSorting
       meta={{ onDataDelete }}
     />
   );
 };
 
-export default PortfolioTable;
+export default ReviseTable;

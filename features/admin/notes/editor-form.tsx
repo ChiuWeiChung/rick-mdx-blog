@@ -30,15 +30,19 @@ import { mutationHandler } from '@/utils/react-query-handler';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
+import { NoteMemo } from '@/actions/note-memos/types';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { deleteNoteMemosByPostId } from '@/actions/note-memos';
 
 interface NoteEditorFormProps {
   noteToEdit?: Partial<CreateNoteRequest> & { id: number };
   categoryOptions: Option<number>[];
   tagOptions: Option<number>[];
   markdown?: string;
+  memos?: NoteMemo[];
 }
 
-const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorFormProps) => {
+const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions, memos }: NoteEditorFormProps) => {
   const isCreate = !noteToEdit;
   const router = useRouter();
   const [open, setOpen] = useState(true);
@@ -52,7 +56,6 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
       ...noteToEdit,
     },
   });
-  console.log('form.formState.errors', form.formState.errors);
 
   const [markdown, manualUpload] = form.watch([
     createNoteSchemaKeys.content,
@@ -64,14 +67,24 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
     router.push('/admin/notes');
   };
 
+  // 刪除筆記備註
+  const { mutate: deleteNoteMemosMutation } = useMutation({
+    mutationFn: mutationHandler(deleteNoteMemosByPostId),
+  });
+
+  // 建立筆記
   const { mutate: createNoteMutation, isPending: isCreatePending } = useMutation({
     mutationFn: mutationHandler(createNote),
     onSuccess: () => mutateSuccessHandler('筆記建立成功'),
   });
 
+  // 更新筆記
   const { mutate: updateNoteMutation, isPending: isUpdatePending } = useMutation({
     mutationFn: mutationHandler(updateNote),
-    onSuccess: () => mutateSuccessHandler('筆記更新成功'),
+    onSuccess: () => {
+      if (memos && noteToEdit) deleteNoteMemosMutation(noteToEdit.id.toString());
+      mutateSuccessHandler('筆記更新成功');
+    },
   });
 
   const onSubmit = (data: CreateNoteRequest) => {
@@ -93,7 +106,9 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
 
   const handleSaveBtnClick = () => {
     const onInvalid = (errors: FieldErrors<CreateNoteRequest>) => {
-      const messagesArr = Object.keys(errors).map(key => errors[key as keyof typeof errors]?.message);
+      const messagesArr = Object.keys(errors).map(
+        key => errors[key as keyof typeof errors]?.message
+      );
       const messageSet = new Set(messagesArr);
       openAlertModal({
         status: 'error',
@@ -112,7 +127,6 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
   };
 
   const isPending = isCreatePending || isUpdatePending;
-  console.log('form errors', form.formState.errors);
 
   return (
     <>
@@ -197,6 +211,34 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
         </SmartForm>
       </DialogContainer>
 
+      {/* 筆記備註區塊 */}
+      {!open && !!memos && memos.length > 0 && (
+        <div className="bg-primary-foreground fixed top-28 right-4 z-[1000] flex flex-col items-center gap-2 rounded-lg p-2 opacity-80">
+          <div className="flex items-center justify-end gap-4">
+            <Accordion type="single" collapsible>
+              <AccordionItem value="memos">
+                <AccordionTrigger>筆記修訂備註 ({memos.length})</AccordionTrigger>
+                <AccordionContent>
+                  <div className="rounded-lg border bg-white/90 p-3 shadow-lg backdrop-blur-sm">
+                    <div className="divide-y text-sm text-gray-600">
+                      {memos.map((memo, index) => (
+                        <div key={memo.id} className="flex flex-col py-2">
+                          <div className="highlight">
+                            {' '}
+                            {index + 1}. {memo.selectedContent}
+                          </div>
+                          <div className="ml-4 text-sm text-gray-600">{memo.content}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
+      )}
+
       {!open && (
         <div className="bg-primary-foreground fixed right-4 bottom-4 z-[1000] flex flex-col items-center gap-2 rounded-lg p-2 opacity-80">
           <div className="flex items-center justify-end gap-4">
@@ -216,7 +258,12 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
               <div className="space-y-1 text-sm text-gray-600">
                 {renderBasicInfo('文章標題', form.watch(createNoteSchemaKeys.title))}
                 {renderBasicInfo('檔案名稱', form.watch(createNoteSchemaKeys.fileName))}
-                {renderBasicInfo('分類', categoryOptions.find(option => option.value === form.watch(createNoteSchemaKeys.category))?.label || '未設定')}
+                {renderBasicInfo(
+                  '分類',
+                  categoryOptions.find(
+                    option => option.value === form.watch(createNoteSchemaKeys.category)
+                  )?.label || '未設定'
+                )}
                 {renderBasicInfo('標籤', form.watch(createNoteSchemaKeys.tags)?.join(', '))}
                 {renderBasicInfo(
                   '是否公開',
@@ -231,7 +278,7 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions }: NoteEditorF
 
       <ForwardRefEditor
         markdown={markdown}
-        className="m-4"
+        className="m-4 mt-12"
         contentEditableClassName="prose prose-sm lg:prose-lg"
         onChange={handleMarkdownChange}
       />

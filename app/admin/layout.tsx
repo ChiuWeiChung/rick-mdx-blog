@@ -1,5 +1,5 @@
 import PageContent from '@/components/page-content';
-import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import AdminSidebar from '@/features/admin/layout/sidebar';
 import { auth } from '@/auth';
 import { notFound } from 'next/navigation';
@@ -11,9 +11,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
   return (
     <SidebarProvider>
       <AdminSidebar />
-      {/* <PageContent> */}
-      <PageContent>
-        <SidebarTrigger />
+
+      <PageContent className="relative p-1 md:p-6 flex flex-col gap-4">
         <div className="absolute top-2 right-10 flex items-center gap-2 text-lg">
           <User className="bg-primary mr-1 rounded-full text-white" />
           <span className="font-bold">Hi, {session.user?.name}</span>

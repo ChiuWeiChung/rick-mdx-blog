@@ -12,20 +12,18 @@ interface ClientTagsPageProps {
 export default async function ClientTagsPage(props: ClientTagsPageProps) {
   const { tagId } = await props.params;
   const result = await getNoteIdsByTagId(Number(tagId));
-  const tagIds = result.map(item => item.tagId);
-  const tagName = result[0]?.tagName;
-  const queryRequest = coerceQueryNoteSchema.parse({tag:tagIds}); // 解析查詢參數
-
-  if (!tagName) notFound()
+  if (!result.length) notFound();
+  const [target] = result;
+  const queryRequest = coerceQueryNoteSchema.parse({ tags: [target.tagId] }); // 解析查詢參數
 
   return (
-    <div className='flex flex-col items-center m-4 min-h-screen gap-4'>
+    <div className="m-4 flex min-h-screen flex-col items-center gap-4">
       <div className="flex items-center gap-2">
-        <Badge variant="outline" className='text-3xl font-bold px-4 py-2'>
-            # {tagName}
-          </Badge>
+        <Badge variant="outline" className="px-4 py-2 text-3xl font-bold">
+          # {target.tagName}
+        </Badge>
       </div>
-      <NotesSection request={queryRequest}  showPagination/>
+      <NotesSection request={queryRequest} showPagination />
     </div>
   );
 }

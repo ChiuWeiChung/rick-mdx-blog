@@ -97,7 +97,7 @@ const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySe
             </div>
             <div className="col-span-4 flex w-full flex-col gap-2 2xl:col-span-2">
               
-              <div className="flex flex-col items-center gap-2 lg:flex-row">
+              <div className="flex flex-col items-end gap-2 lg:flex-row">
                 <DatePickerField name={queryNoteKeys.startUpdatedTime} label="更新時間" placeholder="起始時間" />
                 <DatePickerField name={queryNoteKeys.endUpdatedTime} placeholder="結束時間" />
               </div>

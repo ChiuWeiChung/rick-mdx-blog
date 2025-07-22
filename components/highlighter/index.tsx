@@ -24,43 +24,38 @@ export default function Highlighter({
 
   const { createHighlight } = useHighlights(
     highlights,
-    // onClickHighlight - 點擊現有 highlight 的處理
+    // ======== onClickHighlight - 點擊現有 highlight 的處理 ========
     (data, event) => {
-      console.log('✅ 點擊 highlight，進入編輯模式，ID:', data.id);
-      
-      // 從 React state 中找到對應的 highlight 數據（獲取最新的 note）
+      console.log('點擊 highlight，進入編輯模式，ID:', data.id);
       const highlightData = highlights.find(h => h.id === data.id);
-      console.log('📝 最新的註解內容:', highlightData?.note);
-      
-      if (!highlightData) {
-        console.warn('❌ 找不到對應的 highlight 數據');
-        return;
+
+      if (highlightData) {
+        // 設置編輯模式，使用最新的數據
+        setEditingHighlight({
+          data: highlightData, // 使用從 React state 中獲取的最新數據
+          position: { x: event.clientX, y: event.clientY },
+        });
+        // 設置選取的文字
+        setSelectedData({
+          blockId: highlightData.blockId,
+          startOffset: highlightData.startOffset,
+          endOffset: highlightData.endOffset,
+          selectedContent: highlightData.selectedContent || '',
+        }); 
       }
-      
-      // 設置編輯模式，使用最新的數據
-      setEditingHighlight({
-        data: highlightData, // 使用從 React state 中獲取的最新數據
-        position: { x: event.clientX, y: event.clientY }
-      });
-      
-      // 清除任何現有的選取狀態
-      setSelectedData(null);
     },
-    // onTextSelected - 文字被選取時的處理
+    // ======== onTextSelected - 文字被選取時的處理 ========
     selectionData => {
-      console.log('✅ 文字被選取，準備創建 highlight');
       setSelectedData(selectionData);
-
-      // 清除任何現有的編輯狀態
-      setEditingHighlight(null);
-
-      // 不立即清除選取，讓 Popover 使用原始選取來定位
-      // 清除操作交給 Popover 組件自己處理
+      setEditingHighlight(null); // 清除任何現有的編輯狀態
     },
-    // onCreateHighlight - 創建新 highlight 的處理
+    // ======== onCreateHighlight - 創建新 highlight 的處理 ========
     highlightData => {
       if (onHighlightCreate) {
-        onHighlightCreate(highlightData);
+        onHighlightCreate({
+          ...highlightData,
+          selectedContent: selectedData?.selectedContent,
+        });
       }
     }
   );

@@ -9,6 +9,7 @@ import Link from 'next/link';
 // import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 // import Image from 'next/image';
 import { format } from 'date-fns';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const { accessor, display } = createColumnHelper<Portfolio>();
 
@@ -65,9 +66,16 @@ const columns = [
     cell: ({ getValue }) => {
       const url = getValue();
       return (
-        <Link href={url} target="_blank" className="font-bold">
-          <LinkIcon className="h-4 w-4" />
-        </Link>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href={url} target="_blank" className="font-bold">
+              <LinkIcon className="h-4 w-4" />
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>路徑: {url}</p>
+          </TooltipContent>
+        </Tooltip>
       );
     },
   }),
@@ -76,9 +84,16 @@ const columns = [
     cell: ({ getValue }) => {
       const url = getValue();
       return (
-        <Link href={url} target="_blank" className="font-bold">
-          <LinkIcon className="h-4 w-4" />
-        </Link>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href={url} target="_blank" className="font-bold">
+              <LinkIcon className="h-4 w-4" />
+            </Link>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>路徑: {url}</p>
+          </TooltipContent>
+        </Tooltip>
       );
     },
   }),

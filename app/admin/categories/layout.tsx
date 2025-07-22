@@ -6,9 +6,9 @@ export default function CategoriesLayout({
   modal: React.ReactNode;
 }) {
   return (
-    <div>
+    <>
       {children}
       {modal}
-    </div>
+    </>
   );
 }

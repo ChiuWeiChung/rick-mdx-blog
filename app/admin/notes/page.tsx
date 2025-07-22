@@ -22,7 +22,7 @@ const NotesPage = async (props: NotePageProps) => {
   const { data, totalCount } = await queryNoteList({ ...queryRequest }); // 取得筆記列表
 
   return (
-    <div className="relative mx-4 flex flex-col gap-4">
+    <>
       <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">筆記管理</h1>
 
       {/* Add Notes Section */}
@@ -42,7 +42,7 @@ const NotesPage = async (props: NotePageProps) => {
 
       {/* Notes Table Section */}
       <NoteTable data={data} totalCount={totalCount} />
-    </div>
+    </>
   );
 };
 

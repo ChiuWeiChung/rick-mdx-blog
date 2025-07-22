@@ -39,7 +39,7 @@ const QuerySearchForm = ({ defaultValues }: QuerySearchFormProps) => {
     <SmartForm
       {...form}
       onSubmit={onSubmit}
-      className="flex items-end w-fit gap-2"
+      className="my-4 flex w-fit items-end gap-2"
     >
       <InputField
         name={queryTagKeys.name}

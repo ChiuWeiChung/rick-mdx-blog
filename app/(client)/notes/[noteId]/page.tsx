@@ -11,6 +11,7 @@ import NoteHighlighter from '@/components/note-highlighter';
 import { auth } from '@/auth';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { getNoteMemoByPostId } from '@/actions/note-memos';
 // import Highlighter from '@/components/highlighter';
 
 interface ClientNotesPageProps {
@@ -32,13 +33,14 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
   const resource = await getMarkdownResource(note.filePath);
   // 取得對應的 markdown 資源
   const content = await getMarkdownContent(resource);
+  // 取得對應的筆記備註
+  const memos = await getNoteMemoByPostId(params.noteId);
 
   const options: EvaluateOptions = {
     mdxOptions: { remarkPlugins: [remarkGfm] },
     //  parseFrontmatter: true, // TODO 標題/時間可以從這邊取得 (目前是從資料庫)
     //  vfileDataIntoScope: 'toc', // TODO table of content (目錄的概念)
   };
-
   // const { content, frontmatter, scope, error } = await evaluate<Frontmatter>({
   //   source:content,
   //   options,
@@ -48,9 +50,9 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
   return (
     <div>
       {/* router back button */}
-      <div className="mb-4 flex items-center justify-between border-b pb-4">
+      <div className="mb-4 flex items-center border-b gap-4 pb-4">
         <GoBackButton>回筆記列表</GoBackButton>
-        <p className="text-sm text-gray-500">更新時間：{note.updatedAt.toLocaleDateString()}</p>
+        <p className="text-sm text-gray-500 ml-auto">更新時間：{note.updatedAt.toLocaleDateString()}</p>
         {!!session && (
           <Link href={`/admin/notes/editor?noteId=${params.noteId}`}>
             <Button variant="outline">編輯</Button>
@@ -61,7 +63,7 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
         <MDXRemote source={content} components={createMdxComponents()} options={options} />
       </Suspense>
 
-      {!!session && <NoteHighlighter noteId={params.noteId} />}
+      {!!session && <NoteHighlighter defaultHighlights={memos} noteId={params.noteId} />}
     </div>
   );
 }

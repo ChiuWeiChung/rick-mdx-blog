@@ -2,6 +2,7 @@ import { getProfile } from '@/actions/profile';
 import { getMarkdownContent, getMarkdownResource } from '@/actions/s3/markdown';
 import ProfileEditor from '@/features/admin/profile/editor-form';
 import React from 'react';
+import PageHeader from '@/components/page-header';
 
 export default async function ProfileManagementPage() {
   let markdown: string | null = null;
@@ -11,9 +12,9 @@ export default async function ProfileManagementPage() {
     markdown = await getMarkdownContent(resource);
   }
   return (
-    <div className="relative mx-4 flex flex-col gap-4">
-      <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">自我介紹管理</h1>
+    <>
+      <PageHeader>自我介紹管理</PageHeader>
       <ProfileEditor markdown={markdown} />
-    </div>
+    </>
   );
 }

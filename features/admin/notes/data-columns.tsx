@@ -98,6 +98,7 @@ const columns = [
       return format(value, 'yy/MM/dd HH:mm');
     },
     size: 150,
+    enableSorting: true,
   }),
   accessor(NoteKeys.updatedAt, {
     header: '更新時間',

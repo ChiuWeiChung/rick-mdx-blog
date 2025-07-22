@@ -4,16 +4,16 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Plus } from 'lucide-react';
+import PageHeader from '@/components/page-header';
 
 
 const PortfoliosPage = async () => {
   const { data, totalCount } = await getPortfolios();
 
-
   return (
-    <div className="relative mx-4 flex flex-col gap-4">
-      <h1 className="border-b-2 border-neutral-200 pb-2 text-3xl font-bold">作品集管理</h1>
-
+    <>
+      <PageHeader>作品集管理</PageHeader>
+      {/* 新增 */}
       <Link href={`/admin/portfolios/editor`} className="w-fit self-end">
         <Button>
           <Plus />
@@ -22,7 +22,7 @@ const PortfoliosPage = async () => {
       </Link>
       {/* 表格 */}
       <PortfolioTable data={data} totalCount={totalCount} />
-    </div>
+    </>
   );
 };
 

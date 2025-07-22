@@ -31,8 +31,7 @@ export async function generateMetadata(props: NotesPageProps): Promise<Metadata>
 
 export default async function NotesPage(props: NotesPageProps) {
   const searchParams = await props.searchParams;
-  const queryRequest = coerceQueryNoteSchema.parse(searchParams); // 預設只取前六筆資料
-
+  const queryRequest = coerceQueryNoteSchema.parse({ ...searchParams, visible: true }); // 預設只取前 10 筆資料
   return (
     <Suspense fallback={<SpinnerLoader />}>
       <NotesSection request={queryRequest} showPagination={true} />

@@ -30,32 +30,33 @@ export default function HighlightPopover({
   const [note, setNote] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [anchorPosition, setAnchorPosition] = useState({ x: 0, y: 0 });
-  
   // 判斷是否為編輯模式
   const isEditMode = !!editingHighlight;
   const displayData = editingHighlight || selectionData;
+  // 判斷是否可以提交（註解不為空）
+  const canSubmit = note.trim().length > 0;
 
   // 管理 Popover 開關狀態和位置
   useEffect(() => {
     if (isEditMode && editingHighlight) {
       // 編輯模式：使用點擊位置
-      console.log('✏️ 進入編輯模式，註解內容:', editingHighlight.data.note);
+      console.log('進入編輯模式，註解內容:', editingHighlight.data.content);
       setAnchorPosition(editingHighlight.position);
-      setNote(editingHighlight.data.note || '');
+      setNote(editingHighlight.data.content || '');
       setIsOpen(true);
     } else if (selectionData?.range) {
       // 新建模式：使用選取範圍位置
       const rect = selectionData.range.getBoundingClientRect();
       const scrollX = window.scrollX;
       const scrollY = window.scrollY;
-      
+
       const x = rect.left + scrollX + rect.width / 2;
       const y = rect.bottom + scrollY;
-      
+
       setAnchorPosition({ x, y });
       setNote(''); // 新建時清空註解
       setIsOpen(true);
-      
+
       // 保留選取效果，不立即清除
       // 讓用戶能看到選取的文字保持反白狀態
     } else {
@@ -66,33 +67,18 @@ export default function HighlightPopover({
 
   // 處理創建 highlight（強制要求註解）
   const handleCreateHighlight = () => {
-    if (!selectionData) return;
-    
     const trimmedNote = note.trim();
-    if (!trimmedNote) {
-      console.warn('❌ 註解為必填項目');
-      return;
-    }
-    
+    if (!selectionData || !trimmedNote) return;
     onHighlight(selectionData, trimmedNote);
     setNote('');
     setIsOpen(false);
-    
-    // 創建成功後清除選取
     window.getSelection()?.removeAllRanges();
   };
 
   // 處理編輯 highlight
   const handleEditHighlight = () => {
-    if (!editingHighlight) return;
-    
     const trimmedNote = note.trim();
-    if (!trimmedNote) {
-      console.warn('❌ 註解為必填項目');
-      return;
-    }
-    
-    console.log('✅ 編輯 highlight:', trimmedNote);
+    if (!editingHighlight || !trimmedNote) return;
     onEditHighlight(editingHighlight.data.id, trimmedNote);
     setNote('');
     setIsOpen(false);
@@ -101,8 +87,6 @@ export default function HighlightPopover({
   // 處理刪除 highlight
   const handleDeleteHighlight = () => {
     if (!editingHighlight) return;
-    
-    console.log('✅ 刪除 highlight:', editingHighlight.data.id);
     onDeleteHighlight(editingHighlight.data.id);
     setIsOpen(false);
   };
@@ -111,47 +95,19 @@ export default function HighlightPopover({
   const handleCancel = () => {
     setIsOpen(false);
     setNote('');
-    
+
     // 取消時清除選取
     window.getSelection()?.removeAllRanges();
-    
+
     onCancel();
   };
 
   // 處理 Popover 狀態變化
   const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      handleCancel();
-    }
+    if (!open) handleCancel();
   };
 
-  // 處理快捷鍵
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isOpen) return;
-      
-      if (e.key === 'Escape') {
-        handleCancel();
-      } else if (e.key === 'Enter' && e.ctrlKey) {
-        // Ctrl+Enter 提交
-        e.preventDefault();
-        if (isEditMode) {
-          handleEditHighlight();
-        } else {
-          handleCreateHighlight();
-        }
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, isEditMode, note]);
-
   if (!displayData) return null;
-
-  // 判斷是否可以提交（註解不為空）
-  const canSubmit = note.trim().length > 0;
 
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
@@ -200,20 +156,12 @@ export default function HighlightPopover({
         </div>
 
         {/* 選取的文字預覽 */}
-        {/* <div className="mb-4">
-          <p className="text-xs text-gray-500 mb-1">
-            {isEditMode ? '已選取的文字：' : '選取的文字：'}
-          </p>
-          <div className="p-2 bg-gray-50 rounded text-sm text-gray-700 max-h-20 overflow-y-auto">
-            {isEditMode ? (
-              <span className="italic text-gray-500">
-                [Block: {editingHighlight!.data.blockId}, 範圍: {editingHighlight!.data.startOffset}-{editingHighlight!.data.endOffset}]
-              </span>
-            ) : (
-              <>&ldquo;{selectionData!.selectedText}&rdquo;</>
-            )}
+        <div className="mb-4">
+          <p className="mb-1 text-xs text-gray-500">選取的文字：</p>
+          <div className="max-h-20 overflow-y-auto rounded bg-gray-50 p-2 text-sm text-gray-700">
+            <>&ldquo;{selectionData?.selectedContent ?? '-'}&rdquo;</>
           </div>
-        </div> */}
+        </div>
 
         {/* 註解輸入區域（必填） */}
         <div className="mb-4">
@@ -243,15 +191,6 @@ export default function HighlightPopover({
             // 編輯模式按鈕
             <>
               <Button
-                onClick={handleEditHighlight}
-                disabled={!canSubmit}
-                className="h-8 text-sm"
-                size="sm"
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                更新
-              </Button>
-              <Button
                 onClick={handleDeleteHighlight}
                 variant="destructive"
                 className="h-8 text-sm"
@@ -259,6 +198,15 @@ export default function HighlightPopover({
               >
                 <Trash2 className="mr-2 h-4 w-4" />
                 刪除
+              </Button>
+              <Button
+                onClick={handleEditHighlight}
+                disabled={!canSubmit}
+                className="h-8 text-sm"
+                size="sm"
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                更新
               </Button>
             </>
           ) : (
@@ -273,11 +221,6 @@ export default function HighlightPopover({
               建立
             </Button>
           )}
-        </div>
-
-        {/* 快捷鍵提示 */}
-        <div className="mt-3 border-t border-gray-100 pt-3">
-          <p className="text-xs text-gray-400">快捷鍵：Ctrl+Enter 提交，Esc 取消</p>
         </div>
       </PopoverContent>
     </Popover>

@@ -8,6 +8,10 @@ export enum CategoryQuerySort {
   NAME = 'name',
 }
 
+export enum NoteMemoQuerySort {
+  CREATED_AT = 'createdAt',
+}
+
 export enum TagQuerySort {
   POST_COUNT = 'postCount',
   NAME = 'name',
