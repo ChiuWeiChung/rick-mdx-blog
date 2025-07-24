@@ -4,7 +4,7 @@ import { getMarkdownContent, getMarkdownResource } from '@/actions/s3/markdown';
 import React, { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { EvaluateOptions, MDXRemote } from 'next-mdx-remote-client/rsc';
-import { createMdxComponents } from '@/components/notes-mdx-component';
+import { createMdxComponents } from '@/components/mdx-component/note-module';
 import remarkGfm from 'remark-gfm';
 import GoBackButton from '@/components/go-back-button';
 import NoteHighlighter from '@/components/note-highlighter';
@@ -12,16 +12,28 @@ import { auth } from '@/auth';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getNoteMemoByPostId } from '@/actions/note-memos';
+import { Metadata } from 'next';
 // import Highlighter from '@/components/highlighter';
 
 interface ClientNotesPageProps {
   params: Promise<{ noteId: string }>;
 }
 
-// type Frontmatter = {
-//   title:string;
-//   updatedAt:string;
-// }
+export async function generateMetadata(props: ClientNotesPageProps): Promise<Metadata> {
+  const params = await props.params;
+  const note = await getNoteInfoById(params.noteId);
+  const metadata: Metadata = {
+    title: "Rick's DevNote - 筆記",
+    description: '筆記',
+  };
+
+  if (note) {
+    metadata.title = `筆記 - ${note.title}`;
+    metadata.description = `${note.category} - ${note.title}`;
+  }
+
+  return metadata;
+}
 
 export default async function ClientNotesPage(props: ClientNotesPageProps) {
   const params = await props.params;

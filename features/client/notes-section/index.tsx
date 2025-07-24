@@ -15,7 +15,7 @@ interface NotesSectionProps {
 }
 
 export default async function NotesSection({ request, showPagination = false }: NotesSectionProps) {
-  const { data,totalCount } = await queryNoteList(request);
+  const { data, totalCount } = await queryNoteList(request);
   const origin = await getOrigin();
 
   const renderTags = (tags: string[]) => {
@@ -23,20 +23,22 @@ export default async function NotesSection({ request, showPagination = false }: 
       <div className="flex flex-wrap gap-2">
         {tags.map(tag => (
           <Link href={`/tags?name=${tag}`} key={tag}>
-            <Badge key={tag} variant="outline" className="text-gray-500 hover:scale-105 cursor-pointer">
+            <Badge
+              key={tag}
+              variant="outline"
+              className="cursor-pointer text-gray-500 hover:scale-105"
+            >
               {tag}
             </Badge>
           </Link>
         ))}
       </div>
     );
-    // return ;
   };
 
   return (
     <>
-
-      <section className="mb-4 grid w-full max-w-5xl grid-cols-1 gap-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
+      <section className="grid w-full max-w-5xl grid-cols-1 gap-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
         {data.map(note => (
           <FeatureCard
             key={note.id}
@@ -47,14 +49,15 @@ export default async function NotesSection({ request, showPagination = false }: 
               </>
             }
             description={renderTags(note.tags)}
-            content="" //TODO: 顯示筆記部分內容，內容須從 formatter 來，存擋時，需要讀取 formatter 資料，並且顯示部分內容
-            buttonText={
-              <>
-                <ForwardIcon />
-                查看筆記
-              </>
+            content="adfads" //TODO: 顯示筆記部分內容，內容須從 formatter 來，存擋時，需要讀取 formatter 資料，並且顯示部分內容
+            footer={
+              <Link href={`/notes/${note.id}`} className="w-full">
+                <Button variant="outline" className="w-full">
+                  <ForwardIcon />
+                  查看筆記
+                </Button>
+              </Link>
             }
-            href={`/notes/${note.id}`}
             imageUrl={`${origin}/api/image?key=categories/${note.category}/cover.png`}
           />
         ))}

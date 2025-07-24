@@ -9,6 +9,8 @@ import { findOrCreateTags } from '../tags';
 import { saveMarkdownFile, deleteMarkdownFile } from '../s3/markdown';
 import { createNoteTags } from '../note-tags';
 import { NoteQuerySort } from '@/enums/query';
+import { Option } from '@/types/global';
+import { cache } from 'react';
 
 /** 查詢筆記列表 */
 export const queryNoteList = async (request: QueryNote) => {
@@ -378,7 +380,7 @@ export const deleteNote = async (noteId: number) => {
 };
 
 /** 取得單一筆記的基本資訊，包含 title、visible、created_at、category、file_path、tags */
-export const getNoteInfoById = async (noteId: string) => {
+export const getNoteInfoById = cache(async (noteId: string) => {
   const { rows } = await pool.query(
     `
     SELECT posts.id AS id, title, visible, created_at, updated_at, categories.id AS category, file_path, STRING_AGG(tags.id::text, ', ') AS tags
@@ -403,7 +405,7 @@ export const getNoteInfoById = async (noteId: string) => {
       .map(tag => Number(tag.trim()))
       .filter(Boolean) ?? [];
   return { ...camelCaseRow, tags } as NoteDetail;
-};
+});
 
 /** 更新筆記的 visible 狀態 */
 export const updateNoteVisible = async (request: { noteId: number; visible: boolean }) => {
@@ -417,5 +419,18 @@ export const updateNoteVisible = async (request: { noteId: number; visible: bool
   } catch (error) {
     console.error('Update note visible error:', error);
     return { success: false, message: 'Note visible update failed' };
+  }
+};
+
+
+/** 取得筆記標題 */
+export const getNoteOptions = async () => {
+  try {
+    const { rows } = await pool.query('SELECT id, title FROM posts');
+    const camelCaseRows = toCamelCase<Record<string, unknown>>(rows);
+    return camelCaseRows.map(({ id, title }) => ({ label: title, value: String(id) })) as Option<string>[];
+  } catch (error) {
+    console.error('Get note options error:', error);
+    return [];
   }
 };

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Label } from '../ui/label';
 import SpinnerLoader from '../spinner-loader';
+import { placeholderDataUrl } from '@/constants/placeholder';
 
 export interface ImageStateProps {
   src: string;
@@ -32,15 +33,13 @@ export function FileUpload({ value, width, aspectRatio, defaultImage, ...props }
     if (image) {
       return (
         <Image
-        src={image.src}
-        alt="file"
-        width={image.width}
-        height={image.height}
-        className="object-cover"
-        style={{ width: width || image.width, aspectRatio: aspectRatio}}
-        // TODO 圖片載入時，顯示預設圖片
-        // placeholder="blur"
-        // blurDataURL='/assets/images/gaoyi.jpeg'
+          src={image.src}
+          alt="file"
+          width={image.width}
+          height={image.height}
+          className="object-cover"
+          style={{ width: width || image.width, aspectRatio: aspectRatio }}
+          placeholder={placeholderDataUrl}
         />
       );
     }

@@ -263,7 +263,7 @@ function ReactTable<T>({
                               ),
                               ...style,
                             }}
-                            className="h-11 overflow-hidden text-nowrap whitespace-nowrap last:!w-full"
+                            className="h-11 overflow-hidden text-nowrap whitespace-nowrap last:!w-full last:!max-w-full"
                             key={cell.id}
                           >
                             {contentComponent}

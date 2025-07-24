@@ -20,7 +20,12 @@ export default async function CategoryEditorModalPage({
     if (!category) throw new Error('Category not found');
   }
   return (
-    <DialogContainer title={category ? '編輯類別' : '新增類別'} description="" open={true}>
+    <DialogContainer
+      title={category ? '編輯類別' : '新增類別'}
+      description=""
+      open={true}
+      goBackOnClose
+    >
       <CategoryEditor category={category} />
     </DialogContainer>
   );

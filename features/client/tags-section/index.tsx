@@ -9,7 +9,7 @@ interface TagsSectionProps {
 
 export default function TagsSection({ tags }: TagsSectionProps) {
   return (
-    <div className="m-4 flex max-w-3xl flex-wrap justify-center gap-4 rounded-lg bg-white p-4 shadow-md">
+    <div className="flex max-w-3xl flex-wrap justify-center gap-4 rounded-lg bg-white p-4 shadow-md">
       {tags.map(tag => (
         //   TODO Link to tag page
         <Link href={`/tags/${tag.id}`} key={tag.id}>

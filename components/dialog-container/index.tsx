@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Dialog,
   DialogContent,
@@ -5,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { useRouter } from 'next/navigation';
 
 interface DialogContainerProps {
   title: string;
@@ -12,6 +15,7 @@ interface DialogContainerProps {
   children: React.ReactNode;
   open: boolean;
   onOpenChange?: (open: boolean) => void;
+  goBackOnClose?: boolean;
 }
 
 export default function DialogContainer({
@@ -20,9 +24,18 @@ export default function DialogContainer({
   children,
   open,
   onOpenChange,
+  goBackOnClose = false,
 }: DialogContainerProps) {
+  const handleOpenChange = (open: boolean) => {
+    if (goBackOnClose && !open) {
+      router.back();
+    }
+    onOpenChange?.(open);
+  };
+
+  const router = useRouter();
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>

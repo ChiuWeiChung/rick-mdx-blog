@@ -1,6 +1,6 @@
 import { getProfile } from '@/actions/profile';
 import { getMarkdownContent, getMarkdownResource } from '@/actions/s3/markdown';
-import { createMdxComponents } from '@/components/profile-mdx-component';
+import { createMdxComponents } from '@/components/mdx-component/profile-module';
 import { EvaluateOptions, MDXRemote } from 'next-mdx-remote-client/rsc';
 import { unstable_cache } from 'next/cache';
 import { notFound } from 'next/navigation';

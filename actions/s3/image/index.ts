@@ -54,17 +54,17 @@ async function checkFileExists(filePath: string) {
 }
 
 /** 刪除某個資料夾底下所有物件 */
-const deleteImagesByFolders = async (folders: string[]) => {
+const deleteImagesByFolderNames = async (folderNames: string[]) => {
   try {
     const deleteCommand = new DeleteObjectsCommand({
       Bucket: BUCKET_NAME,
       Delete: {
-        Objects: folders.map(folder => ({ Key: folder })),
+        Objects: folderNames.map(folder => ({ Key: folder })),
       },
     });
 
     await s3.send(deleteCommand);
-    console.log(`已刪除 ${folders.length} 個物件`);
+    console.log(`已刪除 ${folderNames.length} 個物件`);
   } catch (error) {
     console.error('刪除失敗:', error);
     return { success: false, message: 'Failed to delete markdown file' };
@@ -113,4 +113,4 @@ const renameImages = async (request: { oldFolder: string; newFolder: string }) =
   return copyResults;
 };
 
-export { uploadImage, checkFileExists, deleteImagesByFolders, renameImages };
+export { uploadImage, checkFileExists, deleteImagesByFolderNames, renameImages };

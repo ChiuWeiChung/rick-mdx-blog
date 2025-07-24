@@ -2,6 +2,7 @@ import { getTagWithNoteCount } from '@/actions/tags';
 import { QueryTag, queryTagSchema } from '@/actions/tags/types';
 import TagsSection from '@/features/client/tags-section';
 import { redirect } from 'next/navigation';
+import PageWrapper from '@/components/page-wrapper';
 
 interface ClientTagsPageProps {
   searchParams: Promise<QueryTag>;
@@ -16,11 +17,9 @@ export default async function ClientTagsPage(props: ClientTagsPageProps) {
   if (searchParams && data.length === 1) redirect(`/tags/${data[0].id}`);
   
   return (
-    <div className="m-4 flex min-h-screen flex-col items-center justify-start">
+    <PageWrapper>
       <h1 className="mb-4 text-4xl font-bold">標籤清單</h1>
-      <div className="mx-auto gap-4">
-        <TagsSection tags={data} />
-      </div>
-    </div>
+      <TagsSection tags={data} />
+    </PageWrapper>
   );
 }

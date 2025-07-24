@@ -1,6 +1,6 @@
 'use client';
 
-import { Code2, Flame, Library, Notebook, PenTool, Settings, Tag, UserPen } from 'lucide-react';
+import { Flame, Library, Notebook, PenTool, Settings, Tag, UserPen } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -57,14 +57,14 @@ export default function AdminSidebar() {
         <SidebarGroup>
           {/* Add Home Admin Home Logo */}
           <SidebarGroupLabel className="mb-4">
-            <Link href="/admin" className="flex items-center gap-2 text-xl">
+            <Link href="/admin" className="flex items-center gap-2 text-primary font-bold text-xl">
               <Settings /> DevNote 管理後台
             </Link>
           </SidebarGroupLabel>
           <SidebarGroupContent className="pl-4">
             <SidebarMenu>
               {items.map(item => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.title} className="rounded-none border-b border-gray-200">
                   <SidebarMenuButton asChild>
                     <NavLink href={item.url} className="flex h-12 items-center gap-2 !text-[1rem]">
                       <item.icon className="!size-4" />
@@ -73,21 +73,6 @@ export default function AdminSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup className="mb-8 flex-1 justify-end">
-          {/* <SidebarGroupLabel>Projects</SidebarGroupLabel> */}
-          <SidebarGroupContent className="pl-4">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <NavLink href={'/'} className="flex h-12 items-center gap-2 !text-lg">
-                    <Code2 className="!size-6" /> 返回前台
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

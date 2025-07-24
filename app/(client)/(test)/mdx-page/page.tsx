@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 import { EvaluateOptions, MDXRemote } from 'next-mdx-remote-client/rsc';
-import { createMdxComponents } from '@/components/notes-mdx-component';
+import { createMdxComponents } from '@/components/mdx-component/note-module';
 import remarkGfm from 'remark-gfm';
 
 export default async function RemoteMdxPage() {

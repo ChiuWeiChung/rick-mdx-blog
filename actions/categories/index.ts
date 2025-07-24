@@ -4,7 +4,7 @@ import { toCamelCase } from '@/utils/format-utils';
 import { Category, CreateCategoryRequest, QueryCategory, TableCategory } from './types';
 import { PoolClient } from 'pg';
 import { CategoryQuerySort } from '@/enums/query';
-import { deleteImagesByFolders, renameImages, uploadImage } from '../s3/image';
+import { deleteImagesByFolderNames, renameImages, uploadImage } from '../s3/image';
 
 /** 取得所有分類 */
 export const getCategoryOptions = async () => {
@@ -280,10 +280,10 @@ export const deleteCategoryById = async (id: number) => {
     if (!category) throw new Error('Category not found');
 
     // 刪除圖片
-    const folders = [];
-    if (category.coverPath) folders.push(category.coverPath);
-    if (category.iconPath) folders.push(category.iconPath);
-    if (folders.length) await deleteImagesByFolders(folders);
+    const folderNames = [];
+    if (category.coverPath) folderNames.push(category.coverPath);
+    if (category.iconPath) folderNames.push(category.iconPath);
+    if (folderNames.length) await deleteImagesByFolderNames(folderNames);
 
     // 刪除分類
     const { rows } = await pool.query('DELETE FROM categories WHERE id = $1', [id]);

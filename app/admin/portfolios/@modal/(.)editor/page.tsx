@@ -19,7 +19,12 @@ export default async function PortfolioEditorModalPage({
     if (!portfolio) throw new Error('Portfolio not found');
   }
   return (
-    <DialogContainer title={portfolio ? '編輯作品集' : '新增作品集'} description="" open={true}>
+    <DialogContainer
+      title={portfolio ? '編輯作品集' : '新增作品集'}
+      description=""
+      open={true}
+      goBackOnClose
+    >
       <PortfolioEditor portfolio={portfolio} />
     </DialogContainer>
   );

@@ -13,7 +13,12 @@ export default async function TagEditorModalPage({ searchParams }: TagEditorModa
   const tag = await getTagById(Number(tagId));
   if (!tag) throw new Error('Tag not found');
   return (
-    <DialogContainer title={tag ? '編輯標籤' : '新增標籤'} description="" open={true}>
+    <DialogContainer
+      title={tag ? '編輯標籤' : '新增標籤'}
+      description=""
+      open={true}
+      goBackOnClose
+    >
       <TagEditor tag={tag} />
     </DialogContainer>
   );

@@ -1,4 +1,5 @@
 import { NoteMemoQuerySort, QueryOrder } from '@/enums/query';
+import { getDefaultValues } from '@/utils/form-utils';
 import { z } from 'zod/v4';
 
 /** 搜尋筆記備註的 request schema */
@@ -10,6 +11,8 @@ import { z } from 'zod/v4';
   limit: z.coerce.number().default(10),
 });
  type QueryNoteMemo = z.infer<typeof queryNoteMemoSchema>;
+ const queryNoteMemoKeys = queryNoteMemoSchema.keyof().enum;
+ const defaultQueryNoteMemoValues =  getDefaultValues(queryNoteMemoSchema);
 
 /** 筆記備註的 response schema */
  const noteMemoSchema = z.object({
@@ -39,13 +42,18 @@ export {
   // 搜尋
   queryNoteMemoSchema,
   type QueryNoteMemo,
+  queryNoteMemoKeys,
+  defaultQueryNoteMemoValues,
+
   // 筆記備註
   noteMemoSchema,
   type NoteMemo,
   noteMemoKeys, 
+
   // 新增筆記備註
   createNoteMemoRequest,
   type CreateNoteMemoRequest,
+  
   // 表格
   tableNoteMemoSchema,
   type TableNoteMemo,

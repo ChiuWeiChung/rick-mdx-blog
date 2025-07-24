@@ -1,5 +1,10 @@
 'use client';
-import { DatePickerField, InputField } from '@/components/form-fields';
+import {
+  DatePickerField,
+  InputField,
+  FileUploadField,
+  TextAreaField,
+} from '@/components/form-fields';
 import SmartForm from '@/components/smart-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -8,7 +13,7 @@ import { cn } from '@/lib/utils';
 import {
   createPortfolioSchema,
   type CreatePortfolioRequest,
-  portfolioKeys,
+  createPortfolioKeys,
 } from '@/actions/portfolios/types';
 
 import { getDefaultValues } from '@/utils/form-utils';
@@ -18,6 +23,7 @@ import { useMutation } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
 import { Portfolio } from '@/actions/portfolios/types';
 import { createPortfolio, updatePortfolio } from '@/actions/portfolios';
+import { useMemo } from 'react';
 
 interface PortfolioEditorProps {
   portfolio?: Portfolio & { id: number };
@@ -30,6 +36,7 @@ const PortfolioEditor = ({ portfolio }: PortfolioEditorProps) => {
     defaultValues: {
       ...getDefaultValues(createPortfolioSchema),
       ...portfolio,
+      description: portfolio?.description ?? '',
     },
   });
 
@@ -49,9 +56,16 @@ const PortfolioEditor = ({ portfolio }: PortfolioEditorProps) => {
   });
 
   const onSubmit = (data: CreatePortfolioRequest) => {
-    if (portfolio) updateMutation.mutate({ ...data, id: portfolio.id });
+    if (portfolio) updateMutation.mutate({ ...data, id: portfolio.id, oldName: portfolio.projectName });
     else createMutation.mutate(data);
   };
+
+  const defaultCoverImage = useMemo(() => {
+    if (!portfolio || !portfolio.coverPath) return undefined;
+    const src = `${window.location.origin}/api/image?key=${portfolio.coverPath}`;
+    return { src, width: 256, height: 144 };
+  }, [portfolio]);
+
 
   const isPending = updateMutation.isPending || createMutation.isPending;
 
@@ -61,20 +75,34 @@ const PortfolioEditor = ({ portfolio }: PortfolioEditorProps) => {
       onSubmit={onSubmit}
       className={cn('flex flex-col gap-4', isPending && 'pointer-events-none')}
     >
-      <InputField name={portfolioKeys.projectName} label="專案名稱" placeholder="請輸入專案名稱" />
+      <InputField name={createPortfolioKeys.projectName} label="專案名稱" placeholder="請輸入專案名稱" />
+      <FileUploadField
+        name={createPortfolioKeys.coverFile}
+        label="作品集封面"
+        description="建議使用 256x144 的圖片，作為文章的封面" // 16:9
+        width={256}
+        aspectRatio="16/9"
+        defaultImage={defaultCoverImage}
+      />
+      <TextAreaField
+        name={createPortfolioKeys.description}
+        label="作品集描述"
+        placeholder="請輸入作品集描述"
+        rows={5}
+      />
       <InputField
-        name={portfolioKeys.githubUrl}
+        name={createPortfolioKeys.githubUrl}
         label="Github 連結"
         placeholder="請輸入Github 連結"
       />
       <InputField
-        name={portfolioKeys.readmeUrl}
+        name={createPortfolioKeys.readmeUrl}
         label="Readme 連結"
         placeholder="請輸入Readme 連結"
       />
       <div className="grid grid-cols-2 gap-4">
-        <DatePickerField name={portfolioKeys.startDate} label="專案開始日期" />
-        <DatePickerField name={portfolioKeys.endDate} label="專案結束日期" />
+        <DatePickerField name={createPortfolioKeys.startDate} label="專案開始日期" />
+        <DatePickerField name={createPortfolioKeys.endDate} label="專案結束日期" />
       </div>
 
       <div className="flex justify-end gap-2">
