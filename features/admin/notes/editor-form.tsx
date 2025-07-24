@@ -293,12 +293,13 @@ const NoteEditorForm = ({
 
       <ForwardRefEditor
         markdown={markdown}
+        // className="prose-sm lg:prose-lg prose mt-12"
         className="mt-12"
-        contentEditableClassName="prose prose-sm lg:prose-lg"
+        contentEditableClassName="prose prose-sm lg:prose-lg max-w-[unset]"
         onChange={handleMarkdownChange}
       />
 
-      <HintPopover  />
+      <HintPopover />
     </>
   );
 };

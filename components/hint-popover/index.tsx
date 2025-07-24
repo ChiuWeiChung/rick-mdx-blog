@@ -98,7 +98,7 @@ export default function HintPopover() {
         onOpenAutoFocus={e => e.preventDefault()}
       >
         {/* 操作按鈕 */}
-        <WandSparklesIcon className="text-primary-foreground absolute -top-6 -right-6 h-6 w-6 rounded-[5px] bg-neutral-700" />
+        <WandSparklesIcon className="text-primary-foreground absolute -top-2 -right-2 h-4 w-4 bg-neutral-700 rounded-full" />
         <div className="text-primary grid grid-cols-4 items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleProcess(Prompt.expand)}>
             加長
@@ -110,7 +110,7 @@ export default function HintPopover() {
             文法修正
           </Button>
           <DropdownMenu>
-            <DropdownMenuTrigger>
+            <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm">
                 語氣調整
                 <ChevronDownIcon className="h-4 w-4" />

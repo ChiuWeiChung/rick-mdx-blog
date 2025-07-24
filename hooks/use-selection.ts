@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+'use client';
+import { useEffect, useState } from 'react';
 
 interface UseWindowSelectionOptions {
-  debounceMs?: number;
-  boundarySelector?: string;
+  boundarySelector: string;
 }
 
 type TextSelectionSnapshot = {
@@ -10,53 +10,35 @@ type TextSelectionSnapshot = {
   range: Range; // clone 後的 Range
 };
 
-export function useWindowSelection(options: UseWindowSelectionOptions) {
-  const { debounceMs = 1000, boundarySelector } = options;
+export function useWindowSelection({ boundarySelector }: UseWindowSelectionOptions) {
   const [selectionSnapshot, setSelectionSnapshot] = useState<TextSelectionSnapshot | null>(null);
-
+  const boundaryRoot = typeof window !== 'undefined' ? document.querySelector(boundarySelector) : null;
   const clearSelection = () => {
     setSelectionSnapshot(null);
-  }
+  };
 
-  const captureSelection = useCallback(() => {
-    const sel = window.getSelection();
-    if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
-
-    const range = sel.getRangeAt(0);
-    let ancestorEl = range.commonAncestorContainer as HTMLElement;
-
-    if (ancestorEl.nodeType === Node.TEXT_NODE) {
-      ancestorEl = ancestorEl.parentElement ?? ancestorEl;
-    }
-
-    if (boundarySelector) {
-      const boundaryRoot = document.querySelector(boundarySelector);
-      if (boundaryRoot && !boundaryRoot.contains(ancestorEl)) {
-        console.warn('超出範圍');
-        return;
-      }
-    }
-
-    setSelectionSnapshot({
-      text: sel.toString(),
-      range: range.cloneRange(),
-    });
-  }, [boundarySelector]);
 
   useEffect(() => {
-    let debounceTimer: ReturnType<typeof setTimeout>;
+    const mouseUpHandler = () => {
+      const sel = window.getSelection();
+      if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
 
-    const onSelectionChangeDebounced = () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(captureSelection, debounceMs);
+      const range = sel.getRangeAt(0);
+      let ancestorEl = range.commonAncestorContainer as HTMLElement;
+
+      if (ancestorEl.nodeType === Node.TEXT_NODE) {
+        ancestorEl = ancestorEl.parentElement ?? ancestorEl;
+      }
+      setSelectionSnapshot({ text: sel.toString(), range: range.cloneRange() });
     };
 
-    document.addEventListener('selectionchange', onSelectionChangeDebounced);
+    boundaryRoot?.addEventListener('mouseup', mouseUpHandler);
+
     return () => {
-      document.removeEventListener('selectionchange', onSelectionChangeDebounced);
-      clearTimeout(debounceTimer);
+      boundaryRoot?.removeEventListener('mouseup', mouseUpHandler);
+      clearSelection();
     };
-  }, [captureSelection, debounceMs]);
+  }, [boundaryRoot]);
 
   return { selection: selectionSnapshot, clearSelection };
 }
