@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import {
@@ -15,7 +14,7 @@ import { useRouter } from 'next/navigation';
 import { getQueryClient } from './utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
 import { toast } from 'sonner';
-import SpinnerLoader from '../spinner-loader';
+import { revalidatePathUtils, revalidateTagUtils } from '@/lib/revalidateUtils';
 
 export default function Providers({ children }: { children: ReactNode }) {
   const { openAlertModal } = useAlertModal();
@@ -54,21 +53,18 @@ export default function Providers({ children }: { children: ReactNode }) {
     _context: unknown,
     mutation: Mutation<unknown, unknown>
   ) => {
-    // get meta from mutation
-    const { invalidateQueryKeys, successMessage, shouldRefresh } = mutation.options.meta ?? {};
+    const { revalidate, successMessage, shouldRefresh } = mutation.options.meta ?? {};
 
-    // 目前本專案沒有使用到 useQuery 的 queryKey，所以這裡的 invalidateQueryKeys 不會被使用到
-    if (invalidateQueryKeys) {
-      void queryClient.invalidateQueries({ queryKey: invalidateQueryKeys });
+    if (revalidate) {
+      if (revalidate.path) revalidatePathUtils(revalidate.path);
+      if (revalidate.tag) revalidateTagUtils(revalidate.tag);
     }
 
     if (successMessage) {
       toast.success(successMessage.title, { description: successMessage.description });
     }
 
-    if (shouldRefresh) {
-      router.refresh();
-    }
+    if (shouldRefresh) router.refresh();
   };
 
   const config: QueryClientConfig = {

@@ -22,7 +22,7 @@ const NoteTable:FC<NoteTableProps> = ({ data, totalCount }) => {
     mutationFn: mutationHandler(deleteNote),
     meta: {
       successMessage: { title: '筆記刪除成功' },
-      shouldRefresh: true,
+      revalidate: { path: '/admin/notes' },
     },
   });
   
@@ -31,7 +31,8 @@ const NoteTable:FC<NoteTableProps> = ({ data, totalCount }) => {
     mutationFn: mutationHandler(updateNoteVisible),
     meta: {
       successMessage: { title: '更新筆記狀態成功' },
-      shouldRefresh: true,
+      ignoreLoadingMask: true,
+      revalidate: { path: '/admin/notes' },
     },
   });
 

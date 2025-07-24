@@ -31,8 +31,14 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useAlertModal } from '@/hooks/use-alert-modal';
 import { NoteMemo } from '@/actions/note-memos/types';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { deleteNoteMemosByPostId } from '@/actions/note-memos';
+import HintPopover from '@/components/hint-popover';
 
 interface NoteEditorFormProps {
   noteToEdit?: Partial<CreateNoteRequest> & { id: number };
@@ -42,12 +48,18 @@ interface NoteEditorFormProps {
   memos?: NoteMemo[];
 }
 
-const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions, memos }: NoteEditorFormProps) => {
+const NoteEditorForm = ({
+  noteToEdit,
+  categoryOptions,
+  tagOptions,
+  memos,
+}: NoteEditorFormProps) => {
   const isCreate = !noteToEdit;
   const router = useRouter();
   const [open, setOpen] = useState(true);
   const isMobile = useIsMobile();
   const { openAlertModal } = useAlertModal();
+  
 
   const form = useForm({
     resolver: zodResolver(createNoteSchema),
@@ -127,6 +139,9 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions, memos }: Note
   };
 
   const isPending = isCreatePending || isUpdatePending;
+
+  // console.log('selection', selection);
+  // console.log('selection range getBoundingClientRect', selection?.range.getBoundingClientRect());
 
   return (
     <>
@@ -278,10 +293,12 @@ const NoteEditorForm = ({ noteToEdit, categoryOptions, tagOptions, memos }: Note
 
       <ForwardRefEditor
         markdown={markdown}
-        className="m-4 mt-12"
+        className="mt-12"
         contentEditableClassName="prose prose-sm lg:prose-lg"
         onChange={handleMarkdownChange}
       />
+
+      <HintPopover  />
     </>
   );
 };

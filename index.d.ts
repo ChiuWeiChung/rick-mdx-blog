@@ -33,6 +33,11 @@ declare module '@tanstack/react-query' {
       successMessage?: ToastMessage;
       errorMessage?: ToastMessage;
       shouldRefresh?: boolean;
+      ignoreLoadingMask?: boolean;
+      revalidate?: {
+        path?: string;
+        tag?: string;
+      };
     };
   }
 }

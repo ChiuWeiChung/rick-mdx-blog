@@ -45,11 +45,11 @@ export default async function NotesSection({ request, showPagination = false }: 
             title={
               <>
                 <h3>{note.title}</h3>
-                <span className="text-gray-500">{note.category}</span>
+                <span className="text-gray-500">{note.category.replace(/_/g, ' ')}</span>
               </>
             }
             description={renderTags(note.tags)}
-            content="adfads" //TODO: 顯示筆記部分內容，內容須從 formatter 來，存擋時，需要讀取 formatter 資料，並且顯示部分內容
+            content="" //TODO: 顯示筆記部分內容，內容須從 formatter 來，存擋時，需要讀取 formatter 資料，並且顯示部分內容
             footer={
               <Link href={`/notes/${note.id}`} className="w-full">
                 <Button variant="outline" className="w-full">

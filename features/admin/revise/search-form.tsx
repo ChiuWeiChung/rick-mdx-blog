@@ -33,7 +33,7 @@ const QuerySearchForm = ({ defaultValues, noteOptions }: QuerySearchFormProps) =
     const params = getUpdatedSearchParams(values, searchParams);
     router.push(`?${params.toString()}`);
   };
-  console.log('noteOptions', noteOptions);
+
   return (
     <SmartForm {...form} onSubmit={onSubmit} className="flex w-fit items-end gap-2">
       <SingleSelectField

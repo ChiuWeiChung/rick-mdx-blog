@@ -11,7 +11,7 @@ export default async function page() {
   const profile = await getProfile();
   if (!profile) return notFound();
 
-  const getMarkdownContentWithUnstableCache = unstable_cache(
+  const queryMarkdownContent = unstable_cache(
     async (filePath: string) => {
       const resource = await getMarkdownResource(filePath);
       const markdown = await getMarkdownContent(resource);
@@ -23,7 +23,7 @@ export default async function page() {
     }
   );
 
-  const markdown = await getMarkdownContentWithUnstableCache(profile.profilePath);
+  const markdown = await queryMarkdownContent(profile.profilePath);
   const options: EvaluateOptions = {
     mdxOptions: {
       remarkPlugins: [remarkGfm],
@@ -35,11 +35,5 @@ export default async function page() {
     // vfileDataIntoScope: 'toc',
   };
 
-  return (
-        <MDXRemote source={markdown} components={createMdxComponents()} options={options} />
-    // <main className="container mx-auto max-w-5xl px-4 py-8">
-    //   <article className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
-    //   </article>
-    // </main>
-  );
+  return <MDXRemote source={markdown} components={createMdxComponents()} options={options} />;
 }
