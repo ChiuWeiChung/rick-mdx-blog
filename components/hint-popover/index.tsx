@@ -16,7 +16,7 @@ import { askQuestion } from '@/actions/openai';
 import { Prompt } from '@/enums/prompt';
 import { generatePrompt } from './utils';
 import SpinnerLoader from '../spinner-loader';
-import { useWindowSelection } from '@/hooks/use-selection';
+import { useWindowSelection } from '@/hooks/use-window-selection';
 
 export default function HintPopover() {
   const [hint, setHint] = useState('');

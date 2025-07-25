@@ -12,7 +12,7 @@ type TextSelectionSnapshot = {
 
 export function useWindowSelection({ boundarySelector }: UseWindowSelectionOptions) {
   const [selectionSnapshot, setSelectionSnapshot] = useState<TextSelectionSnapshot | null>(null);
-  const boundaryRoot = typeof window !== 'undefined' ? document.querySelector(boundarySelector) : null;
+  // const boundaryRoot = typeof window !== 'undefined' ? document.querySelector(boundarySelector) : null;
   const clearSelection = () => {
     setSelectionSnapshot(null);
   };
@@ -24,21 +24,23 @@ export function useWindowSelection({ boundarySelector }: UseWindowSelectionOptio
       if (!sel || sel.isCollapsed || sel.rangeCount === 0) return;
 
       const range = sel.getRangeAt(0);
-      let ancestorEl = range.commonAncestorContainer as HTMLElement;
 
-      if (ancestorEl.nodeType === Node.TEXT_NODE) {
-        ancestorEl = ancestorEl.parentElement ?? ancestorEl;
+      const boundaryRoot = document.querySelector(boundarySelector);
+      if (boundaryRoot) {
+        const fullyInside = boundaryRoot.contains(range.startContainer) && boundaryRoot.contains(range.endContainer);
+        if (!fullyInside) return;
       }
+
       setSelectionSnapshot({ text: sel.toString(), range: range.cloneRange() });
     };
 
-    boundaryRoot?.addEventListener('mouseup', mouseUpHandler);
+    document.addEventListener('pointerup', mouseUpHandler);
 
     return () => {
-      boundaryRoot?.removeEventListener('mouseup', mouseUpHandler);
+      document.removeEventListener('pointerup', mouseUpHandler);
       clearSelection();
     };
-  }, [boundaryRoot]);
+  }, [boundarySelector]);
 
   return { selection: selectionSnapshot, clearSelection };
 }

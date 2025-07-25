@@ -85,6 +85,56 @@ export function useHighlights(
     [findBlockElement]
   );
 
+  // 檢查選取範圍是否包含已有的 highlight
+  const checkSelectionContainsHighlight = useCallback((range: Range): boolean => {
+    const container = range.commonAncestorContainer;
+    
+    // 如果選取的是文字節點，檢查其父元素
+    if (container.nodeType === Node.TEXT_NODE) {
+      const parent = container.parentElement;
+      if (parent?.classList.contains('highlight')) {
+        return true;
+      }
+    }
+    
+    // 檢查範圍內的所有元素
+    const fragment = range.cloneContents();
+    const walker = document.createTreeWalker(
+      fragment,
+      NodeFilter.SHOW_ELEMENT,
+      null
+    );
+    
+    let node;
+    while ((node = walker.nextNode())) {
+      if ((node as HTMLElement).classList?.contains('highlight')) {
+        return true;
+      }
+    }
+    
+    // 還需要檢查範圍開始和結束位置的父元素
+    const startNode = range.startContainer;
+    const endNode = range.endContainer;
+    
+    // 檢查開始位置
+    if (startNode.nodeType === Node.TEXT_NODE) {
+      const startParent = startNode.parentElement;
+      if (startParent?.classList.contains('highlight')) {
+        return true;
+      }
+    }
+    
+    // 檢查結束位置
+    if (endNode.nodeType === Node.TEXT_NODE) {
+      const endParent = endNode.parentElement;
+      if (endParent?.classList.contains('highlight')) {
+        return true;
+      }
+    }
+    
+    return false;
+  }, []);
+
   // 處理文字選取
   const handleSelectionChange = useCallback(() => {
     const selection = window.getSelection();
@@ -125,6 +175,16 @@ export function useHighlights(
       return;
     }
 
+    // 檢查選取範圍是否包含已有的 highlight
+    if (checkSelectionContainsHighlight(range)) {
+      console.warn('選取的文字內已包含 highlight，無法再次進行 highlight');
+      // 清除選取，給用戶視覺回饋
+      setTimeout(() => {
+        window.getSelection()?.removeAllRanges();
+      }, 100);
+      return;
+    }
+
     // 計算選取文字的 offset
     const startOffset = calculateTextOffset(startBlock, startContainer, range.startOffset);
     const endOffset = calculateTextOffset(startBlock, endContainer, range.endOffset);
@@ -150,7 +210,7 @@ export function useHighlights(
 
     // 更新最後選取時間
     lastSelectionTimeRef.current = Date.now();
-  }, [findBlockElement, calculateTextOffset, onTextSelected]);
+  }, [findBlockElement, calculateTextOffset, onTextSelected, checkSelectionContainsHighlight]);
 
   // 創建 highlight 的方法
   const createHighlight = useCallback(
@@ -170,23 +230,19 @@ export function useHighlights(
     [onCreateHighlight]
   );
 
-  // 監聽 selectionchange 事件 (簡化 debounce)
+  // 監聽 mouseup 事件來檢查文字選取
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-
-    const debouncedHandler = () => {
-      clearTimeout(timeoutId);
-      // 增加 debounce 時間到 1000ms，確保用戶有足夠時間完成選取
-      timeoutId = setTimeout(() => {
+    const handleMouseUp = (_event: MouseEvent) => {
+      // 小延遲確保選取狀態已穩定
+      setTimeout(() => {
         handleSelectionChange();
-      }, 1000);
+      }, 50);
     };
 
-    document.addEventListener('selectionchange', debouncedHandler);
+    document.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      document.removeEventListener('selectionchange', debouncedHandler);
-      clearTimeout(timeoutId);
+      document.removeEventListener('mouseup', handleMouseUp);
     };
   }, [handleSelectionChange]);
 

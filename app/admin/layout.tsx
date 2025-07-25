@@ -15,7 +15,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
       <AdminSidebar />
 
       <PageContent className="relative flex flex-col gap-4 p-1 md:p-6">
-        <div className="absolute top-2 right-10 flex items-center gap-4 text-lg">
+        <div className="absolute top-2 right-10 items-center gap-4 text-lg hidden md:flex">
           <div className="flex items-center gap-2">
             <User className="bg-primary mr-1 rounded-full text-white" />
             <span className="font-bold">{session.user?.name}</span>

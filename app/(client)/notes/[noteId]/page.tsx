@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { getNoteMemoByPostId } from '@/actions/note-memos';
 import { Metadata } from 'next';
+import { EditIcon } from 'lucide-react';
 // import Highlighter from '@/components/highlighter';
 
 interface ClientNotesPageProps {
@@ -62,12 +63,17 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
   return (
     <div>
       {/* router back button */}
-      <div className="mb-4 flex items-center border-b gap-4 pb-4">
+      <div className="mb-4 flex items-center gap-4 border-b pb-4">
         <GoBackButton>回筆記列表</GoBackButton>
-        <p className="text-sm text-gray-500 ml-auto">更新時間：{note.updatedAt.toLocaleDateString()}</p>
+        <p className="ml-auto text-sm text-gray-500">
+          更新時間：{note.updatedAt.toLocaleDateString()}
+        </p>
         {!!session && (
           <Link href={`/admin/notes/editor?noteId=${params.noteId}`}>
-            <Button variant="outline">編輯</Button>
+            <Button variant="outline">
+              編輯
+              <EditIcon />
+            </Button>
           </Link>
         )}
       </div>

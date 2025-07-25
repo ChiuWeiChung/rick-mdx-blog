@@ -273,11 +273,7 @@ export const updateNote = async (note: UpdateNoteRequest) => {
     );
     if (existingNoteResult.rows.length === 0) throw new Error('Note not found');
 
-    // 暫時不檢查是否屬於當前使用者，因為筆記的 owner 是 admin
-    // const existingNote = existingNoteResult.rows[0];
-    // if (existingNote.user_id !== user.id) {
-    //   throw new Error('Unauthorized to update this note');
-    // }
+    // NOTE: 暫時不檢查是否屬於當前使用者，因為筆記的 owner 是 admin
 
     // 如果 category 存在，則取得 category_id，若無則新增 category 並取得 category_id
     const selectedCategory = await findOrCreateCategory(category, client);
@@ -353,14 +349,9 @@ export const deleteNote = async (noteId: number) => {
     if (noteResult.rows.length === 0) throw new Error('Note not found');
     const note = noteResult.rows[0];
 
-    // 暫時不檢查是否屬於當前使用者，因為筆記的 owner 是 admin
-    // if (note.user_id !== user.id) {
-    //   throw new Error('Unauthorized to delete this note');
-    // }
-
+    // NOTE: 暫時不檢查是否屬於當前使用者，因為筆記的 owner 是 admin
     // 刪除筆記記錄
     await client.query('DELETE FROM posts WHERE id = $1', [noteId]);
-    // 注意：由於 post_tags 表有 ON DELETE CASCADE 約束，刪除 posts 記錄時會自動刪除相關的 post_tags 記錄
 
     // 如果有關聯的 markdown 檔案，從 S3 刪除
     if (note.file_path) await deleteMarkdownFile(note.file_path);

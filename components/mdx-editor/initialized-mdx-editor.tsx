@@ -80,7 +80,7 @@ export default function InitializedMDXEditor({
         markdownShortcutPlugin(), // 需要在最底下，才可支援上述的 plugin shortcut
         diffSourcePlugin({ diffMarkdown: props.markdown, viewMode: 'rich-text' }),
         toolbarPlugin({
-          toolbarClassName: 'my-classname',
+          toolbarClassName: 'mdx-editor-toolbar !pl-8',
           toolbarContents: () => (
             <>
               <DiffSourceToggleWrapper>
