@@ -37,7 +37,7 @@ export const DatePickerField = (props: DatePickerFieldProps) => {
         };
 
         return (
-          <FormItem className={cn('relative w-full', className)}>
+          <FormItem className={cn('relative', className)}>
             {label ? <FormLabel>{label}</FormLabel> : null}
             <FormControl>
               <DatePicker

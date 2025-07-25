@@ -86,24 +86,32 @@ const QuerySearchForm = ({ tagOptions, categoryOptions, defaultValues }: QuerySe
               className="col-span-4 lg:col-span-2 xl:col-span-1"
             />
 
-            <div className="col-span-4 flex w-full flex-col gap-2 2xl:col-span-2">
-              
-              <div className="flex flex-col items-end gap-2 lg:flex-row">
-                <DatePickerField name={queryNoteKeys.startCreatedTime} label="建立時間" placeholder="起始時間" />
-                <DatePickerField name={queryNoteKeys.endCreatedTime} placeholder="結束時間" />
-              </div>
+            <div className="col-span-4 flex w-full items-end gap-2 lg:col-span-2 2xl:col-span-1">
+              <DatePickerField
+                name={queryNoteKeys.startCreatedTime}
+                label="建立時間"
+                placeholder="起始時間"
+              />
+              {/* <p className="text-muted-foreground self-center text-sm">至</p> */}
+              <DatePickerField name={queryNoteKeys.endCreatedTime} placeholder="結束時間" />
+              {/* <div className="flex flex-col items-end gap-2 lg:flex-row">
+              </div> */}
 
               {/* <div className="h-14 min-w-[1px] bg-gray-300" /> */}
             </div>
-            <div className="col-span-4 flex w-full flex-col gap-2 2xl:col-span-2">
-              
-              <div className="flex flex-col items-end gap-2 lg:flex-row">
-                <DatePickerField name={queryNoteKeys.startUpdatedTime} label="更新時間" placeholder="起始時間" />
+            <div className="col-span-4 flex w-full items-end gap-2 lg:col-span-2 2xl:col-span-1">
+                <DatePickerField
+                  name={queryNoteKeys.startUpdatedTime}
+                  label="更新時間"
+                  placeholder="起始時間"
+                />
+                {/* <p className="text-muted-foreground self-center text-sm">至</p> */}
                 <DatePickerField name={queryNoteKeys.endUpdatedTime} placeholder="結束時間" />
-              </div>
+              {/* <div className="flex flex-col items-end gap-2 lg:flex-row">
+              </div> */}
             </div>
 
-            <div className="col-span-1 col-start-4 ml-auto flex w-full justify-end gap-2">
+            <div className="col-span-1 col-start-4 ml-auto flex w-full items-end justify-end gap-2">
               <Button type="button" variant="outline" onClick={onReset}>
                 清除條件
               </Button>

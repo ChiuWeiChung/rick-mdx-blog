@@ -34,7 +34,7 @@ export default function DatePicker({
             variant="outline"
             type="button"
             data-empty={!value}
-            className="data-[empty=true]:text-muted-foreground w-full min-w-[260px] justify-start text-left font-normal"
+            className="data-[empty=true]:text-muted-foreground w-full min-w-[9rem] justify-start text-left font-normal"
             disabled={disabled}
           >
             <CalendarIcon />
