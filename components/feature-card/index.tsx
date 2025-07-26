@@ -53,10 +53,10 @@ export function FeatureCard({
         <CardTitle className="text-lg font-bold">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
-      <CardContent>
-        {content }
+      <CardContent className="line-clamp-3 h-16 overflow-hidden text-sm leading-relaxed mt-auto">
+        {content}
       </CardContent>
-      <CardFooter className="mt-auto">{footer}</CardFooter>
+      <CardFooter>{footer}</CardFooter>
     </Card>
   );
 }

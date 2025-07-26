@@ -14,23 +14,23 @@ interface NoteHighlighterProps {
 
 const NoteHighlighter = ({ defaultHighlights, noteId }: NoteHighlighterProps) => {
   const [highlights, setHighlights] = useState<HighlightData[]>(defaultHighlights || []);
-  console.log('highlights', highlights);
+
   // 新增筆記備註
   const createMutation = useMutation({
     mutationFn: mutationHandler(createNoteMemo),
-    meta: { successMessage: { title: '新增筆記備註成功' } },
+    meta: { ignoreLoadingMask: true },
   });
 
   // 更新筆記備註
   const updateMutation = useMutation({
     mutationFn: mutationHandler(updateNoteMemo),
-    meta: { successMessage: { title: '更新筆記備註成功' } },
+    meta: { ignoreLoadingMask: true },
   });
 
   // 刪除筆記備註
   const deleteMutation = useMutation({
     mutationFn: mutationHandler(deleteNoteMemo),
-    meta: { successMessage: { title: '刪除筆記備註成功' } },
+    meta: { ignoreLoadingMask: true },
   });
 
   const handleHighlightCreate = (data: Omit<HighlightData, 'id'>) => {
@@ -68,9 +68,7 @@ const NoteHighlighter = ({ defaultHighlights, noteId }: NoteHighlighterProps) =>
         endOffset: target.endOffset,
         content,
       });
-
     }
-
   };
 
   const handleHighlightDelete = (id: string) => {

@@ -20,14 +20,15 @@ interface InputFieldProps<TFieldValues extends FieldValues = FieldValues>
 }
 
 export const InputField = (props: InputFieldProps) => {
-	const { control, name, label, placeholder, description, className, ...inputProps } = props;
+	const { control, name, label, placeholder, description, className, required, ...inputProps } =
+    props;
 	return (
 		<FormField
 			control={control}
 			name={name}
 			render={({ field }) => (
 				<FormItem className={className}>
-					{label ? <FormLabel>{label}</FormLabel> : null}
+					{label ? <FormLabel>{label} {required && <span className="text-destructive">＊</span>}</FormLabel> : null}
 					<FormControl>
 						<Input placeholder={placeholder} {...field} {...inputProps} />
 					</FormControl>

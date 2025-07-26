@@ -11,11 +11,8 @@ const HighlightTestPage = () => {
       blockId: 'block-1',
       startOffset: 5,
       endOffset: 15,
-      note: '這是第一個測試 highlight'
     }
   ]);
-
-  console.log('highlights', highlights);
 
   const handleHighlightCreate = (data: Omit<HighlightData, 'id'>) => {
     const newHighlight: HighlightData = {
@@ -108,7 +105,6 @@ const HighlightTestPage = () => {
               <div><strong>ID:</strong> {highlight.id}</div>
               <div><strong>Block:</strong> {highlight.blockId}</div>
               <div><strong>Range:</strong> {highlight.startOffset} - {highlight.endOffset}</div>
-              <div><strong>Note:</strong> <span className="text-yellow-600">{highlight.note}</span></div>
             </div>
           ))}
         </div>

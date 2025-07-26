@@ -10,9 +10,9 @@ import { getTagWithNoteCount } from '@/actions/tags';
 import PageWrapper from '@/components/page-wrapper';
 
 export default async function LandingPage() {
-  const queryRequest = coerceQueryNoteSchema.parse({ limit: 6 }); // 預設只取前六筆資料
-  const queryTagRequest = queryTagSchema.parse({ limit: 10000 });
-  const { data: tags } = await getTagWithNoteCount(queryTagRequest);
+  const queryRequest = coerceQueryNoteSchema.parse({ limit: 6, visible: true }); // 預設只取前六筆資料
+  const queryTagRequest = queryTagSchema.parse({ limit: 10 });
+  const { data: tags,totalCount } = await getTagWithNoteCount(queryTagRequest);
 
   return (
     <PageWrapper>
@@ -25,7 +25,7 @@ export default async function LandingPage() {
         </p>
       </section>
 
-      <TagsSection tags={tags} />
+      <TagsSection tags={tags} totalCount={totalCount} />
 
       {/* 測試區，待刪除 */}
       {/* <LandingDemoPage /> */}

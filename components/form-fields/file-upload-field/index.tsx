@@ -24,7 +24,10 @@ export const FileUploadField = (props: FileUploadFieldProps) => {
       render={({ field }) => {
         const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
           const file = event.target.files?.[0];
-          if (file) field.onChange(file);
+          if (file) {
+            props.onChange?.(event);
+            field.onChange(file);
+          }
         };
         return (
           <FormItem className={className}>

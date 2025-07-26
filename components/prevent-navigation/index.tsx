@@ -89,10 +89,7 @@ export const PreventNavigation = ({ isDirty, backHref, resetData }: PreventNavig
     };
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isDirty) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
+      if (isDirty) e.preventDefault();
     };
 
     if (typeof window !== 'undefined') {
@@ -126,7 +123,6 @@ export const PreventNavigation = ({ isDirty, backHref, resetData }: PreventNavig
             setLeavingPage(false);
             confirmationFn.current = () => {};
           }}
-          variant="outline"
         >
           繼續編輯
         </Button>
@@ -138,6 +134,7 @@ export const PreventNavigation = ({ isDirty, backHref, resetData }: PreventNavig
             confirmationFn.current = () => {};
             resetData();
           }}
+          variant="outline"
         >
           確定離開
         </Button>

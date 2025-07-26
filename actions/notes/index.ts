@@ -105,9 +105,11 @@ export const queryNoteList = async (request: QueryNote) => {
   // 查詢總數（只使用 WHERE 條件參數）
   const countResult = await pool.query(
     `
-    SELECT COUNT(DISTINCT posts.id) AS count
-    FROM posts
-    LEFT JOIN post_tags ON post_tags.post_id = posts.id
+    SELECT
+      COUNT(DISTINCT posts.id) AS count
+    FROM
+      posts
+      LEFT JOIN post_tags ON post_tags.post_id = posts.id
     ${whereClause}
     `,
     whereValues
@@ -142,7 +144,8 @@ export const queryNoteList = async (request: QueryNote) => {
       STRING_AGG(tags.name, ', ') AS tags,
       posts.file_path,
       posts.created_at,
-      posts.updated_at
+      posts.updated_at,
+      posts.description
     FROM
       posts
       LEFT JOIN post_tags ON post_tags.post_id = posts.id
@@ -179,7 +182,7 @@ export const queryNoteList = async (request: QueryNote) => {
 
 /** 新增筆記 */
 export const createNote = async (note: CreateNoteRequest) => {
-  const { title, content, file, category, tags, visible, fileName, manualUpload } = note;
+  const { title, content, category, tags, visible, fileName, createdAt, description } = note;
   const client = await pool.connect();
 
   try {
@@ -207,20 +210,36 @@ export const createNote = async (note: CreateNoteRequest) => {
     const selectedTags = await findOrCreateTags(tags, client);
     if (!selectedTags) throw new Error('Tags not found');
 
-    // 如果是上傳檔案，則上傳檔案
-    let filePath = '';
-    const saveRequest =
-      file && manualUpload
-        ? { file, category: selectedCategory.name, fileName }
-        : { content, category: selectedCategory.name, fileName };
-    filePath = await saveMarkdownFile(saveRequest);
+    // 上傳檔案至 S3
+    const filePath = await saveMarkdownFile({ content, category: selectedCategory.name, fileName });
     if (!filePath) throw new Error('Failed to save markdown file');
-
-    // 新增 post
-    const { rows } = await client.query(
-      'INSERT INTO posts (title, user_id, visible, created_at, updated_at, category_id, file_path) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [title, user.id, visible, new Date(), new Date(), selectedCategory.id, filePath]
-    );
+    
+    // 新增 post 至 DB
+    const sql = `
+    INSERT INTO
+      posts (
+        title,
+        user_id,
+        visible,
+        created_at,
+        updated_at,
+        category_id,
+        file_path,
+        description
+      )
+    VALUES
+      ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *
+    `;
+    const { rows } = await client.query(sql, [
+      title,
+      user.id,
+      visible,
+      createdAt ?? new Date(),
+      createdAt ?? new Date(),
+      selectedCategory.id,
+      filePath,
+      description,
+    ]);
     const noteId = toCamelCase<Note>(rows)[0].id;
 
     // 新增 tags 的關聯，以及 post_tags 的關聯
@@ -246,7 +265,7 @@ export const createNote = async (note: CreateNoteRequest) => {
 
 /** 更新筆記 */
 export const updateNote = async (note: UpdateNoteRequest) => {
-  const { id, title, content, category, tags, fileName } = note;
+  const { id, title, content, category, tags, fileName, createdAt, description } = note;
   const client = await pool.connect();
 
   try {
@@ -267,11 +286,20 @@ export const updateNote = async (note: UpdateNoteRequest) => {
     if (!user) throw new Error('User not found');
 
     // 檢查筆記是否存在
-    const existingNoteResult = await client.query(
-      'SELECT id, user_id, file_path FROM posts WHERE id = $1',
-      [id]
-    );
-    if (existingNoteResult.rows.length === 0) throw new Error('Note not found');
+    const checkNoteExistSql = `
+    SELECT
+      id,
+      user_id,
+      file_path,
+      created_at
+    FROM
+      posts
+    WHERE
+      id = $1
+    `;
+    const result = await client.query(checkNoteExistSql, [id]);
+    const existingNote = toCamelCase<Note>(result.rows)[0];
+    if (!existingNote) throw new Error('Note not found');
 
     // NOTE: 暫時不檢查是否屬於當前使用者，因為筆記的 owner 是 admin
 
@@ -286,12 +314,24 @@ export const updateNote = async (note: UpdateNoteRequest) => {
     // 更新 markdown 檔案內容
     const filePath = await saveMarkdownFile({ content, category: selectedCategory.name, fileName });
     if (!filePath) throw new Error('Failed to save markdown file');
-
-
+    
     // 更新 post
+    const sql = `
+    UPDATE
+      posts
+    SET
+      title = $1,
+      created_at = $2,
+      updated_at = $3,
+      category_id = $4,
+      file_path = $5,
+      description = $6
+    WHERE
+      id = $7 RETURNING *
+    `;
     await client.query(
-      'UPDATE posts SET title = $1, updated_at = $2, category_id = $3, file_path = $4 WHERE id = $5 RETURNING *',
-      [title, new Date(), selectedCategory.id, filePath, id]
+      sql,
+      [title, createdAt, new Date(), selectedCategory.id, filePath, description, id]
     );
 
     // 刪除舊的 post_tags 關聯

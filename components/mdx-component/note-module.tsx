@@ -98,6 +98,18 @@ export function createMdxComponents() {
         {...props}
       />
     ),
+    iframe: (props: CommonProps) => {
+      console.log('iframe props', props);
+      console.log('iframe props', props);
+      console.log('iframe props', props);
+      console.log('iframe props', props);
+      return (
+        <iframe
+          {...props}
+          className="w-full h-[500px] border border-gray-300 rounded-md overflow-hidden"
+        />
+      );
+    },
     // a: (props: CommonProps) => <a className="text-blue-500 hover:text-blue-700" {...props} />,
   };
 }

@@ -4,6 +4,7 @@ import {
   createNoteSchemaKeys,
   createNoteSchema,
   CreateNoteRequest,
+  Frontmatter,
 } from '@/actions/notes/types';
 import { Option } from '@/types/global';
 import {
@@ -15,7 +16,7 @@ import {
 } from '@/components/form-fields';
 import SmartForm from '@/components/smart-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { FieldErrors, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { createNote, updateNote } from '@/actions/notes';
@@ -23,7 +24,6 @@ import DialogContainer from '@/components/dialog-container';
 import { useRouter } from 'next/navigation';
 import { ForwardRefEditor } from '@/components/mdx-editor';
 import { Edit } from 'lucide-react';
-import { useIsMobile } from '@/hooks/use-mobile';
 import { PreventNavigation } from '@/components/prevent-navigation';
 import { useMutation } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
@@ -39,6 +39,8 @@ import {
 } from '@/components/ui/accordion';
 import { deleteNoteMemosByPostId } from '@/actions/note-memos';
 import HintPopover from '@/components/hint-popover';
+import { MDXEditorMethods } from '@mdxeditor/editor';
+import { evaluate } from 'next-mdx-remote-client/rsc';
 
 interface NoteEditorFormProps {
   noteToEdit?: Partial<CreateNoteRequest> & { id: number };
@@ -57,22 +59,14 @@ const NoteEditorForm = ({
   const isCreate = !noteToEdit;
   const router = useRouter();
   const [open, setOpen] = useState(true);
-  const isMobile = useIsMobile();
   const { openAlertModal } = useAlertModal();
-  
-
+  const editorRef = useRef<MDXEditorMethods>(null);
   const form = useForm({
     resolver: zodResolver(createNoteSchema),
-    defaultValues: {
-      ...defaultCreateNoteValues,
-      ...noteToEdit,
-    },
+    defaultValues: { ...defaultCreateNoteValues, ...noteToEdit },
   });
 
-  const [markdown, manualUpload] = form.watch([
-    createNoteSchemaKeys.content,
-    createNoteSchemaKeys.manualUpload,
-  ]);
+  const [content, file] = form.watch([createNoteSchemaKeys.content, createNoteSchemaKeys.file]);
 
   const mutateSuccessHandler = (message: string) => {
     toast.success(message);
@@ -94,26 +88,26 @@ const NoteEditorForm = ({
   const { mutate: updateNoteMutation, isPending: isUpdatePending } = useMutation({
     mutationFn: mutationHandler(updateNote),
     onSuccess: () => {
-      if (memos && noteToEdit) deleteNoteMemosMutation(noteToEdit.id.toString());
+      if (memos && noteToEdit) deleteNoteMemosMutation(noteToEdit.id.toString()); // 批次刪除筆記備註  (因為筆記更新時， blockId 會改變，所以需要刪除舊的備註，避免備註的 blockId 與筆記的 blockId 不符)
       mutateSuccessHandler('筆記更新成功');
     },
   });
 
-  const onSubmit = (data: CreateNoteRequest) => {
+  const onSubmit = async (data: CreateNoteRequest) => {
+    // 確認 content 內是否有 frontMatter，截取內部資訊後 (createdAt, description)，更新欄位
+    const evaluateResult = await evaluate<Frontmatter>({
+      source: data.content,
+      options: { parseFrontmatter: true },
+    });
+    const { frontmatter } = evaluateResult;
+    if (frontmatter.description) data.description = frontmatter.description;
+    if (frontmatter.createdAt) data.createdAt = new Date(frontmatter.createdAt);
     if (noteToEdit) updateNoteMutation({ ...data, id: noteToEdit.id });
     else createNoteMutation(data);
   };
 
   const handleMarkdownChange = (markdown: string) => {
     form.setValue(createNoteSchemaKeys.content, markdown, { shouldDirty: true });
-  };
-
-  const renderBasicInfo = (title: string, value: string) => {
-    return (
-      <p>
-        <span className="font-bold">{title}:</span> {value || '未設定'}
-      </p>
-    );
   };
 
   const handleSaveBtnClick = () => {
@@ -140,9 +134,6 @@ const NoteEditorForm = ({
 
   const isPending = isCreatePending || isUpdatePending;
 
-  // console.log('selection', selection);
-  // console.log('selection range getBoundingClientRect', selection?.range.getBoundingClientRect());
-
   return (
     <>
       <PreventNavigation
@@ -165,12 +156,14 @@ const NoteEditorForm = ({
             name={createNoteSchemaKeys.title}
             label="文章標題"
             placeholder="請輸入文章標題"
+            required
           />
           <InputField
             name={createNoteSchemaKeys.fileName}
             label="檔案名稱"
             placeholder="請輸入檔案名稱"
             disabled={!isCreate}
+            required
           />
           <SingleSelectField
             name={createNoteSchemaKeys.category}
@@ -178,6 +171,7 @@ const NoteEditorForm = ({
             placeholder="請選擇分類"
             options={categoryOptions}
             creatable
+            required
           />
           <MultiSelectField
             name={createNoteSchemaKeys.tags}
@@ -185,26 +179,36 @@ const NoteEditorForm = ({
             placeholder="請選擇標籤"
             options={tagOptions}
             creatable
+            required
           />
-          <div className="flex items-center justify-evenly gap-4">
-            <SwitchField
-              name={createNoteSchemaKeys.visible}
-              label="是否公開"
-              disabled={!isCreate}
-            />
-            <div className="h-full w-[2px] bg-gray-200" />
-            <SwitchField
-              name={createNoteSchemaKeys.manualUpload}
-              label="手動上傳"
-              disabled={!isCreate}
-            />
-          </div>
+
+          <SwitchField
+            name={createNoteSchemaKeys.visible}
+            label="是否公開"
+            disabled={!isCreate}
+            className="w-fit grid-cols-2"
+          />
+
           <div className="col-span-2 h-33 w-full">
-            {manualUpload && (
+            {isCreate && (
               <FileUploadField
                 name={createNoteSchemaKeys.file}
-                label="請上傳檔案"
+                label="請上傳檔案 (Optional)"
                 accept="text/markdown"
+                onChange={event => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    const fileReader = new FileReader();
+                    fileReader.onload = e => {
+                      const content = e.target?.result;
+                      editorRef.current?.setMarkdown(content as string);
+                      form.setValue(createNoteSchemaKeys.content, content as string, {
+                        shouldDirty: true,
+                      });
+                    };
+                    fileReader.readAsText(file);
+                  }
+                }}
               />
             )}
           </div>
@@ -213,13 +217,20 @@ const NoteEditorForm = ({
               取消
             </Button>
 
-            {manualUpload ? (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => {
+                setOpen(false);
+                editorRef.current?.focus();
+              }}
+            >
+              繼續編輯
+            </Button>
+
+            {!!file && (
               <Button type="submit" disabled={isPending}>
-                {isPending ? '建立中...' : '建立筆記'}
-              </Button>
-            ) : (
-              <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
-                繼續編輯
+                {isPending ? '建立中...' : '直接建立筆記'}
               </Button>
             )}
           </div>
@@ -228,7 +239,7 @@ const NoteEditorForm = ({
 
       {/* 筆記備註區塊 */}
       {!open && !!memos && memos.length > 0 && (
-        <div className="bg-primary-foreground fixed top-28 right-4 z-[1000] flex flex-col items-center gap-2 rounded-lg p-2 opacity-80">
+        <div className="bg-primary-foreground fixed top-28 right-6 z-[1000] flex flex-col items-center gap-2 rounded-lg p-2 opacity-80">
           <div className="flex items-center justify-end gap-4">
             <Accordion type="single" collapsible>
               <AccordionItem value="memos">
@@ -255,7 +266,7 @@ const NoteEditorForm = ({
       )}
 
       {!open && (
-        <div className="bg-primary-foreground fixed right-4 bottom-4 z-[1000] flex flex-col items-center gap-2 rounded-lg p-2 opacity-80">
+        <div className="bg-primary-foreground fixed right-6 bottom-4 z-[1000] flex flex-col items-center gap-2 rounded-lg p-2 opacity-80">
           <div className="flex items-center justify-end gap-4">
             <Button type="button" variant="outline" onClick={() => router.back()}>
               取消
@@ -267,33 +278,12 @@ const NoteEditorForm = ({
           <Button type="button" variant="outline" onClick={() => setOpen(true)}>
             文章基本資料 <Edit />
           </Button>
-
-          {!isMobile && (
-            <div className="rounded-lg border bg-white/90 p-3 shadow-lg backdrop-blur-sm">
-              <div className="space-y-1 text-sm text-gray-600">
-                {renderBasicInfo('文章標題', form.watch(createNoteSchemaKeys.title))}
-                {renderBasicInfo('檔案名稱', form.watch(createNoteSchemaKeys.fileName))}
-                {renderBasicInfo(
-                  '分類',
-                  categoryOptions.find(
-                    option => option.value === form.watch(createNoteSchemaKeys.category)
-                  )?.label || '未設定'
-                )}
-                {renderBasicInfo('標籤', form.watch(createNoteSchemaKeys.tags)?.join(', '))}
-                {renderBasicInfo(
-                  '是否公開',
-                  form.watch(createNoteSchemaKeys.visible) ? '是' : '否'
-                )}
-                {renderBasicInfo('手動上傳', manualUpload ? '是' : '否')}
-              </div>
-            </div>
-          )}
         </div>
       )}
 
       <ForwardRefEditor
-        markdown={markdown}
-        // className="prose-sm lg:prose-lg prose mt-12"
+        markdown={content}
+        ref={editorRef}
         className="mt-12"
         contentEditableClassName="prose prose-sm lg:prose-lg max-w-[unset]"
         onChange={handleMarkdownChange}

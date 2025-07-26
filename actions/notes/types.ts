@@ -13,6 +13,7 @@ const noteSchema = z.object({
   createdAt: z.date(),
   updatedAt: z.date(),
   tags: z.array(z.string(), '請提供標籤').min(1, '請選擇標籤'),
+  description: z.string().nullable(),
 });
 
 /** 筆記的 response type */
@@ -25,7 +26,7 @@ const NoteKeys = noteSchema.keyof().enum;
 const createNoteSchema = noteSchema
   .omit({
     id: true,
-    createdAt: true,
+    // createdAt: true,
     updatedAt: true,
     filePath: true,
     username: true,
@@ -33,7 +34,8 @@ const createNoteSchema = noteSchema
   .extend({
     file: z.instanceof(File).nullable(),
     content: z.string(),
-    manualUpload: z.boolean(),
+    createdAt: z.date().nullable(),
+    description: z.string().nullable(),
     category: z.union([z.string('請選擇分類'), z.number('請選擇分類')]),
     tags: z.array(
       z.union([z.string('請選擇標籤').min(1, '請選擇標籤'), z.number('請選擇標籤')]),
@@ -45,28 +47,7 @@ const createNoteSchema = noteSchema
       .trim()
       .regex(/^[a-zA-Z0-9_-]+$/, '檔案名稱只能包含英文、數字、底線和連字號'),
   })
-  .check(ctx => {
-    // 如果 manualUpload 為 true，則 file 則為必填
-    if (ctx.value.manualUpload && !ctx.value.file) {
-      // add issue to ctx
-      ctx.issues.push({
-        code: 'custom',
-        message: '您選擇手動上傳，請提供檔案',
-        input: ctx.value.manualUpload,
-        path: ['file'],
-      });
-    }
-
-    if (!ctx.value.manualUpload && !ctx.value.content) {
-      ctx.issues.push({
-        code: 'custom',
-        message: '內容不能為空，請提供內容',
-        input: ctx.value.content,
-        path: ['content'],
-      });
-    }
-  });
-
+  
 /** 新增筆記的 request type */
 type CreateNoteRequest = z.infer<typeof createNoteSchema>;
 
@@ -158,7 +139,7 @@ const coerceQueryNoteSchema = queryNoteSchema.extend({
 /** 更新筆訊的 request schema */
 const updateNoteSchema = createNoteSchema.omit({
   file: true,
-  manualUpload: true,
+  // manualUpload: true,
   visible: true,
 }).extend({
   id: z.number(),
@@ -180,6 +161,13 @@ const noteDetailSchema = noteSchema
 
 /** 筆訊的詳細資訊的 type */
 type NoteDetail = z.infer<typeof noteDetailSchema>;
+
+/** 筆記的 frontmatter type */
+type Frontmatter = {
+  title?: string;
+  description?: string;
+  createdAt?: string;
+};
 
 export {
   // 查看筆記
@@ -207,4 +195,7 @@ export {
   // 筆記詳細資訊
   type NoteDetail,
   noteDetailSchema,
+
+  // 筆記的 frontmatter
+  type Frontmatter,
 };

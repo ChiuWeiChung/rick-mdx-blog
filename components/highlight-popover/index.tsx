@@ -41,7 +41,10 @@ export default function HighlightPopover({
     if (isEditMode && editingHighlight) {
       // 編輯模式：使用點擊位置
       console.log('進入編輯模式，註解內容:', editingHighlight.data.content);
-      setAnchorPosition(editingHighlight.position);
+      // 需要加上當前的 scroll 位置
+      const scrollX = window.scrollX;
+      const scrollY = window.scrollY;
+      setAnchorPosition({ x: editingHighlight.position.x + scrollX, y: editingHighlight.position.y + scrollY }); 
       setNote(editingHighlight.data.content || '');
       setIsOpen(true);
     } else if (selectionData?.range) {

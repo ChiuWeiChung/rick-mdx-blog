@@ -53,7 +53,7 @@ const columns = [
   }),
   accessor(NoteKeys.title, {
     header: '文章標題',
-    size: 200,
+    size: 300,
   }),
   display({
     id: NoteKeys.visible,
@@ -66,7 +66,6 @@ const columns = [
 
       return <Switch checked={row.original.visible} onCheckedChange={onCheckedChange} />;
     },
-    size: 150,
   }),
   // accessor(NoteKeys.username, {
   //   header: '作者',
@@ -93,19 +92,13 @@ const columns = [
   }),
   accessor(NoteKeys.createdAt, {
     header: '建立時間',
-    cell: ({ getValue }) => {
-      const value = getValue();
-      return format(value, 'yy/MM/dd HH:mm');
-    },
+    cell: ({ getValue }) => format(getValue(), 'yyyy/MM/dd'),
     size: 150,
     enableSorting: true,
   }),
   accessor(NoteKeys.updatedAt, {
     header: '更新時間',
-    cell: ({ getValue }) => {
-      const value = getValue();
-      return format(value, 'yy/MM/dd HH:mm');
-    },
+    cell: ({ getValue }) => format(getValue(), 'yyyy/MM/dd'),
     size: 150,
     enableSorting: true,
   }),

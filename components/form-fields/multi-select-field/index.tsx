@@ -18,10 +18,11 @@ interface MultiSelectFieldProps<TFieldValues extends FieldValues = FieldValues>
   label?: ReactNode;
   className?: string;
   description?: ReactNode;
+  required?: boolean;
 }
 
 export const MultiSelectField = (props: MultiSelectFieldProps) => {
-  const { control, name, label, description, className, ...multiSelectProps } = props;
+  const { control, name, label, description, className, required, ...multiSelectProps } = props;
   return (
     <FormField
       control={control}
@@ -29,7 +30,7 @@ export const MultiSelectField = (props: MultiSelectFieldProps) => {
       render={({ field }) => {
         return (
           <FormItem className={cn('relative', className)}>
-            {label ? <FormLabel>{label}</FormLabel> : null}
+            {label ? <FormLabel>{label} {required && <span className="text-destructive">＊</span>}</FormLabel> : null}
             <FormControl>
               <MultiSelect {...field} {...multiSelectProps} />
             </FormControl>

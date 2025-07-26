@@ -1,9 +1,8 @@
 import { getNoteInfoById } from '@/actions/notes';
 import { getMarkdownContent, getMarkdownResource } from '@/actions/s3/markdown';
-// import { coerceQueryNoteSchema } from '@/actions/notes/types';
 import React, { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { EvaluateOptions, MDXRemote } from 'next-mdx-remote-client/rsc';
+import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import { createMdxComponents } from '@/components/mdx-component/note-module';
 import remarkGfm from 'remark-gfm';
 import GoBackButton from '@/components/go-back-button';
@@ -14,7 +13,7 @@ import Link from 'next/link';
 import { getNoteMemoByPostId } from '@/actions/note-memos';
 import { Metadata } from 'next';
 import { EditIcon } from 'lucide-react';
-// import Highlighter from '@/components/highlighter';
+import { Frontmatter } from '@/actions/notes/types';
 
 interface ClientNotesPageProps {
   params: Promise<{ noteId: string }>;
@@ -51,14 +50,16 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
 
   const options: EvaluateOptions = {
     mdxOptions: { remarkPlugins: [remarkGfm] },
-    //  parseFrontmatter: true, // TODO 標題/時間可以從這邊取得 (目前是從資料庫)
+     parseFrontmatter: true,
     //  vfileDataIntoScope: 'toc', // TODO table of content (目錄的概念)
   };
-  // const { content, frontmatter, scope, error } = await evaluate<Frontmatter>({
-  //   source:content,
-  //   options,
-  //   components: createMdxComponents(),
-  // });
+  const evaluateResult = await evaluate<Frontmatter>({
+    source:content,
+    options,
+    components: createMdxComponents(),
+  });
+
+  if (evaluateResult.error) throw new Error(evaluateResult.error.message);
 
   return (
     <div>
@@ -78,7 +79,8 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
         )}
       </div>
       <Suspense fallback={<div className="p-4 text-center">Loading content...</div>}>
-        <MDXRemote source={content} components={createMdxComponents()} options={options} />
+        {/* <MDXRemote source={content} components={createMdxComponents()} options={options} /> */}
+        {evaluateResult.content}
       </Suspense>
 
       {!!session && <NoteHighlighter defaultHighlights={memos} noteId={params.noteId} />}

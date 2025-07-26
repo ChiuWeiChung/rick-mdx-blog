@@ -15,7 +15,7 @@ export default async function ClientTagsPage(props: ClientTagsPageProps) {
   const result = await getNoteIdsByTagId(Number(tagId));
   if (!result.length) notFound();
   const [target] = result;
-  const queryRequest = coerceQueryNoteSchema.parse({ tags: [target.tagId] }); // 解析查詢參數
+  const queryRequest = coerceQueryNoteSchema.parse({ tags: [target.tagId], visible: true }); // 解析查詢參數
 
   return (
     <PageWrapper>

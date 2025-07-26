@@ -17,17 +17,18 @@ interface SingleSelectFieldProps<TFieldValues extends FieldValues = FieldValues>
 	label?: ReactNode;
 	className?: string;
 	description?: ReactNode;
+	required?: boolean;
 }
 
 export const SingleSelectField = (props: SingleSelectFieldProps) => {
-	const { control, name, label, description, className, ...singleSelectProps } = props;
+	const { control, name, label, description, className, required, ...singleSelectProps } = props;
 	return (
 		<FormField
 			control={control}
 			name={name}
 			render={({ field }) => (
 				<FormItem className={className}>
-					{label ? <FormLabel>{label}</FormLabel> : null}
+					{label ? <FormLabel>{label} {required && <span className="text-destructive">＊</span>}</FormLabel> : null}
 					<FormControl>
 						<SingleSelect {...field} {...singleSelectProps} />
 					</FormControl>

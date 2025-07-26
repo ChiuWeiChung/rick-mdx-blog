@@ -18,7 +18,7 @@ export function getDefaultValues<Schema extends z.ZodObject<z.ZodRawShape>>(
         case value instanceof z.ZodURL:
           return [key, ''];
         case value instanceof z.ZodBoolean:
-          return [key, false];
+          return [key, true];
         case value instanceof z.ZodOptional:
         case value instanceof z.ZodNullable:
           return [key, null];
