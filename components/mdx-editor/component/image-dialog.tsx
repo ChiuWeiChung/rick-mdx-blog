@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { uploadImage } from '@/actions/s3/image';
 import { useMutation } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
+import { getOrigin } from '@/lib/router';
 
 const AddImage = () => {
   const insertImage = usePublisher(insertImage$);
@@ -31,7 +32,8 @@ const AddImage = () => {
           fileName: data.title,
           folder: 'blog-images',
         });
-        src = `${window.location.origin}/api/image?key=${key}`;
+        const origin = await getOrigin();
+        src = `${origin}/api/image?key=${key}`;
       }
 
       insertImage({

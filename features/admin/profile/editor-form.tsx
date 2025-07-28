@@ -78,40 +78,39 @@ const ProfileEditor = (props: ProfileEditorProps) => {
   return (
     <>
       <div className="flex items-center justify-end gap-2">
-        
-          {editMode ? (
-            <>
-              <Button
-                type="button"
-                key="cancel"
-                variant="outline"
-                onClick={() => {
-                  setEditMode(false);
-                  form.reset({ content: props.markdown ?? '' });
-                }}
-              >
-                取消
-              </Button>
-              <Button type="button" key="save" onClick={handleSaveBtnClick}>
-                儲存
-              </Button>
-            </>
-          ) : (
+        {editMode ? (
+          <>
             <Button
               type="button"
+              key="cancel"
               variant="outline"
-              className="w-32"
-              key="edit"
-              onClick={() => setEditMode(true)}
+              onClick={() => {
+                setEditMode(false);
+                form.reset({ content: props.markdown ?? '' });
+              }}
             >
-              開始編輯
+              取消
             </Button>
-          )}
+            <Button type="button" key="save" onClick={handleSaveBtnClick}>
+              儲存
+            </Button>
+          </>
+        ) : (
+          <Button
+            type="button"
+            variant="outline"
+            className="w-32"
+            key="edit"
+            onClick={() => setEditMode(true)}
+          >
+            開始編輯
+          </Button>
+        )}
       </div>
 
       <ForwardRefEditor
         key={editMode ? 'edit' : 'readOnly'}
-        markdown={form.watch(upsertProfileSchemaKeys.content)}
+        markdown={props.markdown ?? ''}
         readOnly={!editMode}
         contentEditableClassName="prose prose-sm lg:prose-lg max-w-[80%] !pb-[8rem] [&_img]:!m-0"
         onChange={handleMarkdownChange}
