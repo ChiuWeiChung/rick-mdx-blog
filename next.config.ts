@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
       fullUrl: true,
     },
   },
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
   reactStrictMode: false,
   images: {
     remotePatterns: [
