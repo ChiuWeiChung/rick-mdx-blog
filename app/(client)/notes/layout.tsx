@@ -6,7 +6,7 @@ export default async function layout({ children }: { children: React.ReactNode }
   return (
       <SidebarProvider>
         <ClientSidebar />
-        <PageContent className="relative m-2 p-8 pt-12 pb-18 min-h-screen ">
+        <PageContent className="relative m-5 p-5 pt-12 pb-18 min-h-screen bg-white">
           {children}
         </PageContent>
       </SidebarProvider>

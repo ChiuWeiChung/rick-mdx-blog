@@ -57,8 +57,11 @@ export default function AdminSidebar() {
         <SidebarGroup>
           {/* Add Home Admin Home Logo */}
           <SidebarGroupLabel className="mb-4">
-            <Link href="/admin" className="flex items-center gap-2 text-primary font-bold text-xl">
-              <Settings /> DevNote 管理後台
+            <Link href="/admin" className="flex items-center gap-2 text-xl font-bold">
+              <Settings className="text-neutral-950 w-8 h-8" />
+              <h1 className="bg-gradient-to-r from-neutral-600 to-neutral-500 bg-clip-text text-transparent">
+                DevNote 管理後台
+              </h1>
             </Link>
           </SidebarGroupLabel>
           <SidebarGroupContent className="pl-4">

@@ -8,7 +8,7 @@ interface PageWrapperProps {
 
 const PageWrapper = ({ children, className }: PageWrapperProps) => {
   return (  
-    <div className={cn('container mx-auto flex flex-col items-center px-4 py-8 gap-4', className)}>
+    <div className={cn('container mx-auto flex flex-col items-center px-4 py-8 gap-4 animate-fade', className)}>
       {children}
     </div>
   );

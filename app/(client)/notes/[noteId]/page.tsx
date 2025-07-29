@@ -1,6 +1,5 @@
 import { getNoteInfoById } from '@/actions/notes';
 import { getMarkdownContent, getMarkdownResource } from '@/actions/s3/markdown';
-import React, { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import { evaluate, EvaluateOptions } from 'next-mdx-remote-client/rsc';
 import { createMdxComponents } from '@/components/mdx-component/note-module';
@@ -50,11 +49,11 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
 
   const options: EvaluateOptions = {
     mdxOptions: { remarkPlugins: [remarkGfm] },
-     parseFrontmatter: true,
+    parseFrontmatter: true,
     //  vfileDataIntoScope: 'toc', // TODO table of content (目錄的概念)
   };
   const evaluateResult = await evaluate<Frontmatter>({
-    source:content,
+    source: content,
     options,
     components: createMdxComponents(),
   });
@@ -78,10 +77,8 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
           </Link>
         )}
       </div>
-      <Suspense fallback={<div className="p-4 text-center">Loading content...</div>}>
-        {/* <MDXRemote source={content} components={createMdxComponents()} options={options} /> */}
-        {evaluateResult.content}
-      </Suspense>
+
+      {evaluateResult.content}
 
       {!!session && <NoteHighlighter defaultHighlights={memos} noteId={params.noteId} />}
     </div>
