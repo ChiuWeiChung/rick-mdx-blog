@@ -22,14 +22,11 @@ export async function generateMetadata(props: ClientNotesPageProps): Promise<Met
   const params = await props.params;
   const note = await getNoteInfoById(params.noteId);
   const metadata: Metadata = {
-    title: "Rick's DevNote - 筆記",
-    description: '筆記',
+    title: 'Rick 的開發筆記',
+    description: 'Rick 的開發筆記',
   };
 
-  if (note) {
-    metadata.title = `筆記 - ${note.title}`;
-    metadata.description = `${note.category} - ${note.title}`;
-  }
+  if (note) metadata.description = note.title;
 
   return metadata;
 }

@@ -8,6 +8,17 @@ import SpinnerLoader from '@/components/spinner-loader';
 import { queryTagSchema } from '@/actions/tags/types';
 import { getTagWithNoteCount } from '@/actions/tags';
 import PageWrapper from '@/components/page-wrapper';
+import { Metadata } from 'next';
+
+
+export async function generateMetadata(): Promise<Metadata> {
+  const metadata: Metadata = {
+    title: 'Rick 的開發筆記',
+    description: '歡迎來到 Rick 的開發筆記，這裡記錄了 Rick 的學習筆記與作品集',
+  };
+
+  return metadata;
+}
 
 export default async function LandingPage() {
   const queryRequest = coerceQueryNoteSchema.parse({ limit: 6, visible: true }); // 預設只取前六筆資料

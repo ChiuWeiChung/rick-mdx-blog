@@ -1,5 +1,4 @@
 import { ImageResponse } from 'next/og';
-import { getNoteInfoById } from '@/actions/notes';
 
 // Image metadata
 export const size = {
@@ -10,12 +9,7 @@ export const size = {
 export const contentType = 'image/png';
 
 // Image generation
-export default async function Image(props: { params: Promise<{ noteId: string }> }) {
-  const params = await props.params;
-  const note = await getNoteInfoById(params.noteId);
-
-  if (!note) return new ImageResponse(<div>筆記不存在</div>);
-
+export default async function Image() {
   return new ImageResponse(
     (
       <div
@@ -33,7 +27,8 @@ export default async function Image(props: { params: Promise<{ noteId: string }>
           color: 'white',
         }}
       >
-        {note.title}
+        <span style={{ marginRight: '1rem' }}>🚀</span>
+        Rick&apos;s DevNote
       </div>
     )
   );
