@@ -13,6 +13,7 @@ import { getNoteMemoByPostId } from '@/actions/note-memos';
 import { Metadata } from 'next';
 import { EditIcon } from 'lucide-react';
 import { Frontmatter } from '@/actions/notes/types';
+import { getOrigin } from '@/lib/router';
 
 interface ClientNotesPageProps {
   params: Promise<{ noteId: string }>;
@@ -21,9 +22,12 @@ interface ClientNotesPageProps {
 export async function generateMetadata(props: ClientNotesPageProps): Promise<Metadata> {
   const params = await props.params;
   const note = await getNoteInfoById(params.noteId);
+  const origin = await getOrigin();
+  const metadataBase = new URL(origin);
   const metadata: Metadata = {
     title: 'Rick 的開發筆記',
     description: 'Rick 的開發筆記',
+    metadataBase,
   };
 
   if (note) metadata.description = note.title;
