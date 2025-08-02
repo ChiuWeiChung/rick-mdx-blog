@@ -35,12 +35,9 @@ const handler: Handler = async (serverAction, args, logKey) => {
     logWithStyle('Response', result);
 
     const mutationResponse = mutationResponseSchema.safeParse(result);
-    // 如果解析成功，則檢查是否成功
-    if (mutationResponse.success) {
-      // 如果回傳的結果不是成功，則拋出錯誤 (mutationResponse.data.success = false)
-      if (!mutationResponse.data.success) {
-        throw new Error(mutationResponse.data.message);
-      }
+    // 如果解析成功，但 API Response 結果失敗，則拋出錯誤
+    if (mutationResponse.success && !mutationResponse.data.success) {
+      throw new Error(mutationResponse.data.message);
     }
 
     return result;
@@ -51,12 +48,9 @@ const handler: Handler = async (serverAction, args, logKey) => {
 };
 
 /**
- * 變更處理器 (Mutation Handler)
- * 用於處理資料變更類的 API 呼叫
- * 例如：新增、更新、刪除資料
- *
+ * 讓 mutation 可以帶入 serverAction 的參數，並且在 mutation 執行時，會自動帶入 serverAction 的參數
+ * 用於處理資料變更類的 API 呼叫，例如：新增、更新、刪除資料
  * 使用範例:
- *
  * const createTodoMutation = useMutation(
  *   mutationHandler(createTodo)
  * );

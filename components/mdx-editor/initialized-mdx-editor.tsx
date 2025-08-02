@@ -73,6 +73,7 @@ export default function InitializedMDXEditor({
             yaml: 'YAML',
             bash: 'Bash',
             plaintext: 'Plain Text',
+            dockerfile: 'Dockerfile',
           },
         }),
         imagePlugin({ disableImageSettingsButton: true }),
