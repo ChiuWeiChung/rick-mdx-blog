@@ -1,5 +1,3 @@
-// import LandingBackground from '@/features/client/landing-background';
-// import LandingDemoPage from '@/features/demo';
 import TagsSection from '@/features/client/tags-section';
 import { coerceQueryNoteSchema } from '@/actions/notes/types';
 import NotesSection from '@/features/client/notes-section';
@@ -14,11 +12,16 @@ import { getOrigin } from '@/lib/router';
 
 export async function generateMetadata(): Promise<Metadata> {
   const origin = await getOrigin();
-  const metadataBase = new URL(origin);
   const metadata: Metadata = {
     title: 'Rick 的開發筆記',
-    description: '歡迎來到 Rick 的開發筆記，這裡記錄了 Rick 的學習筆記與作品集',
-    metadataBase,
+    description: '歡迎來到 Rick 的開發筆記，這裡記錄了我的學習筆記與作品集',
+    metadataBase: new URL(origin),
+    authors: [{ name: 'Rick Chiu' }],
+    creator: 'Rick Chiu',
+    publisher: 'Rick Chiu',
+    generator: 'Next.js',
+    keywords: ['Frontend', 'Development', 'Study', 'Blog', 'Note'],
+    robots: 'index, follow',
   };
 
   return metadata;
