@@ -29,6 +29,10 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'rickchiu.me',
       },
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+      },
     ],
   },
   eslint: {

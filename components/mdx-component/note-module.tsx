@@ -3,8 +3,9 @@ import { getLanguageFromClassName, isMermaidSyntax } from '@/utils/mdx-utils';
 import dynamic from 'next/dynamic';
 import { Loader } from 'lucide-react';
 import { CommonProps } from './types';
-
-// const globalBlockCounter = 0;
+import Image from 'next/image';
+import { cn } from '@/lib/utils';
+import { placeholderDataUrl } from '@/constants/placeholder';
 
 // 使用動態導入來加載客戶端元件
 const Mermaid = dynamic(() => import('@/components/mermaid'), {
@@ -74,17 +75,27 @@ export function createMdxComponents() {
     },
     // // 改進段落和列表樣式
     p: (props: CommonProps) => {
+      // // 如果 props.children 是 img 標籤，則返回 img 標籤
+      if (React.isValidElement(props.children) && props.children.type === 'img') {
+        const imgProps = props.children.props as { alt: string; src: string };
+        return (
+          <div className={cn('relative !my-0 inline-block h-[30rem] w-full')}>
+            <Image
+              alt={imgProps.alt}
+              className={cn('!my-0 object-contain')}
+              src={imgProps.src}
+              fill
+              sizes="100%"
+              priority
+              placeholder={placeholderDataUrl}
+            />
+          </div>
+        );
+      }
+
       const blockId = `block-${counter++}`;
       return <p {...props} data-block-id={blockId} />;
     },
-    // ul: (props: CommonProps) => <ul className="list-disc pl-5 my-3" {...props} />,
-    // ol: (props: CommonProps) => <ol className="list-decimal pl-5 my-3" {...props} />,
-    // // 為表格添加滾動支持
-    // table: (props: CommonProps) => (
-    //   <div className="overflow-x-auto w-full my-4">
-    //     <table className="w-full border-collapse" {...props} />
-    //   </div>
-    // ),
     li: (props: CommonProps) => {
       const blockId = `block-${counter++}`;
       return <li {...props} data-block-id={blockId} />;

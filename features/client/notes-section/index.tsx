@@ -1,11 +1,12 @@
 import { queryNoteList } from '@/actions/notes';
-import { QueryNote } from '@/actions/notes/types';
+import { Note, QueryNote } from '@/actions/notes/types';
 import FeatureCard from '@/components/feature-card';
 import ServerPagination from '@/components/react-table/server-pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { getOrigin } from '@/lib/router';
-import { CircleChevronRightIcon, ForwardIcon } from 'lucide-react';
+import { format } from 'date-fns';
+import { CalendarIcon, CircleChevronRightIcon, FileIcon, ForwardIcon, TagIcon } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -18,20 +19,29 @@ export default async function NotesSection({ request, showPagination = false }: 
   const { data, totalCount } = await queryNoteList(request);
   const origin = await getOrigin();
 
-  const renderTags = (tags: string[]) => {
+  const renderMeta = (note: Note) => {
     return (
-      <div className="flex flex-wrap gap-2">
-        {tags.map(tag => (
-          <Link href={`/tags?name=${tag}`} key={tag}>
-            <Badge
-              key={tag}
-              variant="outline"
-              className="cursor-pointer text-gray-500 hover:scale-105"
-            >
-              {tag}
-            </Badge>
-          </Link>
-        ))}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2 text-sm">
+          <CalendarIcon className="h-4 w-4" />
+          {format(note.createdAt, 'yyyy-MM-dd')}
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <FileIcon className="h-4 w-4" />
+          {note.category.replace(/_/g, ' ')}
+        </div>
+        <div className="flex gap-2">
+          <TagIcon className="h-4 w-4 mt-1" />
+          <div className="flex flex-wrap gap-2">
+            {note.tags.map(tag => (
+              <Link href={`/tags?name=${tag}`} key={tag}>
+                <Badge key={tag} variant="outline" className="cursor-pointer hover:scale-105">
+                  {tag}
+                </Badge>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     );
   };
@@ -42,13 +52,8 @@ export default async function NotesSection({ request, showPagination = false }: 
         {data.map(note => (
           <FeatureCard
             key={note.id}
-            title={
-              <>
-                <h3>{note.title}</h3>
-                <span className="text-gray-500">{note.category.replace(/_/g, ' ')}</span>
-              </>
-            }
-            description={renderTags(note.tags)}
+            title={note.title}
+            description={renderMeta(note)}
             content={note.description ?? ''}
             footer={
               <Link href={`/notes/${note.id}`} className="w-full">
