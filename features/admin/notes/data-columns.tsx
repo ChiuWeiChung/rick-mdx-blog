@@ -4,7 +4,7 @@ import { Switch } from '@/components/ui/switch';
 import { TableId } from '@/enums/table';
 import { type Note, NoteKeys } from '@/actions/notes/types';
 import { Button } from '@/components/ui/button';
-import { EditIcon, TrashIcon } from 'lucide-react';
+import { EditIcon, EyeIcon, TrashIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -30,6 +30,15 @@ const columns = [
 
       return (
         <div className="flex gap-2">
+          <Link href={`/notes/${row.original.id}`}>
+            <Button
+              size="icon"
+              variant="outline"
+              className="h-8 w-8 justify-center text-neutral-800"
+            >
+              <EyeIcon />
+            </Button>
+          </Link>
           <Link href={`/admin/notes/editor?noteId=${row.original.id}`}>
             <Button
               size="icon"
@@ -50,10 +59,11 @@ const columns = [
         </div>
       );
     },
+    size: 150,
   }),
   accessor(NoteKeys.title, {
     header: '文章標題',
-    size: 300,
+    size: 400,
   }),
   display({
     id: NoteKeys.visible,

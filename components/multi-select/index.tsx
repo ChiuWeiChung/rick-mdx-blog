@@ -69,7 +69,7 @@ export function MultiSelect<T extends string | number = string | number>({
         <Button
           variant="outline"
           role="combobox"
-          className={cn('h-9 justify-between', !selectedOptions.length && 'text-muted-foreground')}
+          className={cn('min-h-9 h-auto justify-between', !selectedOptions.length && 'text-muted-foreground')}
           disabled={disabled}
         >
           <div className="flex flex-wrap gap-1">
