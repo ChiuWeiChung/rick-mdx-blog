@@ -32,7 +32,7 @@ const NoteEditorPage = async ({ searchParams }: NoteEditorPageProps) => {
         title: note.title,
         category: note.category,
         visible: note.visible,
-        tags: note.tags,
+        tags: note.tags.map(tag => tag.id),
         createdAt: note.createdAt,
         content,
         fileName: note.filePath.split('/').pop()?.replace('.md', '') ?? '',

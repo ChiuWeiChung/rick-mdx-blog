@@ -8,7 +8,7 @@ export default function ClientLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="relative pb-18 z-10 min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 shadow-inner dark:from-gray-900 dark:to-gray-950">
+    <div className="relative z-10 min-h-screen bg-gradient-to-b from-slate-50 to-slate-200 pb-18 shadow-inner dark:from-gray-900 dark:to-gray-950">
       <LandingBackground />
       <Navbar />
       {children}

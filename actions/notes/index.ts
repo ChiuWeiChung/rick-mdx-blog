@@ -414,7 +414,17 @@ export const deleteNote = async (noteId: number) => {
 export const getNoteInfoById = cache(async (noteId: string) => {
   const { rows } = await pool.query(
     `
-    SELECT posts.id AS id, title, visible, created_at, updated_at, categories.id AS category, file_path, STRING_AGG(tags.id::text, ', ') AS tags
+    SELECT
+      posts.id AS id,
+      title,
+      visible,
+      created_at,
+      updated_at,
+      categories.id AS category,
+      file_path,
+      JSON_AGG(
+        JSON_BUILD_OBJECT('id', tags.id, 'name', tags.name)
+      ) AS tags
     FROM posts 
     LEFT JOIN post_tags ON post_tags.post_id = posts.id
     LEFT JOIN tags ON tags.id = post_tags.tag_id
@@ -428,14 +438,7 @@ export const getNoteInfoById = cache(async (noteId: string) => {
   if (rows.length === 0) return null;
 
   const [camelCaseRow] = toCamelCase<Record<string, unknown>>(rows);
-
-  const rowTags = camelCaseRow.tags as string | null;
-  const tags =
-    rowTags
-      ?.split(', ')
-      .map(tag => Number(tag.trim()))
-      .filter(Boolean) ?? [];
-  return { ...camelCaseRow, tags } as NoteDetail;
+  return camelCaseRow as Omit<NoteDetail, 'tags'> & { tags: { id: number; name: string }[] };
 });
 
 /** 更新筆記的 visible 狀態 */

@@ -14,6 +14,8 @@ import { Metadata } from 'next';
 import { EditIcon } from 'lucide-react';
 import { Frontmatter } from '@/actions/notes/types';
 import { getOrigin } from '@/lib/router';
+import { Badge } from '@/components/ui/badge';
+import { format, isSameDay } from 'date-fns';
 
 interface ClientNotesPageProps {
   params: Promise<{ noteId: string }>;
@@ -66,9 +68,27 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
       {/* router back button */}
       <div className="mb-4 flex items-center gap-4 border-b pb-4">
         <GoBackButton>回筆記列表</GoBackButton>
-        <p className="ml-auto text-sm text-gray-500">
-          更新時間：{note.updatedAt.toLocaleDateString()}
-        </p>
+
+        {/* 標籤 */}
+        <div className="flex items-center gap-2">
+          {note.tags.map(tag => (
+            <Link href={`/tags?name=${tag.name}`} key={tag.name}>
+              <Badge variant="outline" className="cursor-pointer hover:scale-105">
+                # {tag.name}
+              </Badge>
+            </Link>
+          ))}
+        </div>
+
+        <div className="ml-auto flex text-sm text-gray-500 divide-x-2 divide-gray-200">
+          {/* 最新更新時間 (如果是同一天，則不顯示) */}
+          {!isSameDay(note.createdAt, note.updatedAt) && (
+            <p className="px-2">更新時間：{format(note.updatedAt, 'yyyy/MM/dd')}</p>
+          )}
+
+          <p className="px-2">建立時間：{format(note.createdAt, 'yyyy/MM/dd')}</p>
+        </div>
+
         {!!session && (
           <Link href={`/admin/notes/editor?noteId=${params.noteId}`}>
             <Button variant="outline">
