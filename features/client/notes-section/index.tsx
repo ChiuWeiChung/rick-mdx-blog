@@ -35,7 +35,7 @@ export default async function NotesSection({ request, showPagination = false }: 
           <div className="flex flex-wrap gap-2">
             {note.tags.map(tag => (
               <Link href={`/tags?name=${tag}`} key={tag}>
-                <Badge key={tag} variant="outline" className="cursor-pointer hover:scale-105">
+                <Badge variant="outline" className="cursor-pointer hover:scale-105">
                   {tag}
                 </Badge>
               </Link>
