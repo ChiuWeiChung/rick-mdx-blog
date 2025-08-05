@@ -1,7 +1,6 @@
 'use client';
 
-import { CartesianGrid, LineChart, Line, XAxis } from 'recharts';
-
+import { CartesianGrid, XAxis, Bar, BarChart } from 'recharts';
 import {
   ChartConfig,
   ChartContainer,
@@ -18,8 +17,8 @@ const chartConfig = {
 
 function NoteChart(props: { data: NoteChart[] }) {
   return (
-    <ChartContainer config={chartConfig} className="aspect-auto h-[250px] w-full">
-      <LineChart data={props.data}>
+    <ChartContainer config={chartConfig} className="aspect-auto h-[300px] w-full">
+      <BarChart accessibilityLayer data={props.data} margin={{ top: 130, left: 20, right: 20 }}>
         <defs>
           <linearGradient id="fillCount" x1="0" y1="0" x2="0" y2="1">
             <stop offset="5%" stopColor="var(--color-count)" stopOpacity={0.8} />
@@ -38,8 +37,8 @@ function NoteChart(props: { data: NoteChart[] }) {
           }}
         />
         <ChartTooltip cursor={false} content={<ChartTooltipContent indicator="dot" />} />
-        <Line dataKey="count" type="step" stroke="var(--color-count)" dot={false} />
-      </LineChart>
+        <Bar dataKey="count" fill={`var(--color-count)`} />
+      </BarChart>
     </ChartContainer>
   );
 }

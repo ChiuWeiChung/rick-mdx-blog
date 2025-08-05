@@ -14,12 +14,14 @@ import {
 } from '@/actions/profile/types';
 import { upsertProfile } from '@/actions/profile';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface ProfileEditorProps {
   markdown?: string | null;
 }
 
 const ProfileEditor = (props: ProfileEditorProps) => {
+  const router = useRouter();
   const { openAlertModal } = useAlertModal();
   const [editMode, setEditMode] = useState(false);
 
@@ -31,11 +33,11 @@ const ProfileEditor = (props: ProfileEditorProps) => {
   const upsertProfileMutation = useMutation({
     mutationFn: mutationHandler(upsertProfile),
     onSuccess: () => {
-      setEditMode(false);
+      router.push('/profile')
     },
     meta: {
       successMessage: { title: '個人資料更新成功' },
-      shouldRefresh: true,
+      revalidate: { tag: 'profile' },
     },
   });
 
