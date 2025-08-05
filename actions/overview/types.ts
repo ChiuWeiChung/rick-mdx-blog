@@ -9,12 +9,12 @@ const overviewSchema = z.object({
     createdAt: z.string(),
     updatedAt: z.string(),
     title: z.string(),
-  }),
+  }).nullable(),
   lastUpdatedNote: z.object({
     createdAt: z.string(),
     updatedAt: z.string(),
     title: z.string(),
-  })
+  }).nullable(),
 });
 
 /** 取得概要資訊的 response type */

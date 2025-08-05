@@ -72,33 +72,37 @@ const AdminHomePage = async (props: AdminHomePageProps) => {
                 <p className="truncate text-sm font-medium">
                   最近新增文章
                   <span className="text-muted-foreground">
-                    &ldquo;{stats.lastCreatedNote.title}&rdquo;
+                    &ldquo;{stats.lastCreatedNote?.title ?? '--'}&rdquo;
                   </span>
                 </p>
                 <p className="text-muted-foreground text-xs">
-                  {formatDistanceToNow(new Date(stats.lastCreatedNote.createdAt), {
-                    addSuffix: true,
-                    locale: zhTW,
-                  })}
+                  {stats.lastCreatedNote?.createdAt
+                    ? formatDistanceToNow(new Date(stats.lastCreatedNote.createdAt), {
+                        addSuffix: true,
+                        locale: zhTW,
+                      })
+                    : '--'}
                 </p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
               <div className="flex-shrink-0">
-                <FileText className="text-neutral-800 h-4 w-4" />
+                <FileText className="h-4 w-4 text-neutral-800" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium">
                   最近更新文章
                   <span className="text-muted-foreground">
-                    &ldquo;{stats.lastUpdatedNote.title}&rdquo;
+                    &ldquo;{stats.lastUpdatedNote?.title ?? '--'}&rdquo;
                   </span>
                 </p>
                 <p className="text-muted-foreground text-xs">
-                  {formatDistanceToNow(new Date(stats.lastUpdatedNote.updatedAt), {
-                    addSuffix: true,
-                    locale: zhTW,
-                  })}
+                  {stats.lastUpdatedNote?.updatedAt
+                    ? formatDistanceToNow(new Date(stats.lastUpdatedNote.updatedAt), {
+                        addSuffix: true,
+                        locale: zhTW,
+                      })
+                    : '--'}
                 </p>
               </div>
             </div>
@@ -132,11 +136,11 @@ const AdminHomePage = async (props: AdminHomePageProps) => {
             </div>
           </CardContent>
         </Card>
-        <Card className="col-span-3 lg:col-span-1 opacity-60 bg-secondary relative">
-            <div className="flex items-center justify-center text-2xl font-bold text-amber-500 absolute top-0 left-0 w-full h-full">
-              開發中
-              <ConstructionIcon className="h-8 w-8 text-center" />
-            </div>
+        <Card className="bg-secondary relative col-span-3 opacity-60 lg:col-span-1">
+          <div className="absolute top-0 left-0 flex h-full w-full items-center justify-center text-2xl font-bold text-amber-500">
+            開發中
+            <ConstructionIcon className="h-8 w-8 text-center" />
+          </div>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <BarChart3Icon className="h-5 w-5" />

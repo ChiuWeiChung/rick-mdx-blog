@@ -62,6 +62,10 @@ const getMarkdownResource = async (filePath: string) => {
 /** 取得 Markdown 檔案的內容 */
 const getMarkdownContent = async (resource: string) => {
   const res = await fetch(resource);
+  if (!res.ok) {
+    console.error('Error getting markdown content:', res.statusText);
+    throw new Error('Failed to get markdown content');
+  }
   const markdown = await res.text();
   return markdown;
 };
