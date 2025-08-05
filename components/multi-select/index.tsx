@@ -13,11 +13,9 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Option } from '@/types/global';
-
-// Generic Option interface
 
 export interface MultiSelectProps<T extends string | number = string | number> {
   placeholder?: string;
@@ -61,6 +59,19 @@ export function MultiSelect<T extends string | number = string | number>({
     }
   };
 
+  // re-mount 時，如果 creatable 為 true，則將 value 中的選項加入到 currentOptions 中
+  useEffect(() => {
+    if (creatable && value) {
+      const valueNotInCurrentOptions = value
+        .filter(option => !currentOptions.some(o => o.value === option))
+        .map(item => ({ value: item, label: item, description: 'NEW' }));
+      if (valueNotInCurrentOptions.length) {
+        setCurrentOptions([...currentOptions, ...(valueNotInCurrentOptions as Option<T>[])]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [creatable]);
+
   const selectedOptions = currentOptions.filter(option => value?.includes(option.value));
 
   return (
@@ -69,7 +80,10 @@ export function MultiSelect<T extends string | number = string | number>({
         <Button
           variant="outline"
           role="combobox"
-          className={cn('min-h-9 h-auto justify-between', !selectedOptions.length && 'text-muted-foreground')}
+          className={cn(
+            'h-auto min-h-9 justify-between',
+            !selectedOptions.length && 'text-muted-foreground'
+          )}
           disabled={disabled}
         >
           <div className="flex flex-wrap gap-1">

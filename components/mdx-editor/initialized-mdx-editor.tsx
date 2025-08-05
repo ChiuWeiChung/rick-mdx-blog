@@ -75,6 +75,7 @@ export default function InitializedMDXEditor({
             plaintext: 'Plain Text',
             dockerfile: 'Dockerfile',
             nginx: 'Nginx',
+            http: 'HTTP',
           },
         }),
         imagePlugin({ disableImageSettingsButton: true }),

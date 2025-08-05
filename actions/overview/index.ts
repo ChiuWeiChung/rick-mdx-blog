@@ -1,7 +1,8 @@
 'use server';
 import pool from '@/lib/db';
 import { toCamelCase } from '@/utils/format-utils';
-import { Overview, QueryNoteChart } from './types';
+import { NoteChart, Overview, QueryNoteChart } from './types';
+import { addMonths, differenceInMonths, format } from 'date-fns';
 
 /** 取得「文章」「分類」「標籤」的數量 & 最近活動(新增文章 & 新增分類 & 新增標籤 & 更新文章) */
 export const getOverviewInfo = async () => {
@@ -79,19 +80,42 @@ export const getNoteChartData = async ({ startDate, endDate }: QueryNoteChart) =
 
   const sql = `
     SELECT
-      TO_CHAR(created_at, 'YYYY-MM-DD') AS month,
+      TO_CHAR(created_at, 'YYYY-MM') AS month,
       COUNT(*) AS count
     FROM
       posts
     ${whereClause}
     GROUP BY
-      TO_CHAR(created_at, 'YYYY-MM-DD')
+      TO_CHAR(created_at, 'YYYY-MM')
     ORDER BY
       month ASC;
   `;
 
-  const { rows } = await pool.query<{ month: string; count: number }>(sql, values);
-  return rows;
+
+
+  const { rows } = await pool.query<NoteChart>(sql, values);
+  if (rows.length === 0) return [];
+  
+  // 補齊中間的月份
+  function fillMissingMonths(rows: NoteChart[]): NoteChart[] {
+    if (rows.length === 0) return [];
+
+    // 確保資料按月份排序
+    const sorted = [...rows].sort((a, b) => a.month.localeCompare(b.month));
+    const startMonth = sorted[0].month;
+    const endMonth = sorted[sorted.length - 1].month;
+    const diff = differenceInMonths(endMonth, startMonth);
+    const lookup = new Map(sorted.map(r => [r.month, r.count]));
+    const result: NoteChart[] = [];
+
+    for (let i = 0; i <= diff; i++) {
+      const monthKey = format(addMonths(startMonth, i), 'yyyy-MM');
+      result.push({ month: monthKey, count: lookup.get(monthKey) ?? 0 });
+    }
+    return result;
+  }
+
+  return fillMissingMonths(rows);
 };
 
 // TODO 規劃瀏覽量統計 (待新增 Table Schema )

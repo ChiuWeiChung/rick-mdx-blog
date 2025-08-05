@@ -134,7 +134,7 @@ const AdminHomePage = async (props: AdminHomePageProps) => {
         </Card>
         <Card className="col-span-3 lg:col-span-1 opacity-60 bg-secondary relative">
             <div className="flex items-center justify-center text-2xl font-bold text-amber-500 absolute top-0 left-0 w-full h-full">
-              施工中
+              開發中
               <ConstructionIcon className="h-8 w-8 text-center" />
             </div>
           <CardHeader>

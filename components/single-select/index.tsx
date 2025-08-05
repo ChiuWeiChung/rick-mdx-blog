@@ -11,7 +11,7 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Option } from '@/types/global';
 
 export interface SingleSelectProps<
@@ -20,7 +20,7 @@ export interface SingleSelectProps<
   placeholder?: string;
   options: Option<T>[];
   value: T;
-  onChange: (value?: T|null) => void;
+  onChange: (value?: T | null) => void;
   creatable?: boolean;
   clearable?: boolean;
   disabled?: boolean;
@@ -44,6 +44,20 @@ export function SingleSelect<T extends string | number = string | number>({
   const [currentOptions, setCurrentOptions] = useState(options);
   const [query, setQuery] = useState('');
   const selectedLabel = currentOptions.find(option => option.value === value)?.label;
+
+  // re-mount 時，如果 creatable 為 true，則將 value 中的選項加入到 currentOptions 中
+  useEffect(() => {
+    if (creatable && value) {
+      const isValueInCurrentOptions = currentOptions.some(option => option.value === value);
+      if (!isValueInCurrentOptions) {
+        setCurrentOptions([
+          ...currentOptions,
+          { value, label: value, description: 'NEW' } as Option<T>,
+        ]);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [creatable]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
