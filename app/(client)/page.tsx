@@ -38,8 +38,8 @@ export default async function LandingPage() {
           Stay Hungry, Stay Foolish
         </h1>
         <p className="text-base leading-loose text-gray-600 md:text-lg dark:text-gray-300">
-          在這裡紀錄開發中常用的小工具與學習心得。這些筆記一開始只寫給自己看，目前持續優化成人人都能理解的內容。雖然
-          AI 萬用，但對我來說，動手寫下理解的過程，也是檢視自我的方式。
+          這裡隨手記下開發常用的小工具和學習心得。原本只是我的小抄，現在慢慢整理，希望大家看了都能秒懂。雖然 AI
+          查資料超快，但自己動筆整理，才能加強理解，也讓成長更扎實。
         </p>
       </section>
 

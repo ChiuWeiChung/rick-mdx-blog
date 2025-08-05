@@ -1,4 +1,3 @@
-import { addMonths } from 'date-fns';
 import { z } from 'zod/v4';
 
 /** 取得概要資訊的 response schema */
@@ -24,8 +23,8 @@ type Overview = z.infer<typeof overviewSchema>;
 /** 搜尋筆記統計資料的 request schema */
 const queryNoteChartSchema = z
   .object({
-    startDate: z.number().default(addMonths(new Date(), -12).getTime()), // 預設為 11 個月前
-    endDate: z.number().default(Date.now()),
+    startDate: z.number(), 
+    endDate: z.number(),
   })
   .check(ctx => {
     if (ctx.value.startDate && ctx.value.endDate && ctx.value.startDate > ctx.value.endDate) {
@@ -39,7 +38,7 @@ const queryNoteChartSchema = z
   });
 
 const coerceQueryNoteChartSchema = z.object({
-  startDate: z.coerce.number().default(addMonths(new Date(), -12).getTime()), // 預設為 11 個月前,
+  startDate: z.coerce.number().default(new Date('2020-02-02').getTime()), // 預設為 2020-02-02
   endDate: z.coerce.number().default(Date.now()),
 });
 
