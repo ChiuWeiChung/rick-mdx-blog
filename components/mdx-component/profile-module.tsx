@@ -89,5 +89,8 @@ export function createMdxComponents() {
         </Button>
       );
     },
+    table: (props: CommonProps) => {
+      return <table {...props} className="table-fixed w-full" />;
+    },
   };
 }
