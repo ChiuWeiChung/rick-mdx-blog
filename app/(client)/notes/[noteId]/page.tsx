@@ -66,7 +66,7 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
   return (
     <div>
       {/* router back button */}
-      <div className="mb-4 flex items-center gap-4 border-b pb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-4 border-b pb-4">
         <GoBackButton>回上一頁</GoBackButton>
 
         {/* 標籤 */}

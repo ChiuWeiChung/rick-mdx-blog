@@ -24,7 +24,6 @@ import {
   ConditionalContents,
   ChangeCodeMirrorLanguage,
   imagePlugin,
-  // InsertImage,
   tablePlugin,
   InsertTable,
   BlockTypeSelect,
@@ -83,43 +82,36 @@ export default function InitializedMDXEditor({
         markdownShortcutPlugin(), // 需要在最底下，才可支援上述的 plugin shortcut
         diffSourcePlugin({ diffMarkdown: props.markdown, viewMode: 'rich-text' }),
         toolbarPlugin({
-          toolbarClassName: 'mdx-editor-toolbar !pl-8',
+          toolbarClassName:
+            'mdx-editor-toolbar !flex-col sm:!flex-row !pl-8 divide-y-2 sm:divide-y-0 sm:divide-x-2 divide-neutral',
           toolbarContents: () => (
-            <>
-              <DiffSourceToggleWrapper>
-                <div className="flex items-center gap-2">
-                  {/* <div className="grid xl:grid-cols-8 grid-cols-4 gap-2"> */}
-                  <UndoRedo />
-                  <div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
-                  <BlockTypeSelect />
-                  <BoldItalicUnderlineToggles />
-                  <div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
-                  <ListsToggle />
-                  <div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
-                  <InsertTable />
-                  {/* <InsertImage /> */}
-                  <AddImage />
-                  <CreateLink />
-                  <ConditionalContents
-                    options={[
-                      {
-                        when: editor => editor?.editorType === 'codeblock',
-                        contents: () => <ChangeCodeMirrorLanguage />,
-                      },
-                      {
-                        fallback: () => (
-                          <>
-                            <InsertCodeBlock />
-                          </>
-                        ),
-                      },
-                    ]}
-                  />
-                  <div className="mx-2 ml-auto inline-block h-4 w-[1px] self-center bg-neutral-300" />
-                  <InsertFrontmatter />
-                </div>
-              </DiffSourceToggleWrapper>
-            </>
+            <DiffSourceToggleWrapper>
+              <div className="flex flex-wrap items-center gap-2 px-2">
+                <UndoRedo />
+                <div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
+                <BlockTypeSelect />
+                <div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
+                <BoldItalicUnderlineToggles />
+                <div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
+                <ListsToggle />
+                <div className="mx-2 inline-block h-4 w-[1px] self-center bg-neutral-300" />
+                <InsertTable />
+                <AddImage />
+                <CreateLink />
+                <ConditionalContents
+                  options={[
+                    {
+                      when: editor => editor?.editorType === 'codeblock',
+                      contents: () => <ChangeCodeMirrorLanguage />,
+                    },
+                    {
+                      fallback: () => <InsertCodeBlock />,
+                    },
+                  ]}
+                />
+                <InsertFrontmatter />
+              </div>
+            </DiffSourceToggleWrapper>
           ),
         }),
       ]}
