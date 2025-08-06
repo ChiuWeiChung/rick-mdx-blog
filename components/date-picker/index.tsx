@@ -60,6 +60,7 @@ export default function DatePicker({
           onSelect={onChange}
           required
           captionLayout="dropdown"
+          defaultMonth={value ?? undefined}
         />
       </PopoverContent>
     </Popover>

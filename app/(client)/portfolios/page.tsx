@@ -41,13 +41,12 @@ export default async function PortfoliosPage() {
       <p className="text-muted-foreground max-w-xl rounded-lg border bg-white p-4 text-left text-lg">
         本頁展示的專案是我平常工作之餘開發的 Side
         Projects，內容和在職期間之公司專案無關，不涉及任何營業機密。
-        若您對我在職時做過的專案有興趣，歡迎再找我聊聊！
       </p>
       <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
         {data.map(portfolio => (
           <FeatureCard
             key={portfolio.id}
-            className="min-w-[22rem]"
+            className="w-[20rem]"
             title={portfolio.projectName}
             imageUrl={
               portfolio.coverPath
