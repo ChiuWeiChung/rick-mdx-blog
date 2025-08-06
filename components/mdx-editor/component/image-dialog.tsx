@@ -14,6 +14,7 @@ import { uploadImage } from '@/actions/s3/image';
 import { useMutation } from '@tanstack/react-query';
 import { mutationHandler } from '@/utils/react-query-handler';
 import { getOrigin } from '@/lib/router';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const AddImage = () => {
   const insertImage = usePublisher(insertImage$);
@@ -54,9 +55,20 @@ const AddImage = () => {
 
   return (
     <>
-      <Button onClick={() => seOpenImageDialog(true)} variant="ghost">
-        <ImageIcon className="size-6" />
-      </Button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={() => seOpenImageDialog(true)}
+            variant="ghost"
+            className="size-6 p-0 hover:bg-neutral-200"
+          >
+            <ImageIcon className="size-5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Insert Image</p>
+        </TooltipContent>
+      </Tooltip>
 
       <Dialog
         open={openImageDialog}
