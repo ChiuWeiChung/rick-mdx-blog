@@ -8,17 +8,20 @@ import GoBackButton from '@/components/go-back-button';
 import { Metadata } from 'next';
 import { getPortfolioById } from '@/actions/portfolios';
 import { format } from 'date-fns';
+import { getOrigin } from '@/lib/router';
 
 interface ClientPortfoliosPageProps {
   params: Promise<{ portfolioId: string }>;
 }
 
 export async function generateMetadata(props: ClientPortfoliosPageProps): Promise<Metadata> {
+  const origin = await getOrigin();
   const params = await props.params;
   const portfolio = await getPortfolioById(Number(params.portfolioId));
   const metadata: Metadata = {
     title: "Rick's DevNote - 作品集",
     description: '作品集',
+    metadataBase: new URL(origin),
   };
 
   if (portfolio) {

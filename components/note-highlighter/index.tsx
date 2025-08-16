@@ -33,22 +33,17 @@ const NoteHighlighter = ({ defaultHighlights, noteId }: NoteHighlighterProps) =>
     meta: { ignoreLoadingMask: true },
   });
 
-  const handleHighlightCreate = (data: Omit<HighlightData, 'id'>) => {
-    const newHighlight: HighlightData = {
-      ...data,
-      id: `highlight-${Date.now()}`,
-    };
-
-    setHighlights(prev => [...prev, newHighlight]);
-
-    createMutation.mutate({
+  const handleHighlightCreate = async (data: Omit<HighlightData, 'id'>) => {
+    const result = await createMutation.mutateAsync({
       postId: Number(noteId),
       blockId: data.blockId,
       startOffset: data.startOffset,
       endOffset: data.endOffset,
       content: data.content || '',
       selectedContent: data.selectedContent || '',
-    });
+    });    
+    const newHighlight: HighlightData = { ...data, id: String(result.id) };
+    setHighlights(prev => [...prev, newHighlight]);
   };
 
   const handleHighlightEdit = (id: string, content: string) => {

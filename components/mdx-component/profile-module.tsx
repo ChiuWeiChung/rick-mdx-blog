@@ -8,7 +8,6 @@ import PageWrapper from '../page-wrapper';
 
 export function createMdxComponents() {
   return {
-
     // 改進標題樣式
     // h1: (props: CommonProps) => {
     //   const blockId = `block-${counter++}`;
@@ -16,36 +15,32 @@ export function createMdxComponents() {
     // },
     wrapper: (props: CommonProps) => {
       return (
-        <PageWrapper className="max-w-5xl">
+        <PageWrapper className="max-w-8xl">
           <article className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
             {props.children}
           </article>
         </PageWrapper>
       );
     },
-
-    h2: (props: CommonProps) => {
-      const childrenText = props.children as string;
-      return <h2 {...props} id={childrenText} />;
+    p: (props: CommonProps) => {
+      if (typeof props.children === 'string') return <p {...props} />;
+      return props.children;
     },
-    h3: (props: CommonProps) => {
-      const childrenText = props.children as string;
-      return <h3 {...props} id={childrenText} />;
-    },
-    // // 改進段落和列表樣式
-    // p: (props: CommonProps) => {
-    //   const blockId = `block-${counter++}`;
-    //   return <p {...props} data-block-id={blockId} />;
-    // },
-    // ul: (props: CommonProps) => <ul className="list-disc pl-5 my-3" {...props} />,
-    // ol: (props: CommonProps) => <ol className="list-decimal pl-5 my-3" {...props} />,
-    // // 為表格添加滾動支持
-    // table: (props: CommonProps) => (
-    //   <div className="overflow-x-auto w-full my-4">
-    //     <table className="w-full border-collapse" {...props} />
-    //   </div>
-    // ),
     img: (props: CommonProps & { alt: string; title: string; src: string }) => {
+      if (props.title.includes('portrait')) {
+        return (
+          <figure className="shape-outside-circle relative float-left mr-8 mb-4 h-24 w-24 overflow-hidden rounded-full md:h-40 md:w-40 md:skew-x-12 lg:h-42 lg:w-42">
+            <Image
+              src={props.src}
+              alt={props.alt}
+              className="block h-full w-auto scale-[1.4] transition-all duration-500 group-hover:scale-100"
+              priority
+              fill
+              sizes="100%"
+            />
+          </figure>
+        );
+      }
       // lg => 10 rem
       // md => 2 rem
       // sm => 1 rem
@@ -90,7 +85,7 @@ export function createMdxComponents() {
       );
     },
     table: (props: CommonProps) => {
-      return <table {...props} className="table-fixed w-full" />;
+      return <table {...props} className="w-full table-fixed" />;
     },
   };
 }

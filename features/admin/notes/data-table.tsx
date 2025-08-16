@@ -58,7 +58,7 @@ const NoteTable:FC<NoteTableProps> = ({ data, totalCount }) => {
   };
 
   return (
-    <div>
+    <>
       <h1 className="mb-1 text-2xl font-bold">筆記列表</h1>
       <ReactTable
         data={data}
@@ -69,7 +69,7 @@ const NoteTable:FC<NoteTableProps> = ({ data, totalCount }) => {
         pinningColumns={[TableId.Number, TableId.Editor, NoteKeys.title]}
         meta={{ onModalOpen, onDataEdit }}
       />
-    </div>
+    </>
   );
 };
 

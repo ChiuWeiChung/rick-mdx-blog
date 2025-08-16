@@ -8,10 +8,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { getCategoryOptions } from '@/actions/categories';
-import NavLink from '../../../components/nav-link';
+import NavLink from '@/components/nav-link';
 import Image from 'next/image';
 import { getUpdatedSearchParams } from '@/utils/form-utils';
 import { getOrigin } from '@/lib/router';
@@ -29,8 +28,6 @@ export default async function ClientSidebar() {
 
   return (
     <Sidebar variant="floating" className="pt-18">
-      {/* <SidebarTrigger className="absolute top-20 -right-6" /> */}
-      <SidebarTrigger className="absolute top-20 -right-6 hidden md:flex" />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="mb-4 gap-2 text-xl">

@@ -10,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import NavLink from '../../../components/nav-link';
@@ -52,7 +51,6 @@ const items = [
 export default function AdminSidebar() {
   return (
     <Sidebar>
-      <SidebarTrigger className="absolute top-0 -right-6 hidden md:flex" />
       <SidebarContent>
         <SidebarGroup>
           {/* Add Home Admin Home Logo */}

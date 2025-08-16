@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import DropdownMenuContainer from './dropdown-menu';
 import { signOutAction } from '@/actions/authentication';
 import { Button } from '../ui/button';
+import { PopoverClose } from '@radix-ui/react-popover';
 
 const Navbar = async () => {
   const session = await auth();
@@ -48,6 +49,20 @@ const Navbar = async () => {
     ));
   };
 
+  const renderDropdownItems = () => {
+    return navItems.map(item => (
+      <PopoverClose asChild key={item.href}>
+        <Button
+          variant="ghost"
+          asChild
+          className="hover:text-primary hover:bg-primary-foreground font-bold hover:scale-110"
+        >
+          <Link href={item.href}>{item.name}</Link>
+        </Button>
+      </PopoverClose>
+    ));
+  };
+
   return (
     <div className="sticky top-0 z-20 w-full bg-transparent">
       <div className="pointer-events-none absolute z-[-1] h-full w-full bg-white opacity-80 shadow-md" />
@@ -72,14 +87,16 @@ const Navbar = async () => {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="flex w-[100vw] flex-col gap-2 opacity-90">
-            <Button
-              variant="ghost"
-              asChild
-              className="hover:text-primary hover:bg-primary-foreground text-lg font-bold hover:scale-110"
-            >
-              <Link href={'/'}>首頁</Link>
-            </Button>
-            {renderNavItems()}
+            <PopoverClose asChild>
+              <Button
+                variant="ghost"
+                asChild
+                className="hover:text-primary hover:bg-primary-foreground text-lg font-bold hover:scale-110"
+              >
+                <Link href={'/'}>首頁</Link>
+              </Button>
+            </PopoverClose>
+            {renderDropdownItems()}
           </PopoverContent>
         </Popover>
 

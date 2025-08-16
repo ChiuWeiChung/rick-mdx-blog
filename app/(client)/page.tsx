@@ -33,6 +33,7 @@ export default async function LandingPage() {
 
   return (
     <PageWrapper>
+      {/* Preface */}
       <section className="max-w-4xl space-y-6 text-center">
         <h1 className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-4xl leading-tight font-bold text-transparent md:text-6xl lg:text-7xl">
           Stay Hungry, Stay Foolish
