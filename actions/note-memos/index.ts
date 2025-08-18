@@ -12,7 +12,7 @@ export const createNoteMemo = async (request: CreateNoteMemoRequest) => {
     'INSERT INTO post_memos (post_id, block_id, start_offset, end_offset, content, selected_content) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
     [postId, blockId, startOffset, endOffset, content, selectedContent]
   );
-  return toCamelCase<NoteMemo>(rows);
+  return toCamelCase<NoteMemo>(rows)[0];
 };
 
 /** 更新筆記備註 */

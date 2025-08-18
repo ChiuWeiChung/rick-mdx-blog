@@ -25,11 +25,10 @@ export async function generateMetadata(props: ClientNotesPageProps): Promise<Met
   const params = await props.params;
   const note = await getNoteInfoById(params.noteId);
   const origin = await getOrigin();
-  const metadataBase = new URL(origin);
   const metadata: Metadata = {
     title: 'Rick 的開發筆記',
     description: 'Rick 的開發筆記',
-    metadataBase,
+    metadataBase: new URL(origin),
   };
 
   if (note) metadata.description = note.title;
@@ -66,7 +65,7 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
   return (
     <div>
       {/* router back button */}
-      <div className="mb-4 flex flex-wrap items-center gap-4 border-b pb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-4 border-b pb-4 pl-4">
         <GoBackButton>回上一頁</GoBackButton>
 
         {/* 標籤 */}
@@ -90,7 +89,7 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
         </div>
 
         {!!session && (
-          <Link href={`/admin/notes/editor?noteId=${params.noteId}`}>
+          <Link href={`/admin/notes/editor?noteId=${params.noteId}`} className="ml-auto">
             <Button variant="outline">
               編輯
               <EditIcon />

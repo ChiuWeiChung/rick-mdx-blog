@@ -4,17 +4,20 @@ import NotesSection from '@/features/client/notes-section';
 import React, { Suspense } from 'react';
 import { Metadata } from 'next';
 import { getCategoryById } from '@/actions/categories';
+import { getOrigin } from '@/lib/router';
 
 interface NotesPageProps {
   searchParams: Promise<QueryNote>;
 }
 
 export async function generateMetadata(props: NotesPageProps): Promise<Metadata> {
+  const origin = await getOrigin();
   const searchParams = await props.searchParams;
   const { category } = coerceQueryNoteSchema.parse(searchParams ?? {});
   const metadata: Metadata = {
     title: "Rick's DevNote - 筆記列表",
     description: '筆記列表',
+    metadataBase: new URL(origin),
   };
 
   if (typeof category !== 'number') return metadata;

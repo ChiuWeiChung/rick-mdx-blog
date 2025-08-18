@@ -30,6 +30,8 @@ import { getUpdatedSearchParams } from '@/utils/form-utils';
 import ServerPagination from './server-pagination';
 import ClientPagination from './client-pagination';
 import { QueryOrder } from '@/enums/query';
+import { useSidebar } from '../ui/sidebar';
+import { SIDEBAR_WIDTH_MOBILE } from '@/constants/sidebar';
 
 const emptyData: unknown[] = [];
 
@@ -57,6 +59,7 @@ function ReactTable<T>({
 }: ReactTableProps<T>) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { open, isMobile } = useSidebar();
   const [isMounted, setIsMounted] = useState(false);
   const [columnVisibility, setColumnVisibility] = useState(visibilityState); // TODO 從 localStorage 存取既有設定
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -65,6 +68,12 @@ function ReactTable<T>({
     pageSize: currentLimit,
   });
 
+  const getWrapperStyle = () => {
+    if (isMobile) return { width: '100%' };
+    if (open) return { width: `calc(100vw - (${SIDEBAR_WIDTH_MOBILE} + 2rem))` };
+    return { width: '100%' };
+  };
+  
   const table = useReactTable({
     data: data ?? (emptyData as T[]),
     columns,
@@ -179,7 +188,7 @@ function ReactTable<T>({
   if (!isMounted) return null;
 
   return (
-    <div className={cn('relative mx-auto flex w-full flex-col', className)}>
+    <div className={cn('relative mx-auto flex w-full flex-col', className)} style={getWrapperStyle()}>
       <Table aria-label="table" className="border border-border">
         {caption && <caption className="caption-top text-2xl font-bold text-left">{caption}</caption>}
         {!headerHide && (

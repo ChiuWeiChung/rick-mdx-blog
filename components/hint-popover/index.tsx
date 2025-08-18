@@ -17,6 +17,7 @@ import { Prompt } from '@/enums/prompt';
 import { generatePrompt } from './utils';
 import SpinnerLoader from '../spinner-loader';
 import { useWindowSelection } from '@/hooks/use-window-selection';
+import { toast } from 'sonner';
 
 export default function HintPopover() {
   const [hint, setHint] = useState('');
@@ -26,7 +27,7 @@ export default function HintPopover() {
 
   // 管理 Popover 開關狀態和位置
   useEffect(() => {
-    if (selection?.range) {
+    if (selection?.range && !hint) {
       // 新建模式：使用選取範圍位置
       const rect = selection.range.getBoundingClientRect();
       const scrollX = window.scrollX;
@@ -38,14 +39,8 @@ export default function HintPopover() {
       setAnchorPosition({ x, y });
       setHint(''); // 新建時清空註解
       setIsOpen(true);
-
-      // 保留選取效果，不立即清除
-      // 讓用戶能看到選取的文字保持反白狀態
-    } else {
-      setIsOpen(false);
-      setHint('');
-    }
-  }, [selection]);
+    } 
+  }, [selection, hint]);
 
   const askMutation = useMutation({
     mutationFn: mutationHandler(askQuestion),
@@ -98,7 +93,7 @@ export default function HintPopover() {
         onOpenAutoFocus={e => e.preventDefault()}
       >
         {/* 操作按鈕 */}
-        <WandSparklesIcon className="text-primary-foreground absolute -top-2 -right-2 h-4 w-4 bg-neutral-700 rounded-full" />
+        <WandSparklesIcon className="text-primary-foreground absolute -top-2 -right-2 h-4 w-4 rounded-full bg-neutral-700" />
         <div className="text-primary grid grid-cols-4 items-center gap-2">
           <Button variant="outline" size="sm" onClick={handleProcess(Prompt.expand)}>
             加長
@@ -130,7 +125,14 @@ export default function HintPopover() {
           <div className="border-border mx-auto my-2 flex flex-col gap-2 rounded-md border bg-neutral-800 p-2 text-sm">
             <p className="text-primary-foreground font-bold">生成提示：</p>
             <p className="text-primary-foreground">{hint}</p>
-            <Button variant="outline" size="sm" onClick={() => navigator.clipboard.writeText(hint)}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                toast.success('已複製到剪貼簿');
+                navigator.clipboard.writeText(hint);
+              }}
+            >
               複製
             </Button>
           </div>

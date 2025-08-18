@@ -75,6 +75,7 @@ export default function InitializedMDXEditor({
             dockerfile: 'Dockerfile',
             nginx: 'Nginx',
             http: 'HTTP',
+            dotenv: 'Dotenv',
           },
         }),
         imagePlugin({ disableImageSettingsButton: true }),
