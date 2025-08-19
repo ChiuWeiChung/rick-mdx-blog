@@ -99,22 +99,28 @@ export const updateCategory = async (
 
     // 處理封面圖片
     if (coverFile) {
-      const coverPath = await uploadImage({
-        file: coverFile,
-        fileName: 'cover',
-        folder: `categories/${name}`,
-      });
+      const coverPath = await uploadImage(
+        {
+          file: coverFile,
+          fileName: 'cover',
+          folder: `categories/${name}`,
+        },
+        true
+      );
       updates.push(`cover_path = $${paramIndex++}`);
       values.push(coverPath);
     }
 
     // 處理圖示圖片
     if (iconFile) {
-      const iconPath = await uploadImage({
-        file: iconFile,
-        fileName: 'icon',
-        folder: `categories/${name}`,
-      });
+      const iconPath = await uploadImage(
+        {
+          file: iconFile,
+          fileName: 'icon',
+          folder: `categories/${name}`,
+        },
+        true
+      );
       updates.push(`icon_path = $${paramIndex++}`);
       values.push(iconPath);
     }

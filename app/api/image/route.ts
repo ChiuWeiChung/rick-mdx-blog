@@ -20,9 +20,11 @@ export async function GET(req: NextRequest) {
 
   try {
     const getUrlCached = unstable_cache(
-      async () => {
+      async () => {   
         // 如果有 CF_DOMAIN 則直接回傳 URL（CDN 模式），否則使用 S3 的簽名 URL
-        if (process.env.CF_DOMAIN) return `https://${process.env.CF_DOMAIN}/${key}`;
+        if (process.env.CF_DOMAIN && process.env.NODE_ENV !== 'development'){
+          return `https://${process.env.CF_DOMAIN}/${key}`;
+        }
         return await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
       },
       [key],
