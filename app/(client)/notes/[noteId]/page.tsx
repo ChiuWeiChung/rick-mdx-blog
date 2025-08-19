@@ -67,6 +67,14 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
       {/* router back button */}
       <div className="mb-4 flex flex-wrap items-center gap-4 border-b pb-4 pl-4">
         <GoBackButton>回上一頁</GoBackButton>
+        {!!session && (
+          <Link href={`/admin/notes/editor?noteId=${params.noteId}`}>
+            <Button>
+              編輯
+              <EditIcon />
+            </Button>
+          </Link>
+        )}
 
         {/* 標籤 */}
         <div className="flex items-center gap-2">
@@ -79,7 +87,7 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
           ))}
         </div>
 
-        <div className="ml-auto flex text-sm text-gray-500 divide-x-2 divide-gray-200">
+        <div className="ml-auto flex divide-x-2 divide-gray-200 text-sm text-gray-500">
           {/* 最新更新時間 (如果是同一天，則不顯示) */}
           {!isSameDay(note.createdAt, note.updatedAt) && (
             <p className="px-2">更新時間：{format(note.updatedAt, 'yyyy/MM/dd')}</p>
@@ -87,15 +95,6 @@ export default async function ClientNotesPage(props: ClientNotesPageProps) {
 
           <p className="px-2">建立時間：{format(note.createdAt, 'yyyy/MM/dd')}</p>
         </div>
-
-        {!!session && (
-          <Link href={`/admin/notes/editor?noteId=${params.noteId}`} className="ml-auto">
-            <Button variant="outline">
-              編輯
-              <EditIcon />
-            </Button>
-          </Link>
-        )}
       </div>
 
       {evaluateResult.content}
