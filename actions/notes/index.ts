@@ -312,7 +312,10 @@ export const updateNote = async (note: UpdateNoteRequest) => {
     if (!selectedTags) throw new Error('Tags not found');
 
     // 更新 markdown 檔案內容
-    const filePath = await saveMarkdownFile({ content, category: selectedCategory.name, fileName });
+    const filePath = await saveMarkdownFile(
+      { content, category: selectedCategory.name, fileName },
+      true
+    );
     if (!filePath) throw new Error('Failed to save markdown file');
     
     // 更新 post

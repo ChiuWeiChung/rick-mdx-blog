@@ -2,14 +2,19 @@
 import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 import s3 from '@/lib/s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
 import { BUCKET_NAME } from '@/constants/environment';
+
+// Note: CloudFront 是「全球服務」(global service)，所以 region 固定為 us-east-1
+const cf = new CloudFrontClient({ region: 'us-east-1' });
+const DIST_ID = process.env.CF_DISTRIBUTION_ID!;
 
 type SaveMarkdownFileRequest =
   | { content: string; category: string; fileName: string }
   | { file: File; category: string; fileName: string };
 
 /** 儲存 Markdown 檔案 */
-const saveMarkdownFile = async (request: SaveMarkdownFileRequest) => {
+const saveMarkdownFile = async (request: SaveMarkdownFileRequest, isUpdate: boolean = false) => {
   const { category, fileName } = request;
 
   let buffer: Buffer;
@@ -37,6 +42,19 @@ const saveMarkdownFile = async (request: SaveMarkdownFileRequest) => {
 
   try {
     await s3.send(command);
+
+    // 如果是更新，則需要清除 CDN 的快取
+    if (isUpdate) {
+      const command = new CreateInvalidationCommand({
+        DistributionId: DIST_ID,
+        InvalidationBatch: {
+          CallerReference: Date.now().toString(),
+          Paths: { Quantity: 1, Items: [`/${filePath}`] },
+        },
+      });
+      await cf.send(command);
+    }
+
     return filePath;
   } catch (error) {
     console.error('Error uploading markdown file:', error);
@@ -52,7 +70,9 @@ const getMarkdownResource = async (filePath: string) => {
   });
   try {
     // 如果有 CF_DOMAIN 則直接回傳 URL（CDN 模式），否則使用 S3 的簽名 URL
-    if (process.env.CF_DOMAIN) return `https://${process.env.CF_DOMAIN}/${filePath}`;
+    if (process.env.CF_DOMAIN && process.env.NODE_ENV !== 'development') {
+      return `https://${process.env.CF_DOMAIN}/${filePath}`;
+    }
     return await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
   } catch (error) {
     console.error('Error getting markdown resource:', error);
@@ -105,6 +125,14 @@ const saveProfileFile = async (request: { content: string }) => {
 
   try {
     await s3.send(command);
+    const cfCommand = new CreateInvalidationCommand({
+      DistributionId: DIST_ID,
+      InvalidationBatch: {
+        CallerReference: Date.now().toString(),
+        Paths: { Quantity: 1, Items: [`/${filePath}`] },
+      },
+    });
+    await cf.send(cfCommand);
     return filePath;
   } catch (error) {
     console.error('Error uploading markdown file:', error);

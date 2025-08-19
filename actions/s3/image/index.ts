@@ -9,10 +9,15 @@ import {
   ListObjectsV2Command,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
+import { CloudFrontClient, CreateInvalidationCommand } from '@aws-sdk/client-cloudfront';
 import { revalidateTag } from 'next/cache';
 
+// Note: CloudFront 是「全球服務」(global service)，所以 region 固定為 us-east-1
+const cf = new CloudFrontClient({ region: 'us-east-1' });
+const DIST_ID = process.env.CF_DISTRIBUTION_ID!;
+
 /** 上傳圖片 */
-async function uploadImage(request: { file: File; fileName: string; folder: string }) {
+async function uploadImage(request: { file: File; fileName: string; folder: string },isUpdate:boolean=false) {
   const { file, fileName, folder } = request;
   if (!file || file.size === 0) {
     throw new Error('No file uploaded');
@@ -34,6 +39,17 @@ async function uploadImage(request: { file: File; fileName: string; folder: stri
   });
 
   await s3.send(command);
+  // 如果是更新，則需要清除 CDN 的快取
+  if (isUpdate) {
+    const command = new CreateInvalidationCommand({
+      DistributionId: DIST_ID,
+      InvalidationBatch: {
+        CallerReference: Date.now().toString(),
+        Paths: { Quantity: 1, Items: [`/${objectKey}`] },
+      },
+    });
+    await cf.send(command);
+  }
   revalidateTag(objectKey);
   return objectKey;
 }
