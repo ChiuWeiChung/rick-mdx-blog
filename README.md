@@ -14,7 +14,7 @@
 ## 技術棧 (Tech Stack)
 
 * **前端框架**：Next.js 15
-* **前端函式庫**：Mdx Editor、Next Mdx Remote Client、Pg 等（詳見 [package.json](./package.json)）
+* **前端核心函式庫**：Mdx Editor、Next Mdx Remote Client、Pg 等（詳見 [package.json](./package.json)）
 * **資料庫**：PostgreSQL
 * **檔案儲存**：Amazon S3（非結構化資料）
 * **環境與部署**：AWS EC2、Nginx

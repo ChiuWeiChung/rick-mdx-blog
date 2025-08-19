@@ -18,10 +18,6 @@ const nextConfig: NextConfig = {
         hostname: 'images.unsplash.com',
       },
       {
-        protocol: 'https',
-        hostname: 'rick-mdx-storage.s3.us-east-2.amazonaws.com',
-      },
-      {
         protocol: 'http',
         hostname: 'localhost',
       },
@@ -32,6 +28,10 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'github.com',
+      },
+      {
+        protocol: 'https',
+        hostname: process.env.CF_DOMAIN ?? 'rickchiu.me',
       },
     ],
   },
