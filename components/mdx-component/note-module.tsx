@@ -4,7 +4,6 @@ import dynamic from 'next/dynamic';
 import { Loader } from 'lucide-react';
 import { CommonProps } from './types';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
 import { placeholderDataUrl } from '@/constants/placeholder';
 
 // 使用動態導入來加載客戶端元件
@@ -24,7 +23,7 @@ export function createMdxComponents() {
   return {
     wrapper: (props: CommonProps) => {
       return (
-        <article className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+        <article className="prose prose-sm sm:prose-base max-w-none">
           {props.children}
         </article>
       );
@@ -79,10 +78,10 @@ export function createMdxComponents() {
       if (React.isValidElement(props.children) && props.children.type === 'img') {
         const imgProps = props.children.props as { alt: string; src: string };
         return (
-          <div className={cn('relative !my-0 inline-block h-[12rem] md:h-[24rem] w-full')}>
+          <div className="relative !my-0 inline-block h-[12rem] w-full md:h-[24rem]">
             <Image
               alt={imgProps.alt}
-              className={cn('!my-0 object-contain')}
+              className="!my-0 object-contain object-left"
               src={imgProps.src}
               fill
               sizes="100%"

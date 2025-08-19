@@ -284,7 +284,7 @@ const NoteEditorForm = ({
       <ForwardRefEditor
         markdown={content}
         ref={editorRef}
-        contentEditableClassName="prose prose-sm lg:prose-lg max-w-[unset]"
+        contentEditableClassName="prose prose-sm sm:prose-base max-w-[unset]"
         onChange={handleMarkdownChange}
       />
 

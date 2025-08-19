@@ -36,7 +36,7 @@ export default async function RemoteMdxPage() {
 
   return (
     <Suspense fallback={<div className="p-4 text-center">Loading content...</div>}>
-      <article className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+      <article className="prose prose-sm sm:prose-base max-w-none">
         <MDXRemote source={markdown} components={createMdxComponents()} options={options} />
       </article>
     </Suspense>

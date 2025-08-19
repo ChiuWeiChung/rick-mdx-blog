@@ -46,7 +46,7 @@ export default async function ClientPortfoliosPage(props: ClientPortfoliosPagePr
   const content = await result.text();
 
   return (
-    <div className="relative m-2 min-h-screen p-8">
+    <div className="container mx-auto m-4 bg-white/80 p-4">
       {/* router back button */}
       <div className="mb-4 flex flex-wrap items-center gap-4 border-b pb-4">
         <GoBackButton>回作品集列表</GoBackButton>
