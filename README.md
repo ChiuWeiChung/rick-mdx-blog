@@ -36,6 +36,10 @@
 
 ## 功能特色 (Features)
 
+### 前台支援 RWD
+
+![rwd](https://github.com/ChiuWeiChung/rick-mdx-blog/blob/main/docs/rwd.gif?raw=true)
+
 ### Markdown 編輯器
 基於 **mdx-editor** 打造的編輯器，提供直覺的 Markdown 編輯體驗。
 

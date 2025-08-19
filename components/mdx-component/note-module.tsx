@@ -79,7 +79,7 @@ export function createMdxComponents() {
       if (React.isValidElement(props.children) && props.children.type === 'img') {
         const imgProps = props.children.props as { alt: string; src: string };
         return (
-          <div className={cn('relative !my-0 inline-block h-[30rem] w-full')}>
+          <div className={cn('relative !my-0 inline-block h-[12rem] md:h-[24rem] w-full')}>
             <Image
               alt={imgProps.alt}
               className={cn('!my-0 object-contain')}
