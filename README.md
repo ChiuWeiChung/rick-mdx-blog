@@ -16,7 +16,7 @@
 ### 前端技術
 * **框架**：Next.js 15
 * **核心函式庫**：Mdx Editor、Next Mdx Remote Client、Pg 等
-  > 完整套件列表請見 [package.json](./package.json)
+  > 完整套件列表請見 [package.json](https://github.com/ChiuWeiChung/rick-mdx-blog/blob/main/package.json)
 
 ### 資料層
 * **資料庫**：PostgreSQL
@@ -39,24 +39,24 @@
 ### Markdown 編輯器
 基於 **mdx-editor** 打造的編輯器，提供直覺的 Markdown 編輯體驗。
 
-![editor](./docs/editor.gif)
+![editor](https://github.com/ChiuWeiChung/rick-mdx-blog/blob/main/docs/admin.gif?raw=true)
 
 ### 文章 Highlight 功能
 便於後台檢視與修訂的文章重點標記系統。
 
-![highlighter](./docs/highlighter.gif)
+![highlighter](https://github.com/ChiuWeiChung/rick-mdx-blog/blob/main/docs/highlighter.gif?raw=true)
 
 ### AI 協助編輯
 整合 **OpenAI API** 提供文章編輯功能，包含語句修飾、內容加長／縮短、錯別字檢查等。
 
 > 有時候在寫筆記或編輯內容時，中文表達會卡住，腦袋有畫面但文字卻湊不出來。這種情況下，如果有個幫手在旁邊幫忙調整、潤飾，就能快很多。對我來說，把 AI 加進來不是為了「炫技」，而是想讓自己少一點疲累，把精力留在更重要的地方。
 
-![openai-api](./docs/openai-api.gif)
+![openai-api](https://github.com/ChiuWeiChung/rick-mdx-blog/blob/main/docs/openai-api.gif?raw=true)
 
 ### 後台管理與權限
 後台整合 **Google OAuth**，僅限登入後才能進行特定操作（如新增、刪除、修改筆記、分類、標籤、作品集等資料）。
 
-![admin](./docs/admin.gif)
+![admin](https://github.com/ChiuWeiChung/rick-mdx-blog/blob/main/docs/admin.gif?raw=true)
 
 ---
 
