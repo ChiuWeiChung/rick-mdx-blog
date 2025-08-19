@@ -5,7 +5,7 @@ export default async function layout({ children }: { children: React.ReactNode }
   return (
     <SidebarProvider>
       <ClientSidebar />
-      <SidebarInset className="mx-5 my-2 bg-white/60 p-4 pb-18">
+      <SidebarInset className="mx-5 my-2 bg-white/60 p-4 pb-18 overflow-hidden">
         <SidebarTrigger className="fixed -ml-10" />
         {children}
       </SidebarInset>

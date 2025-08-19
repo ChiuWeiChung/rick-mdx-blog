@@ -46,9 +46,9 @@ export default async function ClientPortfoliosPage(props: ClientPortfoliosPagePr
   const content = await result.text();
 
   return (
-    <div className="relative m-2 min-h-screen p-8 pt-12">
+    <div className="relative m-2 min-h-screen p-8">
       {/* router back button */}
-      <div className="mb-4 flex items-center gap-4 border-b pb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-4 border-b pb-4">
         <GoBackButton>回作品集列表</GoBackButton>
         <p className="ml-auto text-lg font-bold text-gray-500">
           期間：{format(new Date(portfolio.startDate), 'yyyy/MM/dd')} -{' '}
