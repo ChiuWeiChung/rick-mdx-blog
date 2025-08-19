@@ -13,11 +13,11 @@
 
 ## 技術棧 (Tech Stack)
 
-* **框架**：Next.js 15
-* **前端工具**：React Query、React Table、Shadcn、Zustand...
-* 資料庫：PostgreSQL
+* **前端框架**：Next.js 15
+* **前端函式庫**：Mdx Editor、Next Mdx Remote Client、Pg 等（詳見 [package.json](./package.json)）
+* **資料庫**：PostgreSQL
 * **檔案儲存**：Amazon S3（非結構化資料）
-* **部署**：AWS EC2、Nginx
+* **環境與部署**：AWS EC2、Nginx
 * **AI API**：OpenAI API
 
 ---
@@ -25,33 +25,28 @@
 ## 功能特色 (Features)
 
 * 基於 **mdx-editor** 的 Markdown 編輯器
+
+![editor](./docs/editor.gif)
+
 * 文章 **Highlight**（後台便於檢視與修訂）
+
+![highlighter](./docs/highlighter.gif)
+
 * OpenAI API 協助文章編輯（語句修飾、加長／縮短、錯別字檢查）
+
+有時候在寫筆記或編輯內容時，中文表達會卡住，腦袋有畫面但文字卻湊不出來。這種情況下，如果有個幫手在旁邊幫忙調整、潤飾，就能快很多。對我來說，把 AI 加進來不是為了「炫技」，而是想讓自己少一點疲累，把精力留在更重要的地方。
+
+![openai-api](./docs/openai-api.gif)
+
 * 後台整合 Google OAuth 權限管理
 
----
-
-## 為什麼選 mdx-editor，而不是 tiptap／quill？
-
-我選擇 mdx-editor 的原因，主要是因為它以 Markdown 為核心設計，和我平常寫筆記的習慣完全契合。由於我的筆記幾乎都是用 Markdown 格式撰寫，未來如果要轉換平台，也能保持很高的相容性。
-
-相比之下，tiptap 雖然也支援 Markdown，但匯入與匯出的功能需要試用或付費帳號，使用門檻相對較高。對我來說，mdx-editor 的體驗反而更直覺、簡單，也更符合我當下的需求。
-
-另外，mdx-editor 的討論度在社群中逐漸升高，整體氛圍相當活躍，讓我覺得它的未來發展性不錯，因此更有信心投入使用。
-
-> Ps. 老實說我其實也蠻想試試 tiptap，因為在社群裡大家最推崇的就是它的開發體驗好，不過在目前這個情境下，mdx-editor 還是比較符合我的需求。
+![admin](./docs/admin.gif)
 
 ---
 
-## 架構設計 (Architecture)
+## DB Schema
 
-（建議未來可補上系統架構圖／流程圖，說明前端、後端、資料庫、S3 的互動）
-
----
-
-## Database Schema（僅展示 ER Diagram）
-
-> 完整 SQL 請見根目錄的 **[db.sql](./db.sql)**
+> 完整 SQL 請見根目錄的 **[db.sql](.docs/db.sql)**
 
 ```mermaid
 erDiagram
@@ -123,24 +118,21 @@ erDiagram
 
 ---
 
-## 開發理念與選擇 (Philosophy)
+## 技術選擇與考量 (Dev Considerations)
 
-* **不使用 ORM（Drizzle／Prisma）**：先以 `pg` 手寫 SQL 深入理解資料庫行為與查詢邏輯，累積排錯經驗。
-* 專案穩定後再考慮導入 ORM，提升團隊協作與維護性。
-* 媒體檔案改以 **Amazon S3** 管理；原本曾考慮自架 MinIO，但既然部署在 AWS EC2，直接使用同生態服務更省維運成本。
+一開始做這個專案時，我並沒有急著用 ORM（像 Drizzle 或 Prisma），而是先用 pg 自己手寫 SQL。原因很單純，就是想先親手去感受資料庫的行為，實際踩過一些坑，累積排錯的經驗。等到專案慢慢走向穩定，再把 ORM 引進來，這樣能更清楚感受到 ORM 在協作與維護上的好處。
 
----
+在檔案儲存上，我原本也考慮過自己架 [MinIO](https://www.min.io/)，不過後來仔細想想，既然系統就是要部署在 AWS EC2 上，那直接用 Amazon S3 不就更順手嗎？這樣還能省下額外的維運成本，讓整個架構簡單很多。
 
-## 部署 (Deployment)
+> 雖然 MinIO 的 API 與 Amazon S3 相容，但考量目前專案架構，直接採用 Amazon S3 比較合適
 
-* 以 **AWS EC2** 佈署應用，**Nginx** 作為代理伺服器。
-* 圖片與靜態檔案由 **S3** 儲存與服務。
+至於編輯器的部分，我最後選了 mdx-editor。原因是它以 Markdown 為核心設計，剛好跟我平常寫筆記的習慣完全對得上。因為我的筆記幾乎全都是 Markdown 格式，所以未來如果要轉換平台，也能保持高度相容性。相比之下，tiptap 雖然功能更完整，也支援 Markdown，但匯入和匯出的功能需要試用或付費帳號，對我來說門檻稍微高了一些。相較之下，mdx-editor 更直覺、更簡單，剛好滿足我當下的需求。而且它最近在社群裡的討論度越來越高，發展也算有前景，讓我更有信心投入使用。
 
-> （可於此處補充 Docker／docker-compose、環境變數與 CI/CD 流程）
+> Ps. 老實說，我也蠻想試試 tiptap，因為它在社群裡最被推崇的就是「開發體驗超好」。只是這次的專案定位，讓我更傾向選 mdx-editor 😅。
 
 ---
 
-## TODO（上線後優化方向）
+## 上線後優化方向（TODO）
 
 * 導入 ORM（像是 Drizzle／Prisma）主要是想讓程式碼更好維護、更好看。現在用 `pg` 手寫 SQL 雖然很扎實，但隨著功能越加越多，SQL 查詢跟關聯會變得有點雜亂。ORM 可以幫忙把這些查詢用更結構化的方式表達，schema 跟程式碼也能同步更新，不用自己到處追。少掉一堆重複 SQL，維護起來會輕鬆很多，也能讓之後的擴充更順手。
 * 新增瀏覽量統計

@@ -54,11 +54,11 @@ export default function InitializedMDXEditor({
         codeBlockPlugin({ defaultCodeBlockLanguage: 'js' }),
         codeMirrorPlugin({
           codeBlockLanguages: {
-            js: 'JavaScript',
+            js: 'JS',
             javascript: 'JavaScript',
-            jsx: 'JavaScript',
-            tsx: 'TypeScript',
-            ts: 'TypeScript',
+            jsx: 'JSX',
+            tsx: 'TSX',
+            ts: 'TS',
             typescript: 'TypeScript',
             css: 'CSS',
             mermaid: 'Mermaid',

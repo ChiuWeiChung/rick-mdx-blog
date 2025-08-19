@@ -16,9 +16,10 @@ import { getUpdatedSearchParams } from '@/utils/form-utils';
 export interface ServerPaginationProps {
   className?: string;
   totalElements: number;
+  scrollToTopOnPageChange?: boolean;
 }
 
-export default function ServerPagination({ className,  totalElements }: ServerPaginationProps) {
+export default function ServerPagination({ className,  totalElements, scrollToTopOnPageChange }: ServerPaginationProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const pageSize = Number(searchParams.get('limit') ?? '10');
@@ -84,6 +85,7 @@ export default function ServerPagination({ className,  totalElements }: ServerPa
         {/* 上一頁按鈕 */}
         <PaginationItem>
           <PaginationPrevious
+            scroll={scrollToTopOnPageChange}
             href={currentPage > 1 ? buildUrl(currentPage - 1) : buildUrl(currentPage)}
             className={currentPage <= 1 ? 'pointer-events-none opacity-50' : ''}
           />
@@ -95,7 +97,11 @@ export default function ServerPagination({ className,  totalElements }: ServerPa
             {pageNum === 'ellipsis' ? (
               <PaginationEllipsis />
             ) : (
-              <PaginationLink href={buildUrl(pageNum)} isActive={pageNum === currentPage}>
+              <PaginationLink
+                href={buildUrl(pageNum)}
+                isActive={pageNum === currentPage}
+                scroll={scrollToTopOnPageChange}
+              >
                 {pageNum}
               </PaginationLink>
             )}
@@ -105,6 +111,7 @@ export default function ServerPagination({ className,  totalElements }: ServerPa
         {/* 下一頁按鈕 */}
         <PaginationItem>
           <PaginationNext
+            scroll={scrollToTopOnPageChange}
             href={currentPage < totalPages ? buildUrl(currentPage + 1) : buildUrl(currentPage)}
             className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : ''}
           />

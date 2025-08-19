@@ -26,6 +26,15 @@ export default async function NotesSection({ request, showPagination = false }: 
   const { data, totalCount } = await queryNoteList(request);
   const origin = await getOrigin();
 
+  const renderCategory = () => {
+    if(data.length === 0) return null;
+    const category = data[0].category;
+    const categoryName = category.replace(/_/g, ' ');
+    return (
+      <h2 className="text-3xl font-bold text-center mb-8">{request.category ? categoryName : '全部'}</h2>
+    );
+  };
+
   const renderNoteMeta = (note: Note) => {
     return (
       <div className="flex flex-col gap-2">
@@ -90,14 +99,19 @@ export default async function NotesSection({ request, showPagination = false }: 
 
   return (
     <>
+      {/* 類別標題 */}
+      {renderCategory()}
+
+      {/* 筆記卡片列表 */}
       <section className="mx-auto grid w-full max-w-5xl grid-cols-1 gap-6 gap-y-12 md:grid-cols-2 lg:grid-cols-3">
         {data.length === 0 ? renderEmptyState() : renderNoteCards()}
       </section>
 
+      {/* 分頁 */}
       {data.length > 0 &&
         (showPagination ? (
           <div className="mt-8 flex justify-center">
-            <ServerPagination totalElements={totalCount} />
+            <ServerPagination totalElements={totalCount} scrollToTopOnPageChange />
           </div>
         ) : (
           <div className="mt-8 flex justify-center">
