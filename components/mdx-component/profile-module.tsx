@@ -16,7 +16,7 @@ export function createMdxComponents() {
     wrapper: (props: CommonProps) => {
       return (
         <PageWrapper className="max-w-8xl">
-          <article className="prose prose-sm sm:prose-base md:prose-lg max-w-none">
+          <article className="prose prose-sm sm:prose-base max-w-none">
             {props.children}
           </article>
         </PageWrapper>

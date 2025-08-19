@@ -79,7 +79,7 @@ const ProfileEditor = (props: ProfileEditorProps) => {
 
   return (
     <div className="h-[calc(100vh-8rem)] overflow-y-scroll">
-      <div className="flex items-center justify-end gap-2 mb-4">
+      <div className="mb-4 flex items-center justify-end gap-2">
         {editMode ? (
           <>
             <Button
@@ -114,7 +114,7 @@ const ProfileEditor = (props: ProfileEditorProps) => {
         key={editMode ? 'edit' : 'readOnly'}
         markdown={props.markdown ?? ''}
         readOnly={!editMode}
-        contentEditableClassName="prose prose-sm lg:prose-lg max-w-[80%] !pb-[8rem] [&_img]:!m-0"
+        contentEditableClassName="prose prose-sm sm:prose-base max-w-[80%] !pb-[8rem] [&_img]:!m-0"
         onChange={handleMarkdownChange}
       />
     </div>
