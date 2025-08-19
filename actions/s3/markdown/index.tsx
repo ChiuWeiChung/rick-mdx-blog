@@ -51,8 +51,9 @@ const getMarkdownResource = async (filePath: string) => {
     Key: filePath,
   });
   try {
-    const signedUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
-    return signedUrl;
+    // 如果有 CF_DOMAIN 則直接回傳 URL（CDN 模式），否則使用 S3 的簽名 URL
+    if (process.env.CF_DOMAIN) return `https://${process.env.CF_DOMAIN}/${filePath}`;
+    return await getSignedUrl(s3, command, { expiresIn: 60 * 60 * 6 }); // 有效 6 小時
   } catch (error) {
     console.error('Error getting markdown resource:', error);
     throw error;
@@ -110,7 +111,6 @@ const saveProfileFile = async (request: { content: string }) => {
     throw error;
   }
 };
-
 
 export {
   saveMarkdownFile,

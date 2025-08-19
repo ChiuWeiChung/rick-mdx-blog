@@ -29,11 +29,11 @@ export function createMdxComponents() {
     img: (props: CommonProps & { alt: string; title: string; src: string }) => {
       if (props.title.includes('portrait')) {
         return (
-          <figure className="shape-outside-circle relative float-left mr-8 mb-4 h-24 w-24 overflow-hidden rounded-full md:h-40 md:w-40 md:skew-x-12 lg:h-42 lg:w-42">
+          <figure className="shape-outside-circle relative float-left mr-8 mb-4 h-24 w-24 overflow-hidden rounded-full md:h-40 md:w-40 lg:h-42 lg:w-42">
             <Image
               src={props.src}
               alt={props.alt}
-              className="block h-full w-auto scale-[1.4] transition-all duration-500 group-hover:scale-100"
+              className="block h-full w-auto scale-[1.1] transition-all duration-500 group-hover:scale-100"
               priority
               fill
               sizes="100%"

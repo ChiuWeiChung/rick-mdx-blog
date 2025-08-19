@@ -31,7 +31,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
             </Link>
           </div>
         </header>
-        <div className="relative flex flex-col gap-4 p-2 md:p-6">{children}</div>
+        <div className="relative flex flex-col gap-4 p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

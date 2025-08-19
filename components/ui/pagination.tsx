@@ -47,6 +47,7 @@ function PaginationLink({
   className,
   isActive,
   size = "icon",
+  scroll = false,
   ...props
 }: PaginationLinkProps) {
   return (
@@ -61,7 +62,7 @@ function PaginationLink({
         }),
         className
       )}
-      scroll={false}
+      scroll={scroll}
       {...props}
     />
   );

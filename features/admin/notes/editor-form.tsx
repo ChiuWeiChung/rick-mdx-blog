@@ -135,7 +135,7 @@ const NoteEditorForm = ({
   const isPending = isCreatePending || isUpdatePending;
 
   return (
-    <>
+    <div className="h-[calc(100vh-8rem)] overflow-y-scroll">
       <PreventNavigation
         isDirty={form.formState.isDirty}
         backHref="/admin/notes"
@@ -284,13 +284,12 @@ const NoteEditorForm = ({
       <ForwardRefEditor
         markdown={content}
         ref={editorRef}
-        className="mt-12"
         contentEditableClassName="prose prose-sm lg:prose-lg max-w-[unset]"
         onChange={handleMarkdownChange}
       />
 
       <HintPopover />
-    </>
+    </div>
   );
 };
 

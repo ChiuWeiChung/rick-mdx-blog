@@ -4,8 +4,6 @@ import s3 from '@/lib/s3';
 import {
   CopyObjectCommand,
   DeleteObjectCommand,
-  //   DeleteObjectCommand,
-  //   ListObjectsV2Command,
   DeleteObjectsCommand,
   HeadObjectCommand,
   ListObjectsV2Command,

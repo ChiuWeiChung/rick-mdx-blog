@@ -241,6 +241,13 @@
 		@apply min-h-[90vh] bg-gray-50;
 	}
 
+	.mdxeditor-popup-container * {
+		max-height: 50vh !important;
+		overflow: scroll !important;
+		scrollbar-width: thin;
+		scrollbar-color: #ccc #f1f1f1;
+	}
+
 	.mdxeditor iframe,
 	.prose iframe {
 		width: 100%;
