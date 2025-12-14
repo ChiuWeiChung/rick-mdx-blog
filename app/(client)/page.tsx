@@ -7,14 +7,11 @@ import { queryTagSchema } from '@/actions/tags/types';
 import { getTagWithNoteCount } from '@/actions/tags';
 import PageWrapper from '@/components/page-wrapper';
 import { Metadata } from 'next';
-import { getOrigin } from '@/lib/router';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const origin = await getOrigin();
   const metadata: Metadata = {
     title: 'Rick 的開發筆記',
     description: '歡迎來到 Rick 的開發筆記，這裡記錄了我的學習筆記與作品集',
-    metadataBase: new URL(origin),
     authors: [{ name: 'Rick Chiu' }],
     creator: 'Rick Chiu',
     publisher: 'Rick Chiu',
